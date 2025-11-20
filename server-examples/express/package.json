@@ -21,6 +21,7 @@
     "express": "^4.18.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "x402-express": "latest"
+    "x402-express": "^0.7.0",
+    "@coinbase/x402": "^0.7.1"
   }
 }
