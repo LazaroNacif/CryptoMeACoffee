@@ -49,17 +49,17 @@ Last Updated: November 20, 2025
 - ❌ Widget needs simplification of payment signing logic
 - 📦 Added @coinbase/x402 dependency for mainnet support
 
-#### Phase 2: Widget Simplification (Day 2) 🔄 READY TO START
-- [ ] Simplify widget payment signing logic in `src/widget.js`
-- [ ] Remove custom EIP-712 domain/types construction
-- [ ] Let server provide signing instructions via 402 response
-- [ ] Widget should only handle: wallet connection + signing
+#### Phase 2: Widget Simplification (Day 2) 🟢 IN PROGRESS
+- [x] Simplify widget payment signing logic in `src/widget.js`
+- [x] Remove custom EIP-712 domain/types construction (now uses server params)
+- [x] Let server provide signing instructions via 402 response
+- [x] Widget now uses server-provided: scheme, network, asset, extra (name/version)
 - [ ] Test 402 response parsing
 - [ ] Test payment signing with provided data
 - [ ] Test end-to-end payment flow
 - [ ] Verify payment in Base Sepolia block explorer
 - [ ] Update widget documentation
-- [ ] Remove test-signature.js file (no longer needed)
+- [x] Remove test-signature.js file (no longer needed)
 
 #### Phase 3: Documentation & Testing (Day 3)
 - [ ] Update README.md with Phase 1 findings
@@ -366,28 +366,31 @@ The following issues are superseded by the x402 refactoring. They will be resolv
 
 ### Sprint 1.5: x402 Refactoring (Nov 19-21)
 **Total Story Points:** 21
-**Completed:** 0
-**Remaining:** 21
-**Progress:** 0%
+**Completed:** 9
+**Remaining:** 12
+**Progress:** 43%
 
-**Planned:**
-- Phase 1: Research & Install x402: 5 points
-- Phase 2: Refactor Server Examples: 8 points
-- Phase 3: Update Widget & Docs: 8 points
+**Completed:**
+- ✅ Phase 1: Research & Install x402: 5 points (Day 1)
+- 🟢 Phase 2: Widget Simplification: 4 points (Day 2 - in progress)
+
+**Remaining:**
+- Phase 2: Testing & Verification: 4 points (Day 2)
+- Phase 3: Documentation: 8 points (Day 3)
 
 **Burndown Chart:**
 ```
 21 │ ●
 18 │
 15 │
-12 │
+12 │       ●  ← Current (Day 2)
  9 │
  6 │
  3 │
  0 └─────────────────
    D1 D2 D3
 ```
-*Updated: Nov 19 - Sprint started*
+*Updated: Nov 20 - Phase 2 code complete, testing pending*
 
 ---
 
@@ -429,8 +432,13 @@ The following issues are superseded by the x402 refactoring. They will be resolv
 - [x] 🔍 Comprehensive architecture review completed - Nov 19, 2025
 - [x] 📋 Created detailed refactoring plan - Nov 19, 2025
 
+**Phase 2 Wins:**
+- [x] 🎨 Widget simplified to use server-provided parameters - Nov 20, 2025
+- [x] 🗑️ Removed unnecessary test-signature.js file - Nov 20, 2025
+- [x] 📋 Created Phase 2 documentation (PHASE2_WIDGET_SIMPLIFICATION.md) - Nov 20, 2025
+
 **Upcoming Wins:**
-- [ ] ✅ x402-express properly integrated
+- [ ] ✅ End-to-end payment tested on testnet
 - [ ] 🎯 First successful testnet transaction (x402 compliant)
 - [ ] 📚 Documentation updated with x402 focus
 - [ ] First external contributor

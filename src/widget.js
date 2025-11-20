@@ -316,17 +316,14 @@ class CryptoMeACoffee {
   }
 
   // Sign payment using EIP-3009 transferWithAuthorization
+  // Simplified: uses all data from server's 402 response
   async signPayment(paymentOption) {
     const provider = this.getEthereumProvider();
 
-    // Ensure both addresses match the server's format (checksummed)
-    // The `to` address from server is checksummed, so we need `from` to match
-    const toAddress = paymentOption.payTo;
-    const fromAddress = toAddress.toLowerCase() === this.state.userAddress.toLowerCase()
-      ? toAddress  // If same wallet, use same checksum format
-      : this.state.userAddress;  // Otherwise use wallet's format
-
-    const assetAddress = paymentOption.asset;
+    // ✅ Use data from server response instead of hardcoding
+    const toAddress = paymentOption.payTo;  // From server
+    const assetAddress = paymentOption.asset;  // From server
+    const fromAddress = this.state.userAddress;
 
     // Convert USD amount to USDC (6 decimals)
     const usdcAmount = Math.floor(this.state.selectedAmount * 1000000);
@@ -338,19 +335,15 @@ class CryptoMeACoffee {
     const validAfter = 0;
     const validBefore = Math.floor(Date.now() / 1000) + 3600;
 
-    // EIP-712 Domain (must match USDC contract's domain)
-    // Use domain info from server's `extra` field if available
-    const domainName = paymentOption.extra?.name || 'USDC';
-    const domainVersion = paymentOption.extra?.version || '2';
-
+    // ✅ EIP-712 Domain - use server-provided parameters
     const domain = {
-      name: domainName,
-      version: domainVersion,
+      name: paymentOption.extra.name,  // From server
+      version: paymentOption.extra.version,  // From server
       chainId: this.targetNetwork.id,
-      verifyingContract: assetAddress
+      verifyingContract: assetAddress  // From server
     };
 
-    // EIP-712 Types for transferWithAuthorization
+    // EIP-712 Types for transferWithAuthorization (standard)
     const types = {
       TransferWithAuthorization: [
         { name: 'from', type: 'address' },
@@ -363,7 +356,6 @@ class CryptoMeACoffee {
     };
 
     // Message to sign - use lowercase addresses for wallet compatibility
-    // Coinbase Wallet normalizes addresses to lowercase before signing
     const message = {
       from: fromAddress.toLowerCase(),
       to: toAddress.toLowerCase(),
@@ -373,7 +365,7 @@ class CryptoMeACoffee {
       nonce: nonce
     };
 
-    console.log('📝 EIP-712 Domain:', domain);
+    console.log('📝 EIP-712 Domain (from server):', domain);
     console.log('📝 Signing message:', message);
 
     // Sign using eth_signTypedData_v4
@@ -390,16 +382,15 @@ class CryptoMeACoffee {
       ]
     });
 
-    console.log('✍️ Raw signature:', signature);
+    console.log('✍️ Signature:', signature);
 
-    // Create x402 payment payload
-    // IMPORTANT: authorization addresses must match what was signed (lowercase)
+    // ✅ Create x402 payment payload using server's network and scheme
     const x402Payment = {
       x402Version: 1,
-      scheme: 'exact',
-      network: this.config.network,
+      scheme: paymentOption.scheme,  // From server (usually 'exact')
+      network: paymentOption.network,  // From server (base-sepolia)
       payload: {
-        signature: signature,  // Raw signature from wallet
+        signature: signature,
         authorization: {
           from: fromAddress.toLowerCase(),
           to: toAddress.toLowerCase(),
