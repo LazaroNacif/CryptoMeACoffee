@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CryptoMeACoffee - Demo</title>
+  <title>CryptoMeACoffee - x402 Official Client Demo</title>
 
   <!-- Widget Styles -->
   <link rel="stylesheet" href="../../src/styles.css">
@@ -20,11 +20,6 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       padding: 2rem 1rem;
-      transition: background 0.3s ease;
-    }
-
-    body.dark-mode {
-      background: linear-gradient(135deg, #1a1d1f 0%, #242729 100%);
     }
 
     .container {
@@ -35,25 +30,42 @@
     .header {
       text-align: center;
       color: white;
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
     }
 
     .header h1 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
     }
 
     .header p {
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       opacity: 0.9;
+    }
+
+    .info-banner {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      color: white;
+    }
+
+    .info-banner h2 {
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+    }
+
+    .info-banner ul {
+      margin-left: 1.5rem;
+      line-height: 1.8;
     }
 
     .demo-section {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
       gap: 2rem;
-      margin-bottom: 2rem;
     }
 
     .demo-card {
@@ -74,74 +86,6 @@
       display: flex;
       justify-content: center;
     }
-
-    .controls {
-      text-align: center;
-      margin-top: 2rem;
-    }
-
-    .theme-toggle {
-      background: white;
-      color: #667eea;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.5rem;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: all 0.2s ease;
-    }
-
-    .theme-toggle:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .theme-toggle:active {
-      transform: translateY(0);
-    }
-
-    .code-section {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 1rem;
-      padding: 2rem;
-      margin-top: 2rem;
-    }
-
-    .code-section h2 {
-      color: white;
-      margin-bottom: 1rem;
-    }
-
-    pre {
-      background: #1a1d1f;
-      color: #f8f8f2;
-      padding: 1.5rem;
-      border-radius: 0.5rem;
-      overflow-x: auto;
-      font-size: 0.875rem;
-      line-height: 1.6;
-    }
-
-    code {
-      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    }
-
-    @media (max-width: 768px) {
-      .header h1 {
-        font-size: 2rem;
-      }
-
-      .header p {
-        font-size: 1rem;
-      }
-
-      .demo-section {
-        grid-template-columns: 1fr;
-      }
-    }
   </style>
 </head>
 <body>
@@ -149,90 +93,40 @@
     <!-- Header -->
     <div class="header">
       <h1>☕ CryptoMeACoffee</h1>
-      <p>Accept crypto donations in under 5 minutes</p>
+      <p>Using Official x402 Client Library</p>
     </div>
 
     <!-- Info Banner -->
-    <div class="demo-card" style="margin-bottom: 2rem;">
-      <h2>🔗 Wallet Connection Test</h2>
-      <p style="color: white; opacity: 0.9; margin: 0;">
-        Click <strong>"Connect Wallet"</strong> to test the wallet integration.
-        You'll need MetaMask or Coinbase Wallet installed. The widget will:
-      </p>
-      <ul style="color: white; opacity: 0.9; margin: 1rem 0 0 1.5rem;">
-        <li>Request wallet connection</li>
-        <li>Detect current network</li>
-        <li>Prompt to switch to Base Sepolia if needed</li>
-        <li>Show your connected address</li>
+    <div class="info-banner">
+      <h2>✅ Now Using Official x402 Client!</h2>
+      <p style="margin-bottom: 1rem;">This version uses the official x402 client library with:</p>
+      <ul>
+        <li><strong>createPaymentHeader()</strong> - Proper signature creation</li>
+        <li><strong>Viem wallet client</strong> - Standard Web3 integration</li>
+        <li><strong>Automatic payload formatting</strong> - No manual EIP-712 construction</li>
+        <li><strong>Official x402 compliance</strong> - Matches Coinbase examples</li>
       </ul>
     </div>
 
-    <!-- Demo Widgets -->
+    <!-- Demo Widget -->
     <div class="demo-section">
-      <!-- Light Theme Widget -->
       <div class="demo-card">
-        <h2>💡 Light Theme</h2>
+        <h2>💡 Test Widget (x402 Client)</h2>
         <div class="widget-wrapper">
-          <div id="widget-light"></div>
+          <div id="widget-x402"></div>
         </div>
       </div>
-
-      <!-- Dark Theme Widget -->
-      <div class="demo-card">
-        <h2>🌙 Dark Theme</h2>
-        <div class="widget-wrapper">
-          <div id="widget-dark"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Theme Toggle -->
-    <div class="controls">
-      <button class="theme-toggle" onclick="togglePageTheme()">
-        Toggle Page Theme
-      </button>
-    </div>
-
-    <!-- Code Examples -->
-    <div class="code-section">
-      <h2>📦 Installation</h2>
-      <pre><code>&lt;!-- Include the widget CSS --&gt;
-&lt;link rel="stylesheet" href="cryptomeacoffee/styles.css"&gt;
-
-&lt;!-- Include the widget JavaScript --&gt;
-&lt;script src="cryptomeacoffee/widget.js"&gt;&lt;/script&gt;</code></pre>
-    </div>
-
-    <div class="code-section">
-      <h2>🚀 Usage</h2>
-      <pre><code>&lt;!-- Create a container for the widget --&gt;
-&lt;div id="donation-widget"&gt;&lt;/div&gt;
-
-&lt;script&gt;
-  // Initialize the widget
-  const widget = new CryptoMeACoffee({
-    walletAddress: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
-    apiEndpoint: 'https://your-server.com/api/donate',
-    presetAmounts: [1, 3, 5],
-    theme: 'light', // or 'dark'
-    network: 'base-sepolia', // testnet
-    logoUrl: '/path/to/your/logo.svg' // optional
-  });
-
-  // Render the widget
-  widget.render('donation-widget');
-&lt;/script&gt;</code></pre>
     </div>
   </div>
 
-  <!-- Widget Script -->
-  <script src="../../src/widget.js"></script>
+  <!-- Widget Script - UMD bundle includes x402 + viem -->
+  <script src="../../dist/widget.umd.js"></script>
 
   <script>
-    // Initialize Light Theme Widget
-    const widgetLight = new CryptoMeACoffee({
-      walletAddress: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
-      apiEndpoint: 'http://localhost:3000/api/donate',
+    // Initialize widget using official x402 client
+    const widget = new CryptoMeACoffee({
+      walletAddress: '0x518Cb6A5475097Ac3dDe6D2AF98F7cb1593262FB',
+      apiEndpoint: 'http://localhost:3001/api/donate',
       presetAmounts: [1, 3, 5],
       theme: 'light',
       network: 'base-sepolia',
@@ -240,25 +134,10 @@
       successMessage: 'Thank you for your support!',
       logoUrl: '../../assets/logos/bmc-brand-icon.svg'
     });
-    widgetLight.render('widget-light');
 
-    // Initialize Dark Theme Widget
-    const widgetDark = new CryptoMeACoffee({
-      walletAddress: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
-      apiEndpoint: 'http://localhost:3000/api/donate',
-      presetAmounts: [2, 5, 10],
-      theme: 'dark',
-      network: 'base-sepolia',
-      buttonText: '🚀 Support this project',
-      successMessage: 'You\'re awesome!',
-      logoUrl: '../../assets/logos/bmc-brand-logo.svg'
-    });
-    widgetDark.render('widget-dark');
+    widget.render('widget-x402');
 
-    // Page theme toggle
-    function togglePageTheme() {
-      document.body.classList.toggle('dark-mode');
-    }
+    console.log('✅ Widget initialized with official x402 client library');
   </script>
 </body>
 </html>

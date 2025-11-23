@@ -1,11 +1,12 @@
 {
   "name": "cryptomeacoffee",
   "version": "1.0.0",
-  "description": "Open-source, self-hosted donation widget for accepting cryptocurrency donations via x402 protocol",
-  "main": "src/widget.js",
+  "description": "Open-source, self-hosted donation widget for accepting cryptocurrency donations via x402 protocol (using official x402 client library)",
+  "main": "dist/widget.umd.js",
   "scripts": {
     "test": "jest",
-    "build": "node scripts/build.js",
+    "build": "vite build",
+    "build:old": "node scripts/build.js",
     "dev": "vite"
   },
   "keywords": [
@@ -25,7 +26,8 @@
     "url": ""
   },
   "dependencies": {
-    "viem": "^2.39.0"
+    "viem": "^2.39.3",
+    "x402": "^0.7.2"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",
