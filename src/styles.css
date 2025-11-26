@@ -1,50 +1,62 @@
 /**
- * CryptoMeACoffee Widget Styles
- * Mobile-first, responsive design with light/dark themes
+ * CryptoMeACoffee Widget Styles - Modern Bold Design
+ * Floating widget with modal popup
  */
 
 /* CSS Variables */
 :root {
-  /* Light Theme Colors */
-  --cmac-primary: #0052ff;
-  --cmac-primary-hover: #0041cc;
-  --cmac-success: #05c46b;
-  --cmac-error: #ff3838;
+  /* Light Theme Colors - Bold Black & White */
+  --cmac-primary: #000000;
+  --cmac-primary-hover: #333333;
+  --cmac-accent: #5F7FFF;
+  --cmac-accent-hover: #4a6adb;
+  --cmac-success: #00D084;
+  --cmac-error: #FF4444;
   --cmac-bg: #ffffff;
-  --cmac-bg-secondary: #f7f8fa;
-  --cmac-text: #0a0b0d;
-  --cmac-text-secondary: #5b616e;
-  --cmac-border: #e0e3eb;
-  --cmac-shadow: rgba(0, 0, 0, 0.1);
+  --cmac-bg-secondary: #f5f5f5;
+  --cmac-text-primary: #000000;
+  --cmac-text-secondary: #666666;
+  --cmac-text-placeholder: #999999;
+  --cmac-border: #e0e0e0;
+  --cmac-shadow: rgba(0, 0, 0, 0.08);
+  --cmac-overlay: rgba(0, 0, 0, 0.6);
 
   /* Spacing */
   --cmac-spacing-xs: 0.25rem;
   --cmac-spacing-sm: 0.5rem;
-  --cmac-spacing-md: 1rem;
-  --cmac-spacing-lg: 1.5rem;
-  --cmac-spacing-xl: 2rem;
+  --cmac-spacing-md: 0.75rem;
+  --cmac-spacing-lg: 1rem;
+  --cmac-spacing-xl: 1.5rem;
+  --cmac-spacing-2xl: 2rem;
 
   /* Border Radius */
   --cmac-radius-sm: 0.375rem;
-  --cmac-radius-md: 0.5rem;
-  --cmac-radius-lg: 0.75rem;
+  --cmac-radius-md: 0.75rem;
+  --cmac-radius-lg: 1.25rem;
+  --cmac-radius-xl: 1.5rem;
+  --cmac-radius-full: 9999px;
 
   /* Transitions */
-  --cmac-transition: all 0.2s ease;
+  --cmac-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --cmac-transition-slow: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Dark Theme */
 .theme-dark {
-  --cmac-primary: #1652f0;
-  --cmac-primary-hover: #2e6bff;
-  --cmac-success: #05c46b;
-  --cmac-error: #ff6b6b;
-  --cmac-bg: #1a1d1f;
-  --cmac-bg-secondary: #242729;
-  --cmac-text: #ffffff;
-  --cmac-text-secondary: #b1b5c3;
-  --cmac-border: #2e3236;
+  --cmac-primary: #ffffff;
+  --cmac-primary-hover: #e0e0e0;
+  --cmac-accent: #5F7FFF;
+  --cmac-accent-hover: #7a93ff;
+  --cmac-success: #00D084;
+  --cmac-error: #FF6B6B;
+  --cmac-bg: #1a1a1a;
+  --cmac-bg-secondary: #2a2a2a;
+  --cmac-text-primary: #ffffff;
+  --cmac-text-secondary: #999999;
+  --cmac-text-placeholder: #666666;
+  --cmac-border: #333333;
   --cmac-shadow: rgba(0, 0, 0, 0.3);
+  --cmac-overlay: rgba(0, 0, 0, 0.8);
 }
 
 /* Reset */
@@ -56,143 +68,335 @@
 
 /* Widget Container */
 .cryptomeacoffee-widget {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
-  color: var(--cmac-text);
-  max-width: 400px;
-  width: 100%;
+  color: var(--cmac-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 500;
 }
 
-/* Widget Card */
-.cmac-widget {
-  background: var(--cmac-bg);
-  border: 1px solid var(--cmac-border);
-  border-radius: var(--cmac-radius-lg);
-  padding: var(--cmac-spacing-lg);
-  box-shadow: 0 4px 6px var(--cmac-shadow);
+/* ==================== FLOATING BUTTON ==================== */
+
+.cmac-floating-widget {
+  position: fixed;
+  z-index: 999999;
+  /* Position set via inline style */
 }
 
-/* Header */
-.cmac-header {
-  margin-bottom: var(--cmac-spacing-lg);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--cmac-spacing-sm);
-}
-
-.cmac-logo {
-  height: 48px;
-  width: auto;
-  max-width: 100%;
-  object-fit: contain;
-}
-
-.cmac-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--cmac-text);
-  margin: 0;
-}
-
-/* Amount Buttons Grid */
-.cmac-amounts {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--cmac-spacing-sm);
-  margin-bottom: var(--cmac-spacing-lg);
-}
-
-.cmac-amount-btn {
-  background: var(--cmac-bg-secondary);
-  border: 2px solid var(--cmac-border);
-  border-radius: var(--cmac-radius-md);
-  padding: var(--cmac-spacing-md);
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--cmac-text);
+.cmac-float-button {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--cmac-radius-full);
+  border: none;
+  background-color: var(--cmac-primary);
+  color: white;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: var(--cmac-transition);
   outline: none;
 }
 
-.cmac-amount-btn:hover {
-  border-color: var(--cmac-primary);
+.cmac-float-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.cmac-float-button:active {
+  transform: scale(0.95);
+}
+
+.cmac-float-button svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* ==================== MODAL OVERLAY ==================== */
+
+.cmac-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--cmac-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000000;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  padding: var(--cmac-spacing-lg);
+}
+
+.cmac-modal-overlay.show {
+  opacity: 1;
+}
+
+/* ==================== MODAL ==================== */
+
+.cmac-modal {
   background: var(--cmac-bg);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px var(--cmac-shadow);
+  border-radius: var(--cmac-radius-xl);
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow: auto;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  position: relative;
+  padding: 2.5rem;
+  opacity: 0;
+  transform: scale(0.96) translateY(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.cmac-amount-btn:active {
-  transform: translateY(0);
+.cmac-modal-overlay.show .cmac-modal {
+  opacity: 1;
+  transform: scale(1) translateY(0);
 }
 
-.cmac-amount-btn.selected {
+/* Close Button */
+.cmac-modal-close {
+  position: absolute;
+  top: var(--cmac-spacing-lg);
+  right: var(--cmac-spacing-lg);
+  background: none;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--cmac-text-secondary);
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--cmac-radius-sm);
+  transition: var(--cmac-transition);
+  outline: none;
+}
+
+.cmac-modal-close:hover {
+  background: var(--cmac-bg-secondary);
+  color: var(--cmac-text-primary);
+}
+
+/* ==================== MODAL HEADER ==================== */
+
+.cmac-modal-header {
+  margin-bottom: var(--cmac-spacing-2xl);
+}
+
+.cmac-modal-header h2 {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--cmac-text-primary);
+  margin: 0;
+  padding-right: var(--cmac-spacing-2xl);
+  line-height: 1.2;
+}
+
+/* ==================== AMOUNT SECTION ==================== */
+
+.cmac-amount-section {
+  margin-bottom: var(--cmac-spacing-xl);
+}
+
+.cmac-amount-input-wrapper {
+  position: relative;
+  margin-bottom: var(--cmac-spacing-md);
+}
+
+.cmac-currency-symbol {
+  position: absolute;
+  left: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--cmac-text-primary);
+  pointer-events: none;
+}
+
+.cmac-custom-amount {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  font-size: 24px;
+  font-weight: 700;
+  border: 2px solid var(--cmac-border);
+  border-radius: var(--cmac-radius-lg);
+  background: var(--cmac-bg);
+  color: var(--cmac-text-primary);
+  outline: none;
+  transition: var(--cmac-transition);
+  font-family: inherit;
+}
+
+.cmac-custom-amount::placeholder {
+  color: var(--cmac-text-placeholder);
+  font-weight: 500;
+}
+
+.cmac-custom-amount:focus {
+  background: var(--cmac-bg);
+  border-color: var(--cmac-primary);
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Preset Amount Buttons */
+.cmac-preset-amounts {
+  display: flex;
+  gap: 0.625rem;
+  justify-content: flex-end;
+}
+
+.cmac-preset-btn {
+  background: var(--cmac-bg);
+  border: 2px solid var(--cmac-border);
+  border-radius: var(--cmac-radius-full);
+  padding: 0.625rem 1.25rem;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--cmac-text-primary);
+  cursor: pointer;
+  transition: var(--cmac-transition);
+  outline: none;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+.cmac-preset-btn:hover {
+  background: var(--cmac-bg-secondary);
+  border-color: var(--cmac-primary);
+  transform: translateY(-1px);
+}
+
+.cmac-preset-btn.selected {
   background: var(--cmac-primary);
-  color: white;
+  color: var(--cmac-bg);
   border-color: var(--cmac-primary);
 }
 
-.cmac-custom-btn {
-  grid-column: span 2;
+/* ==================== MESSAGE SECTION ==================== */
+
+.cmac-message-section {
+  margin-bottom: var(--cmac-spacing-xl);
+  position: relative;
 }
 
-/* Donate Button */
-.cmac-donate-btn {
+.cmac-message-input {
+  width: 100%;
+  padding: 0.875rem;
+  font-size: 15px;
+  font-weight: 500;
+  border: 2px solid var(--cmac-border);
+  border-radius: var(--cmac-radius-lg);
+  background: var(--cmac-bg);
+  color: var(--cmac-text-primary);
+  outline: none;
+  transition: var(--cmac-transition);
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
+}
+
+.cmac-message-input::placeholder {
+  color: var(--cmac-text-placeholder);
+  font-weight: 400;
+}
+
+.cmac-message-input:focus {
+  background: var(--cmac-bg);
+  border-color: var(--cmac-primary);
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.cmac-char-count {
+  text-align: right;
+  font-size: 12px;
+  color: var(--cmac-text-secondary);
+  margin-top: var(--cmac-spacing-xs);
+}
+
+/* ==================== STATUS MESSAGE ==================== */
+
+.cmac-status-message {
+  margin-bottom: var(--cmac-spacing-lg);
+  padding: var(--cmac-spacing-md);
+  border-radius: var(--cmac-radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  animation: slideDown 0.3s ease;
+}
+
+.cmac-status-message.cmac-status-success {
+  background: rgba(5, 196, 107, 0.1);
+  color: var(--cmac-success);
+  border: 1px solid var(--cmac-success);
+}
+
+.cmac-status-message.cmac-status-error {
+  background: rgba(255, 56, 56, 0.1);
+  color: var(--cmac-error);
+  border: 1px solid var(--cmac-error);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================== SUPPORT BUTTON ==================== */
+
+.cmac-support-button {
   width: 100%;
   background: var(--cmac-primary);
-  color: white;
+  color: var(--cmac-bg);
   border: none;
-  border-radius: var(--cmac-radius-md);
-  padding: var(--cmac-spacing-md) var(--cmac-spacing-lg);
-  font-size: 1rem;
-  font-weight: 600;
+  border-radius: var(--cmac-radius-full);
+  padding: 1rem 1.5rem;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   cursor: pointer;
   transition: var(--cmac-transition);
   outline: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--cmac-spacing-sm);
+  gap: 0.5rem;
+  margin-bottom: var(--cmac-spacing-xl);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.cmac-donate-btn:hover:not(:disabled) {
+.cmac-support-button:hover:not(:disabled) {
   background: var(--cmac-primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px var(--cmac-shadow);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
-.cmac-donate-btn:active:not(:disabled) {
+.cmac-support-button:active:not(:disabled) {
   transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.cmac-donate-btn:disabled {
-  opacity: 0.6;
+.cmac-support-button:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
-}
-
-/* Status Messages */
-.cmac-status {
-  margin-bottom: var(--cmac-spacing-md);
-  padding: var(--cmac-spacing-sm) var(--cmac-spacing-md);
-  border-radius: var(--cmac-radius-sm);
-  font-size: 0.875rem;
-  font-weight: 500;
-  animation: slideDown 0.3s ease;
-}
-
-.cmac-status-success {
-  background: rgba(5, 196, 107, 0.1);
-  color: var(--cmac-success);
-  border: 1px solid var(--cmac-success);
-}
-
-.cmac-status-error {
-  background: rgba(255, 56, 56, 0.1);
-  color: var(--cmac-error);
-  border: 1px solid var(--cmac-error);
 }
 
 /* Loading Spinner */
@@ -210,204 +414,170 @@
   to { transform: rotate(360deg); }
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* ==================== BRANDING FOOTER ==================== */
 
-/* Modal */
-.cmac-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.cmac-modal-content {
-  background: var(--cmac-bg);
-  border-radius: var(--cmac-radius-lg);
-  width: 90%;
-  max-width: 400px;
-  max-height: 90vh;
-  overflow: auto;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  animation: slideUp 0.3s ease;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.cmac-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--cmac-spacing-lg);
-  border-bottom: 1px solid var(--cmac-border);
-}
-
-.cmac-modal-header h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--cmac-text);
-  margin: 0;
-}
-
-.cmac-modal-close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: var(--cmac-text-secondary);
-  cursor: pointer;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--cmac-radius-sm);
-  transition: var(--cmac-transition);
-}
-
-.cmac-modal-close:hover {
-  background: var(--cmac-bg-secondary);
-  color: var(--cmac-text);
-}
-
-.cmac-modal-body {
-  padding: var(--cmac-spacing-lg);
-}
-
-.cmac-input-group {
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--cmac-spacing-sm);
-}
-
-.cmac-input-prefix {
-  position: absolute;
-  left: var(--cmac-spacing-md);
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--cmac-text-secondary);
-  pointer-events: none;
-}
-
-.cmac-custom-input {
-  width: 100%;
-  padding: var(--cmac-spacing-md) var(--cmac-spacing-md) var(--cmac-spacing-md) 2.5rem;
-  font-size: 1.25rem;
-  font-weight: 600;
-  border: 2px solid var(--cmac-border);
-  border-radius: var(--cmac-radius-md);
-  background: var(--cmac-bg);
-  color: var(--cmac-text);
-  outline: none;
-  transition: var(--cmac-transition);
-}
-
-.cmac-custom-input:focus {
-  border-color: var(--cmac-primary);
-  box-shadow: 0 0 0 3px rgba(0, 82, 255, 0.1);
-}
-
-.cmac-input-hint {
-  font-size: 0.875rem;
-  color: var(--cmac-text-secondary);
+.cmac-branding {
   text-align: center;
-}
-
-.cmac-modal-footer {
-  display: flex;
-  gap: var(--cmac-spacing-sm);
-  padding: var(--cmac-spacing-lg);
+  padding-top: var(--cmac-spacing-md);
   border-top: 1px solid var(--cmac-border);
 }
 
-.cmac-btn {
-  flex: 1;
-  padding: var(--cmac-spacing-sm) var(--cmac-spacing-md);
-  border: none;
-  border-radius: var(--cmac-radius-md);
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
+.cmac-branding a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cmac-spacing-xs);
+  font-size: 14px;
+  color: var(--cmac-text-secondary);
+  text-decoration: none;
   transition: var(--cmac-transition);
-  outline: none;
 }
 
-.cmac-btn-primary {
-  background: var(--cmac-primary);
-  color: white;
+.cmac-branding a:hover {
+  color: var(--cmac-text-primary);
 }
 
-.cmac-btn-primary:hover {
-  background: var(--cmac-primary-hover);
-}
+/* ==================== RESPONSIVE DESIGN ==================== */
 
-.cmac-btn-secondary {
-  background: var(--cmac-bg-secondary);
-  color: var(--cmac-text);
-  border: 1px solid var(--cmac-border);
-}
-
-.cmac-btn-secondary:hover {
-  background: var(--cmac-border);
-}
-
-/* Responsive Design */
 @media (max-width: 480px) {
-  .cmac-widget {
+  .cmac-modal-overlay {
     padding: var(--cmac-spacing-md);
   }
 
-  .cmac-amounts {
-    grid-template-columns: 1fr 1fr;
+  .cmac-modal {
+    padding: var(--cmac-spacing-xl);
+    max-height: 95vh;
   }
 
-  .cmac-modal-content {
-    width: 95%;
+  .cmac-modal-header h2 {
+    font-size: 20px;
+  }
+
+  .cmac-preset-amounts {
+    flex-wrap: wrap;
+  }
+
+  .cmac-float-button {
+    width: 56px;
+    height: 56px;
+  }
+
+  .cmac-float-button svg {
+    width: 22px;
+    height: 22px;
   }
 }
 
-/* Accessibility */
-.cmac-amount-btn:focus,
-.cmac-donate-btn:focus,
-.cmac-btn:focus,
-.cmac-custom-input:focus {
+@media (max-width: 360px) {
+  .cmac-modal {
+    padding: var(--cmac-spacing-lg);
+  }
+
+  .cmac-modal-header h2 {
+    font-size: 18px;
+  }
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+
+.cmac-float-button:focus,
+.cmac-custom-amount:focus,
+.cmac-preset-btn:focus,
+.cmac-message-input:focus,
+.cmac-support-button:focus,
+.cmac-modal-close:focus {
   outline: 2px solid var(--cmac-primary);
   outline-offset: 2px;
 }
 
-/* Print Styles */
+/* Focus visible (for keyboard navigation only) */
+.cmac-float-button:focus:not(:focus-visible),
+.cmac-custom-amount:focus:not(:focus-visible),
+.cmac-preset-btn:focus:not(:focus-visible),
+.cmac-message-input:focus:not(:focus-visible),
+.cmac-support-button:focus:not(:focus-visible),
+.cmac-modal-close:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ==================== PRINT STYLES ==================== */
+
 @media print {
   .cryptomeacoffee-widget {
-    display: none;
+    display: none !important;
   }
+}
+
+/* ==================== DARK MODE SPECIFIC ADJUSTMENTS ==================== */
+
+.theme-dark .cmac-preset-btn {
+  background: var(--cmac-bg);
+  border-color: var(--cmac-border);
+}
+
+.theme-dark .cmac-preset-btn:hover {
+  background: var(--cmac-bg-secondary);
+  border-color: var(--cmac-primary);
+}
+
+.theme-dark .cmac-preset-btn.selected {
+  background: var(--cmac-primary);
+  color: var(--cmac-bg);
+  border-color: var(--cmac-primary);
+}
+
+/* ==================== SMOOTH SCROLLBAR (FOR MODAL) ==================== */
+
+.cmac-modal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cmac-modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cmac-modal::-webkit-scrollbar-thumb {
+  background: var(--cmac-border);
+  border-radius: var(--cmac-radius-full);
+}
+
+.cmac-modal::-webkit-scrollbar-thumb:hover {
+  background: var(--cmac-text-secondary);
+}
+
+/* ==================== ANIMATIONS ==================== */
+
+/* Modal entrance animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Button pulse effect (optional - can be added to floating button) */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(95, 127, 255, 0.4);
+  }
+}
+
+/* Add pulse animation on first load (optional) */
+.cmac-floating-widget.pulse .cmac-float-button {
+  animation: pulse 2s ease-in-out infinite;
 }

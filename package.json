@@ -1,29 +1,66 @@
 {
   "name": "cryptomeacoffee",
-  "version": "1.0.0",
-  "description": "Open-source, self-hosted donation widget for accepting cryptocurrency donations via x402 protocol (using official x402 client library)",
+  "version": "1.1.0",
+  "description": "Open-source, self-hosted donation widget for accepting cryptocurrency donations via x402 protocol. Zero fees, direct to wallet.",
   "main": "dist/widget.umd.js",
+  "module": "dist/widget.es.js",
+  "unpkg": "dist/widget.umd.js",
+  "jsdelivr": "dist/widget.umd.js",
+  "exports": {
+    ".": {
+      "import": "./dist/widget.es.js",
+      "require": "./dist/widget.umd.js"
+    },
+    "./styles.css": "./src/styles.css"
+  },
+  "files": [
+    "dist/widget.umd.js",
+    "dist/widget.umd.js.map",
+    "dist/widget.es.js",
+    "dist/widget.es.js.map",
+    "dist/widget-*.mjs",
+    "dist/widget-*.mjs.map",
+    "src/styles.css",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "jest",
     "build": "vite build",
     "build:old": "node scripts/build.js",
-    "dev": "vite"
+    "dev": "vite",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "crypto",
+    "cryptocurrency",
     "donations",
     "x402",
     "usdc",
     "base",
+    "base-network",
     "web3",
+    "ethereum",
     "payment",
-    "widget"
+    "widget",
+    "viem",
+    "self-hosted",
+    "zero-fees",
+    "buymeacoffee",
+    "kofi"
   ],
   "author": "",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": ""
+  },
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "engines": {
+    "node": ">=16.0.0"
   },
   "dependencies": {
     "viem": "^2.39.3",
@@ -33,6 +70,7 @@
     "@playwright/test": "^1.40.0",
     "eslint": "^8.0.0",
     "jest": "^29.0.0",
+    "mcporter": "^0.6.3",
     "vite": "^5.0.0"
   }
 }

@@ -1,6 +1,17 @@
 /**
- * CryptoMeACoffee Widget - Using Official x402 Client Library
+ * CryptoMeACoffee Widget - Floating Buy Me a Coffee Style
  * Accept USDC donations via x402 protocol
+ *
+ * Usage:
+ * <script data-name="CMAC-Widget"
+ *         src="widget.min.js"
+ *         data-wallet="0x..."
+ *         data-api="https://..."
+ *         data-color="#5F7FFF"
+ *         data-position="Right"
+ *         data-x_margin="18"
+ *         data-y_margin="18"
+ *         data-creator-name="Your Name"></script>
  */
 
 import { createPaymentHeader, selectPaymentRequirements } from 'x402/client';
@@ -14,27 +25,38 @@ class CryptoMeACoffee {
       walletAddress: config.walletAddress || '',
       apiEndpoint: config.apiEndpoint || '',
 
+      // Display
+      creatorName: config.creatorName || 'this creator',
+      message: config.message || 'Thanks for the coffee!',
+      color: config.color || '#5F7FFF',
+
+      // Position (Buy Me a Coffee style)
+      position: config.position || 'Right', // 'Left' or 'Right'
+      xMargin: config.xMargin || '18',
+      yMargin: config.yMargin || '18',
+
       // Optional
       presetAmounts: config.presetAmounts || [1, 3, 5],
       theme: config.theme || 'light',
       network: config.network || 'base-sepolia',
-      buttonText: config.buttonText || '☕ Buy me a coffee',
-      successMessage: config.successMessage || 'Thank you for your support!',
       logoUrl: config.logoUrl || null,
 
       // Advanced
       minAmount: config.minAmount || 0.01,
-      maxAmount: config.maxAmount || 1000,
+      maxAmount: config.maxAmount || 1000000,
       ...config
     };
 
     this.state = {
+      modalOpen: false,           // NEW: Track modal visibility
       connected: false,
       loading: false,
       error: null,
       selectedAmount: null,
+      customAmount: '',           // NEW: Separate custom amount input
       userAddress: null,
-      currentChainId: null
+      currentChainId: null,
+      message: ''                 // NEW: Message from supporter
     };
 
     this.elements = {};
@@ -54,7 +76,6 @@ class CryptoMeACoffee {
   }
 
   initializeNetworkConfig() {
-    // Network configurations using viem chains
     this.networks = {
       'base-sepolia': {
         chain: baseSepolia,
@@ -198,6 +219,12 @@ class CryptoMeACoffee {
     try {
       console.log('🔄 Step 1: Requesting payment details from server...');
 
+      const amount = this.state.selectedAmount || parseFloat(this.state.customAmount);
+
+      if (!amount || amount <= 0) {
+        throw new Error('Please enter a valid amount');
+      }
+
       // Step 1: Make initial request to get 402 response with payment details
       const initialResponse = await fetch(this.config.apiEndpoint, {
         method: 'POST',
@@ -205,7 +232,8 @@ class CryptoMeACoffee {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          amount: this.state.selectedAmount
+          amount: amount,
+          message: this.state.message // ✅ Include message
         })
       });
 
@@ -233,7 +261,6 @@ class CryptoMeACoffee {
       console.log('✍️ Step 2: Creating payment header using x402 client...');
 
       // ✅ USE OFFICIAL x402 CLIENT LIBRARY
-      // This handles all signature creation and payload formatting correctly!
       const paymentHeader = await createPaymentHeader(
         this.walletClient,
         paymentDetails.x402Version,
@@ -252,7 +279,8 @@ class CryptoMeACoffee {
           'X-PAYMENT': paymentHeader
         },
         body: JSON.stringify({
-          amount: this.state.selectedAmount
+          amount: amount,
+          message: this.state.message // ✅ Include message
         })
       });
 
@@ -265,7 +293,7 @@ class CryptoMeACoffee {
       const result = await paymentResponse.json();
       console.log('✅ Payment successful:', result);
 
-      this.showSuccess(this.config.successMessage);
+      this.showSuccess();
 
     } catch (error) {
       console.error('❌ Payment error:', error);
@@ -273,14 +301,146 @@ class CryptoMeACoffee {
     }
   }
 
-  // ... Rest of the UI methods remain the same ...
-  // (render, attachEventListeners, handleDonate, etc.)
-  // For brevity, I'm showing the key payment logic changes
+  // NEW: Modal management
+  openModal() {
+    this.state.modalOpen = true;
+    const overlay = this.elements.container.querySelector('.cmac-modal-overlay');
+    if (overlay) {
+      overlay.style.display = 'flex';
+      // Trigger reflow for animation
+      setTimeout(() => overlay.classList.add('show'), 10);
+    }
+  }
 
-  render(containerId) {
-    const container = document.getElementById(containerId);
-    if (!container) {
-      throw new Error(`Container #${containerId} not found`);
+  closeModal() {
+    this.state.modalOpen = false;
+    const overlay = this.elements.container.querySelector('.cmac-modal-overlay');
+    if (overlay) {
+      overlay.classList.remove('show');
+      setTimeout(() => overlay.style.display = 'none', 200);
+    }
+    // Reset form
+    this.resetForm();
+  }
+
+  resetForm() {
+    this.state.selectedAmount = null;
+    this.state.customAmount = '';
+    this.state.message = '';
+
+    // Clear input fields
+    const customInput = this.elements.container.querySelector('.cmac-custom-amount');
+    const messageInput = this.elements.container.querySelector('.cmac-message-input');
+
+    if (customInput) customInput.value = '';
+    if (messageInput) {
+      messageInput.value = '';
+      this.updateCharCounter();
+    }
+
+    // Deselect amount buttons
+    this.elements.container.querySelectorAll('.cmac-preset-btn').forEach(btn => {
+      btn.classList.remove('selected');
+    });
+  }
+
+  // NEW: Handle preset amount click
+  handlePresetAmount(amount) {
+    console.log('💰 Preset amount clicked:', amount);
+    this.state.selectedAmount = amount;
+    this.state.customAmount = ''; // Clear custom amount
+
+    // Update input field to show selected preset amount
+    const customInput = this.elements.container.querySelector('.cmac-custom-amount');
+    console.log('Input field found:', customInput);
+    if (customInput) {
+      customInput.value = amount;
+      console.log('Input field updated to:', amount);
+    }
+
+    // Update button states
+    this.elements.container.querySelectorAll('.cmac-preset-btn').forEach(btn => {
+      if (parseFloat(btn.dataset.amount) === amount) {
+        btn.classList.add('selected');
+      } else {
+        btn.classList.remove('selected');
+      }
+    });
+  }
+
+  // NEW: Handle custom amount input
+  handleCustomAmountInput(value) {
+    this.state.customAmount = value;
+    if (value) {
+      this.state.selectedAmount = null; // Deselect preset amounts
+      this.elements.container.querySelectorAll('.cmac-preset-btn').forEach(btn => {
+        btn.classList.remove('selected');
+      });
+    }
+  }
+
+  // NEW: Handle message input with character limit
+  handleMessageInput(value) {
+    if (value.length <= 500) {
+      this.state.message = value;
+      this.updateCharCounter();
+    }
+  }
+
+  updateCharCounter() {
+    const counter = this.elements.container.querySelector('.cmac-char-count');
+    if (counter) {
+      counter.textContent = `${this.state.message.length}/500`;
+    }
+  }
+
+  // NEW: Handle support button click
+  async handleSupport() {
+    try {
+      this.setLoading(true);
+
+      // Validate amount
+      const amount = this.state.selectedAmount || parseFloat(this.state.customAmount);
+      if (!amount || amount < this.config.minAmount || amount > this.config.maxAmount) {
+        this.showError(`Please enter an amount between $${this.config.minAmount} and $${this.config.maxAmount}`);
+        return;
+      }
+
+      // Connect wallet if not connected
+      if (!this.state.connected) {
+        await this.connectWallet();
+      }
+
+      // Check/switch network
+      if (this.state.currentChainId !== this.targetNetwork.id) {
+        await this.switchNetwork();
+      }
+
+      // Process payment
+      await this.processPayment();
+
+    } catch (error) {
+      console.error('Support error:', error);
+      this.showError(error.message || 'Failed to process donation');
+    } finally {
+      this.setLoading(false);
+    }
+  }
+
+  // Render floating widget
+  render(containerId = 'body') {
+    let container;
+
+    if (containerId === 'body') {
+      // Create container and append to body
+      container = document.createElement('div');
+      container.id = 'cryptomeacoffee-widget-container';
+      document.body.appendChild(container);
+    } else {
+      container = document.getElementById(containerId);
+      if (!container) {
+        throw new Error(`Container #${containerId} not found`);
+      }
     }
 
     container.innerHTML = this.getWidgetHTML();
@@ -291,58 +451,87 @@ class CryptoMeACoffee {
   }
 
   getWidgetHTML() {
+    const position = this.config.position.toLowerCase();
+    const xMargin = this.config.xMargin + 'px';
+    const yMargin = this.config.yMargin + 'px';
+
+    const floatButtonStyle = position === 'left'
+      ? `left: ${xMargin}; bottom: ${yMargin};`
+      : `right: ${xMargin}; bottom: ${yMargin};`;
+
+    // Use logo if provided, otherwise use SVG icon
+    const buttonContent = this.config.logoUrl
+      ? `<img src="${this.config.logoUrl}" alt="Support" style="width: 32px; height: 32px; object-fit: contain;" />`
+      : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 21h19v-3H2v3zM20 8H4V5h16v3zm0 6c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" fill="white"/>
+        </svg>`;
+
     return `
-      <div class="cmac-widget">
-        <div class="cmac-header">
-          ${this.config.logoUrl ? `<img src="${this.config.logoUrl}" alt="Logo" class="cmac-logo" />` : ''}
-          <h3 class="cmac-title">${this.config.buttonText}</h3>
-        </div>
-
-        <div class="cmac-amounts">
-          ${this.config.presetAmounts.map(amount => `
-            <button class="cmac-amount-btn" data-amount="${amount}">
-              $${amount}
-            </button>
-          `).join('')}
-          <button class="cmac-amount-btn cmac-custom-btn" data-custom="true">
-            Custom
-          </button>
-        </div>
-
-        <div class="cmac-status" style="display: none;">
-          <div class="cmac-status-message"></div>
-        </div>
-
-        <button class="cmac-donate-btn" disabled>
-          Connect Wallet
+      <!-- Floating Button -->
+      <div class="cmac-floating-widget" style="${floatButtonStyle}">
+        <button class="cmac-float-button" style="background-color: ${this.config.color || '#000000'};">
+          ${buttonContent}
         </button>
       </div>
 
-      <div class="cmac-modal" style="display: none;">
-        <div class="cmac-modal-content">
+      <!-- Modal Overlay -->
+      <div class="cmac-modal-overlay" style="display: none;">
+        <div class="cmac-modal">
+          <!-- Close button -->
+          <button class="cmac-modal-close">&times;</button>
+
+          <!-- Header -->
           <div class="cmac-modal-header">
-            <h3>Enter Custom Amount</h3>
-            <button class="cmac-modal-close">&times;</button>
+            <h2>Support ${this.config.creatorName}</h2>
+            <p style="font-size: 15px; color: var(--cmac-text-secondary); margin-top: 0.5rem; font-weight: 500;">Buy them a coffee with USDC</p>
           </div>
-          <div class="cmac-modal-body">
-            <div class="cmac-input-group">
-              <span class="cmac-input-prefix">$</span>
+
+          <!-- Amount Section -->
+          <div class="cmac-amount-section">
+            <div class="cmac-amount-input-wrapper">
+              <span class="cmac-currency-symbol">$</span>
               <input
                 type="number"
-                class="cmac-custom-input"
-                placeholder="0.00"
+                class="cmac-custom-amount"
+                placeholder="5"
                 min="${this.config.minAmount}"
                 max="${this.config.maxAmount}"
                 step="0.01"
               />
             </div>
-            <div class="cmac-input-hint">
-              Min: $${this.config.minAmount} - Max: $${this.config.maxAmount}
+            <div class="cmac-preset-amounts">
+              ${this.config.presetAmounts.map(amount => `
+                <button class="cmac-preset-btn" data-amount="${amount}">
+                  $${amount}
+                </button>
+              `).join('')}
             </div>
           </div>
-          <div class="cmac-modal-footer">
-            <button class="cmac-btn cmac-btn-secondary cmac-modal-cancel">Cancel</button>
-            <button class="cmac-btn cmac-btn-primary cmac-modal-confirm">Confirm</button>
+
+          <!-- Message Section -->
+          <div class="cmac-message-section">
+            <textarea
+              class="cmac-message-input"
+              placeholder="Leave a message (optional)"
+              maxlength="500"
+              rows="3"
+            ></textarea>
+            <div class="cmac-char-count">0/500</div>
+          </div>
+
+          <!-- Status Message -->
+          <div class="cmac-status-message" style="display: none;"></div>
+
+          <!-- Support Button -->
+          <button class="cmac-support-button">
+            Support with USDC
+          </button>
+
+          <!-- Branding Footer -->
+          <div class="cmac-branding">
+            <a href="https://cryptomeacoffee.com" target="_blank" rel="noopener">
+              ☕ Powered by CryptoMeACoffee
+            </a>
           </div>
         </div>
       </div>
@@ -352,104 +541,54 @@ class CryptoMeACoffee {
   attachEventListeners() {
     const container = this.elements.container;
 
-    container.querySelectorAll('.cmac-amount-btn[data-amount]').forEach(btn => {
-      btn.addEventListener('click', (e) => this.handleAmountSelect(e));
-    });
+    // Floating button - open modal
+    const floatButton = container.querySelector('.cmac-float-button');
+    floatButton?.addEventListener('click', () => this.openModal());
 
-    const customBtn = container.querySelector('.cmac-custom-btn');
-    customBtn?.addEventListener('click', () => this.showCustomModal());
-
-    const donateBtn = container.querySelector('.cmac-donate-btn');
-    donateBtn?.addEventListener('click', () => this.handleDonate());
-
+    // Modal close buttons
     const modalClose = container.querySelector('.cmac-modal-close');
-    const modalCancel = container.querySelector('.cmac-modal-cancel');
-    const modalConfirm = container.querySelector('.cmac-modal-confirm');
+    modalClose?.addEventListener('click', () => this.closeModal());
 
-    modalClose?.addEventListener('click', () => this.hideCustomModal());
-    modalCancel?.addEventListener('click', () => this.hideCustomModal());
-    modalConfirm?.addEventListener('click', () => this.confirmCustomAmount());
-
-    const modal = container.querySelector('.cmac-modal');
-    modal?.addEventListener('click', (e) => {
-      if (e.target === modal) this.hideCustomModal();
-    });
-  }
-
-  handleAmountSelect(e) {
-    const amount = parseFloat(e.target.dataset.amount);
-    this.selectAmount(amount);
-  }
-
-  selectAmount(amount) {
-    this.state.selectedAmount = amount;
-
-    const container = this.elements.container;
-    container.querySelectorAll('.cmac-amount-btn').forEach(btn => {
-      btn.classList.remove('selected');
+    // Close on overlay click
+    const overlay = container.querySelector('.cmac-modal-overlay');
+    overlay?.addEventListener('click', (e) => {
+      if (e.target === overlay) this.closeModal();
     });
 
-    const selectedBtn = container.querySelector(`[data-amount="${amount}"]`);
-    selectedBtn?.classList.add('selected');
-
-    this.updateDonateButton();
-  }
-
-  showCustomModal() {
-    const modal = this.elements.container.querySelector('.cmac-modal');
-    modal.style.display = 'flex';
-
-    const input = this.elements.container.querySelector('.cmac-custom-input');
-    input.value = '';
-    input.focus();
-  }
-
-  hideCustomModal() {
-    const modal = this.elements.container.querySelector('.cmac-modal');
-    modal.style.display = 'none';
-  }
-
-  confirmCustomAmount() {
-    const input = this.elements.container.querySelector('.cmac-custom-input');
-    const amount = parseFloat(input.value);
-
-    if (isNaN(amount) || amount < this.config.minAmount || amount > this.config.maxAmount) {
-      this.showError(`Please enter an amount between $${this.config.minAmount} and $${this.config.maxAmount}`);
-      return;
-    }
-
-    this.selectAmount(amount);
-    this.hideCustomModal();
-  }
-
-  async handleDonate() {
-    try {
-      this.setLoading(true);
-
-      if (!this.state.connected) {
-        await this.connectWallet();
-        this.updateDonateButton();
-        this.showSuccess(`Connected: ${this.formatAddress(this.state.userAddress)}`);
-        return;
+    // ESC key to close modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.state.modalOpen) {
+        this.closeModal();
       }
+    });
 
-      if (!this.state.selectedAmount) {
-        this.showError('Please select a donation amount');
-        return;
-      }
+    // Preset amount buttons
+    const presetBtns = container.querySelectorAll('.cmac-preset-btn');
+    console.log('🔘 Found preset buttons:', presetBtns.length);
+    presetBtns.forEach(btn => {
+      console.log('🔘 Attaching listener to button:', btn.dataset.amount);
+      btn.addEventListener('click', () => {
+        console.log('🔘 Button clicked!', btn.dataset.amount);
+        const amount = parseFloat(btn.dataset.amount);
+        this.handlePresetAmount(amount);
+      });
+    });
 
-      if (this.state.currentChainId !== this.targetNetwork.id) {
-        await this.switchNetwork();
-      }
+    // Custom amount input
+    const customInput = container.querySelector('.cmac-custom-amount');
+    customInput?.addEventListener('input', (e) => {
+      this.handleCustomAmountInput(e.target.value);
+    });
 
-      await this.processPayment();
+    // Message input
+    const messageInput = container.querySelector('.cmac-message-input');
+    messageInput?.addEventListener('input', (e) => {
+      this.handleMessageInput(e.target.value);
+    });
 
-    } catch (error) {
-      console.error('Donation error:', error);
-      this.showError(error.message || 'Failed to process donation');
-    } finally {
-      this.setLoading(false);
-    }
+    // Support button
+    const supportButton = container.querySelector('.cmac-support-button');
+    supportButton?.addEventListener('click', () => this.handleSupport());
   }
 
   formatAddress(address) {
@@ -457,69 +596,100 @@ class CryptoMeACoffee {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   }
 
-  updateDonateButton() {
-    const donateBtn = this.elements.container.querySelector('.cmac-donate-btn');
-
-    if (!donateBtn) return;
-
-    if (this.state.connected) {
-      if (this.state.selectedAmount) {
-        donateBtn.textContent = `Donate $${this.state.selectedAmount}`;
-        donateBtn.disabled = false;
-      } else {
-        donateBtn.textContent = `Connected: ${this.formatAddress(this.state.userAddress)}`;
-        donateBtn.disabled = true;
-      }
-    } else {
-      donateBtn.textContent = 'Connect Wallet';
-      donateBtn.disabled = false;
-    }
-  }
-
   setLoading(loading) {
     this.state.loading = loading;
-    const donateBtn = this.elements.container.querySelector('.cmac-donate-btn');
+    const supportButton = this.elements.container.querySelector('.cmac-support-button');
 
     if (loading) {
-      donateBtn.disabled = true;
-      donateBtn.innerHTML = '<span class="cmac-spinner"></span> Processing...';
+      supportButton.disabled = true;
+      supportButton.innerHTML = '<span class="cmac-spinner"></span> Processing...';
     } else {
-      this.updateDonateButton();
+      supportButton.disabled = false;
+      supportButton.innerHTML = 'Support';
     }
   }
 
   showError(message) {
     this.state.error = message;
-    const statusDiv = this.elements.container.querySelector('.cmac-status');
-    const messageDiv = this.elements.container.querySelector('.cmac-status-message');
+    const statusDiv = this.elements.container.querySelector('.cmac-status-message');
 
-    statusDiv.style.display = 'block';
-    statusDiv.className = 'cmac-status cmac-status-error';
-    messageDiv.textContent = message;
+    if (statusDiv) {
+      statusDiv.style.display = 'block';
+      statusDiv.className = 'cmac-status-message cmac-status-error';
+      statusDiv.textContent = '❌ ' + message;
 
-    setTimeout(() => {
-      statusDiv.style.display = 'none';
-    }, 5000);
+      setTimeout(() => {
+        statusDiv.style.display = 'none';
+      }, 5000);
+    }
   }
 
-  showSuccess(message) {
-    const statusDiv = this.elements.container.querySelector('.cmac-status');
-    const messageDiv = this.elements.container.querySelector('.cmac-status-message');
+  showSuccess() {
+    const statusDiv = this.elements.container.querySelector('.cmac-status-message');
 
-    statusDiv.style.display = 'block';
-    statusDiv.className = 'cmac-status cmac-status-success';
-    messageDiv.textContent = message;
+    if (statusDiv) {
+      statusDiv.style.display = 'block';
+      statusDiv.className = 'cmac-status-message cmac-status-success';
+      statusDiv.textContent = '✅ ' + this.config.message;
 
-    setTimeout(() => {
-      statusDiv.style.display = 'none';
-    }, 5000);
+      setTimeout(() => {
+        statusDiv.style.display = 'none';
+        this.closeModal();
+      }, 3000);
+    }
   }
 
   destroy() {
     if (this.elements.container) {
-      this.elements.container.innerHTML = '';
+      this.elements.container.remove();
     }
   }
 }
+
+// AUTO-INITIALIZATION from script tag
+(function() {
+  if (typeof window === 'undefined') return;
+
+  // Find the script tag with data attributes
+  const currentScript = document.currentScript ||
+    document.querySelector('script[data-name="CMAC-Widget"]');
+
+  if (currentScript && currentScript.dataset.wallet && currentScript.dataset.api) {
+    // Wait for DOM to be ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initWidget);
+    } else {
+      initWidget();
+    }
+
+    function initWidget() {
+      const config = {
+        walletAddress: currentScript.dataset.wallet,
+        apiEndpoint: currentScript.dataset.api,
+        creatorName: currentScript.dataset.creatorName || 'this creator',
+        message: currentScript.dataset.message || 'Thanks for the coffee!',
+        color: currentScript.dataset.color || '#5F7FFF',
+        position: currentScript.dataset.position || 'Right',
+        xMargin: currentScript.dataset.xMargin || '18',
+        yMargin: currentScript.dataset.yMargin || '18',
+        network: currentScript.dataset.network || 'base-sepolia',
+        theme: currentScript.dataset.theme || 'light',
+        logoUrl: currentScript.dataset.logoUrl || null
+      };
+
+      // Parse preset amounts if provided
+      if (currentScript.dataset.presetAmounts) {
+        try {
+          config.presetAmounts = JSON.parse(currentScript.dataset.presetAmounts);
+        } catch (e) {
+          console.warn('Invalid presetAmounts format, using defaults');
+        }
+      }
+
+      window.CryptoMeACoffeeWidget = new CryptoMeACoffee(config);
+      window.CryptoMeACoffeeWidget.render('body');
+    }
+  }
+})();
 
 export default CryptoMeACoffee;

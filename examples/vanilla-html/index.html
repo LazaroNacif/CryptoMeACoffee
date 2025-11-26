@@ -3,7 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CryptoMeACoffee - x402 Official Client Demo</title>
+  <title>CryptoMeACoffee - Floating Widget Demo</title>
+
+  <!-- Pixel Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
   <!-- Widget Styles -->
   <link rel="stylesheet" href="../../src/styles.css">
@@ -16,10 +21,11 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Press Start 2P', -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace;
+      background: #1E7BFF;
       min-height: 100vh;
       padding: 2rem 1rem;
+      image-rendering: pixelated;
     }
 
     .container {
@@ -33,20 +39,32 @@
       margin-bottom: 2rem;
     }
 
+    .header .logo {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 1.5rem;
+      image-rendering: pixelated;
+      filter: drop-shadow(4px 4px 0px rgba(0, 0, 0, 0.3));
+    }
+
     .header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #0A1E4A;
+      text-shadow: 3px 3px 0px rgba(255, 255, 255, 0.3);
+      letter-spacing: 2px;
     }
 
     .header p {
-      font-size: 1.1rem;
-      opacity: 0.9;
+      font-size: 0.9rem;
+      color: #0A1E4A;
+      letter-spacing: 1px;
     }
 
     .info-banner {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 1rem;
+      background: #0A1E4A;
+      border: 4px solid #FFFFFF;
+      box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3);
       padding: 1.5rem;
       margin-bottom: 2rem;
       color: white;
@@ -54,12 +72,15 @@
 
     .info-banner h2 {
       margin-bottom: 1rem;
-      font-size: 1.3rem;
+      font-size: 1rem;
+      color: #FFD700;
+      letter-spacing: 1px;
     }
 
     .info-banner ul {
       margin-left: 1.5rem;
-      line-height: 1.8;
+      line-height: 2;
+      font-size: 0.7rem;
     }
 
     .demo-section {
@@ -69,22 +90,72 @@
     }
 
     .demo-card {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 1rem;
+      background: #0A1E4A;
+      border: 4px solid #FFFFFF;
+      box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3);
       padding: 2rem;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      color: white;
+      transition: transform 0.1s;
+    }
+
+    .demo-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.3);
     }
 
     .demo-card h2 {
-      color: white;
-      margin-bottom: 1.5rem;
-      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      color: #FFD700;
+      letter-spacing: 1px;
     }
 
-    .widget-wrapper {
-      display: flex;
-      justify-content: center;
+    .demo-card p {
+      line-height: 1.8;
+      margin-bottom: 1rem;
+      font-size: 0.7rem;
+    }
+
+    .code-block {
+      background: #000000;
+      border: 2px solid #FFFFFF;
+      padding: 1rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.65rem;
+      overflow-x: auto;
+      margin-top: 1rem;
+      color: #00FF00;
+    }
+
+    .code-block code {
+      color: #00FF00;
+    }
+
+    .highlight {
+      background: #FFD700;
+      color: #0A1E4A;
+      padding: 0.2rem 0.4rem;
+      font-weight: 600;
+    }
+
+    .cta {
+      background: #FFD700;
+      color: #0A1E4A;
+      border: 4px solid #FFFFFF;
+      box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3);
+      padding: 1rem;
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .cta:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.3);
     }
   </style>
 </head>
@@ -92,52 +163,109 @@
   <div class="container">
     <!-- Header -->
     <div class="header">
-      <h1>☕ CryptoMeACoffee</h1>
-      <p>Using Official x402 Client Library</p>
+      <img src="../../assets/logos/logo.png" alt="CryptoMeACoffee Logo" class="logo">
+      <h1>CRYPTO ME A COFFEE</h1>
+      <p>OPEN-SOURCE X402 DONATION WIDGET</p>
     </div>
 
     <!-- Info Banner -->
     <div class="info-banner">
-      <h2>✅ Now Using Official x402 Client!</h2>
-      <p style="margin-bottom: 1rem;">This version uses the official x402 client library with:</p>
+      <h2>>>> NEW FLOATING WIDGET STYLE!</h2>
+      <p style="margin-bottom: 1rem; font-size: 0.7rem;">THIS VERSION FEATURES:</p>
       <ul>
-        <li><strong>createPaymentHeader()</strong> - Proper signature creation</li>
-        <li><strong>Viem wallet client</strong> - Standard Web3 integration</li>
-        <li><strong>Automatic payload formatting</strong> - No manual EIP-712 construction</li>
-        <li><strong>Official x402 compliance</strong> - Matches Coinbase examples</li>
+        <li><strong>FLOATING BUTTON</strong> - Bottom-right corner</li>
+        <li><strong>MODAL POPUP</strong> - Clean, centered design</li>
+        <li><strong>MESSAGE SUPPORT</strong> - Optional supporter messages (500 chars)</li>
+        <li><strong>AUTO-INITIALIZATION</strong> - Just add script tag with data attributes</li>
+        <li><strong>X402 COMPLIANT</strong> - Official client library integration</li>
       </ul>
     </div>
 
-    <!-- Demo Widget -->
+    <!-- Demo Section -->
     <div class="demo-section">
       <div class="demo-card">
-        <h2>💡 Test Widget (x402 Client)</h2>
-        <div class="widget-wrapper">
-          <div id="widget-x402"></div>
+        <h2>>>> LOOK AT THE BOTTOM-RIGHT!</h2>
+        <p>
+          Click the floating coffee button in the bottom-right corner to see the donation modal.
+        </p>
+        <p>
+          The widget uses <span class="highlight">OFFICIAL X402 CLIENT LIBRARY</span> with Viem for wallet interaction.
+        </p>
+        <div class="cta">
+          CLICK THE BUTTON TO TEST THE WIDGET!
         </div>
+      </div>
+
+      <div class="demo-card">
+        <h2>>>> SUPER EASY SETUP</h2>
+        <p>
+          Just add one script tag to your website:
+        </p>
+        <div class="code-block"><code>&lt;script data-name="CMAC-Widget"
+        src="widget.min.js"
+        data-wallet="0x..."
+        data-api="https://your-api.com/donate"
+        data-creator-name="Your Name"
+        data-color="#5F7FFF"
+        data-position="Right"&gt;&lt;/script&gt;</code></div>
+        <p style="margin-top: 1rem;">
+          That's it! The widget auto-initializes and renders the floating button.
+        </p>
+      </div>
+
+      <div class="demo-card">
+        <h2>>>> MESSAGE SUPPORT</h2>
+        <p>
+          Supporters can now include an optional message (up to 500 characters) with their donations.
+        </p>
+        <p>
+          Messages are sent in the request body along with the amount, and your backend receives them automatically.
+        </p>
+      </div>
+
+      <div class="demo-card">
+        <h2>>>> CONFIGURATION OPTIONS</h2>
+        <ul style="line-height: 1.8;">
+          <li><code>data-wallet</code> - Your wallet address (required)</li>
+          <li><code>data-api</code> - Your backend endpoint (required)</li>
+          <li><code>data-creator-name</code> - Display name in modal</li>
+          <li><code>data-color</code> - Button color (hex)</li>
+          <li><code>data-position</code> - "Left" or "Right"</li>
+          <li><code>data-x_margin</code> - Horizontal margin (px)</li>
+          <li><code>data-y_margin</code> - Vertical margin (px)</li>
+          <li><code>data-network</code> - "base-sepolia" or "base"</li>
+        </ul>
       </div>
     </div>
   </div>
 
-  <!-- Widget Script - UMD bundle includes x402 + viem -->
-  <script src="../../dist/widget.umd.js"></script>
+  <!-- Widget Script - Auto-initializes from data attributes -->
+  <script
+    data-name="CMAC-Widget"
+    src="../../dist/widget.umd.js"
+    data-wallet="0x518Cb6A5475097Ac3dDe6D2AF98F7cb1593262FB"
+    data-api="http://localhost:3000/api/donate"
+    data-creator-name="Test Creator"
+    data-message="Thanks for the coffee!"
+    data-color="#5F7FFF"
+    data-position="Right"
+    data-x_margin="18"
+    data-y_margin="18"
+    data-network="base-sepolia"
+    data-logo-url="../../assets/logos/logo.svg"
+  ></script>
 
   <script>
-    // Initialize widget using official x402 client
-    const widget = new CryptoMeACoffee({
-      walletAddress: '0x518Cb6A5475097Ac3dDe6D2AF98F7cb1593262FB',
-      apiEndpoint: 'http://localhost:3001/api/donate',
-      presetAmounts: [1, 3, 5],
-      theme: 'light',
-      network: 'base-sepolia',
-      buttonText: '☕ Buy me a coffee',
-      successMessage: 'Thank you for your support!',
-      logoUrl: '../../assets/logos/bmc-brand-icon.svg'
+    // Widget auto-initializes! No manual JavaScript needed.
+    // The floating button should appear in the bottom-right corner.
+
+    // Optional: Access widget instance if you need programmatic control
+    window.addEventListener('load', () => {
+      if (window.CryptoMeACoffeeWidget) {
+        console.log('✅ Widget auto-initialized successfully!');
+        console.log('Widget instance:', window.CryptoMeACoffeeWidget);
+      }
     });
-
-    widget.render('widget-x402');
-
-    console.log('✅ Widget initialized with official x402 client library');
   </script>
 </body>
 </html>

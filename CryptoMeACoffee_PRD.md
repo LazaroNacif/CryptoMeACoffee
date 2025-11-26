@@ -3,25 +3,30 @@
 ## 📋 Document Information
 
 **Product Name:** CryptoMeACoffee
-**Version:** 1.1.0
-**Document Status:** In Development - Architecture Refactoring
-**Last Updated:** November 19, 2025
+**Version:** 1.1.0 (Floating Widget Edition)
+**Document Status:** In Development - Testing Phase
+**Last Updated:** November 23, 2025
 **Product Owner:** [Your Name]
 **Repository:** Local (pending GitHub push)
 
-## ⚠️ IMPORTANT: Architecture Refactoring Notice
+## ✅ CURRENT STATUS: Floating Widget Complete!
 
-**Status:** Sprint 1.5 - x402 Protocol Compliance Refactoring (Nov 19-21)
+**Status:** Sprint 2 Complete (Nov 23) - Buy Me a Coffee Style Widget Ready
 
-After comprehensive architecture review on November 19, 2025, we discovered our implementation was not properly leveraging the x402 protocol. We were building custom verification logic that x402-express already handles automatically.
+After completing x402 compliance refactoring (Sprint 1.5), we successfully implemented a floating donation widget matching Buy Me a Coffee's UX:
 
-**See:** `REFACTORING_PLAN.md` for complete refactoring strategy.
+**Completed Features:**
+- ✅ Floating circular button (bottom-right, configurable position)
+- ✅ Modal popup with Buy Me a Coffee visual design
+- ✅ Message support (500 character limit)
+- ✅ Auto-initialization from script tag
+- ✅ NPM distribution strategy documented
+- ✅ Build successful (133 KB gzipped)
 
-**Key Changes:**
-- ✅ Remove custom payment verification code
-- ✅ Properly integrate x402-express middleware
-- ✅ Let Coinbase x402 Facilitator handle all verification
-- ✅ Focus exclusively on UI/UX and integration examples
+**See:**
+- `docs/NPM_DISTRIBUTION_PLAN.md` - Complete NPM publication plan
+- `PROGRESS_TRACKER.md` - Detailed sprint progress
+- `src/widget.js` - Floating widget implementation
 
 ---
 
@@ -340,18 +345,24 @@ cryptomeacoffee/
 
 ### MVP (Minimum Viable Product)
 
-#### 1.1 Frontend Widget
-**Status:** 🟢 Complete (Testing)
+#### 1.1 Frontend Widget (Floating - Buy Me a Coffee Style)
+**Status:** 🟢 Complete (Testing Phase)
 
 | Feature | Priority | Description | Acceptance Criteria | Status |
 |---------|----------|-------------|---------------------|--------|
-| Button UI | P0 | Display donation button with preset amounts | - Shows 3 preset amounts + custom<br>- Responsive design<br>- Light/dark themes | 🟢 Complete |
-| Wallet Connection | P0 | Connect via Viem wallet client | - Detects wallet automatically<br>- Requests account access<br>- Handles rejection gracefully | 🟢 Complete |
-| Network Detection | P0 | Verify correct blockchain network | - Detects current network via Viem<br>- Prompts to switch if wrong<br>- Adds network if missing | 🟢 Complete |
-| Payment Signing | P0 | Sign payment with Viem | - Uses Viem's signTypedData<br>- Proper EIP-712 structure<br>- Handles cancellation | 🟢 Complete |
-| Status Feedback | P0 | Show loading/success/error states | - Loading spinner during process<br>- Success animation<br>- Clear error messages | 🟢 Complete |
-| Custom Amount | P1 | Allow users to enter custom donation | - Modal with input field<br>- Validation (min/max)<br>- USD denomination | 🟢 Complete |
-| Coinbase Onramp | P2 | Optional "Get more USDC" button | - Integrates Coinbase Onramp<br>- Helps non-crypto users buy USDC<br>- Requires CDP Client API key<br>- Built into x402-express | 🔴 Not Started |
+| Floating Button | P0 | Circular floating button (bottom-right) | - 60px circular button<br>- Configurable position (Left/Right)<br>- Configurable margins (x/y)<br>- Hover/active animations<br>- Coffee icon SVG | 🟢 Complete |
+| Modal Interface | P0 | Buy Me a Coffee style popup | - Dark overlay background<br>- Centered white card<br>- Smooth open/close animations<br>- ESC key to close<br>- Overlay click to close<br>- Responsive design | 🟢 Complete |
+| Preset Amounts | P0 | Quick amount selection buttons | - Shows 3 configurable amounts (+1, +3, +5)<br>- Pill-style buttons<br>- Selected state styling<br>- Responsive layout | 🟢 Complete |
+| Custom Amount | P0 | Manual amount entry | - Input with $ prefix<br>- Min/max validation<br>- Decimal support<br>- Gray background styling | 🟢 Complete |
+| Message Support | P0 | Optional supporter message | - Textarea (500 char limit)<br>- Character counter (0/500)<br>- Placeholder text<br>- Auto-resize (3 rows min)<br>- Sent with payment | 🟢 Complete |
+| Auto-Initialization | P0 | Zero-config setup | - Reads script tag data attributes<br>- Auto-renders on DOM ready<br>- No manual JavaScript needed<br>- Window namespace access | 🟢 Complete |
+| Wallet Connection | P0 | Connect via Viem wallet client | - Detects wallet automatically<br>- Requests account access<br>- Handles rejection gracefully<br>- MetaMask + Coinbase Wallet | 🟢 Complete |
+| Network Detection | P0 | Verify correct blockchain network | - Detects current network via Viem<br>- Prompts to switch if wrong<br>- Adds network if missing<br>- Base Sepolia + Base mainnet | 🟢 Complete |
+| Payment Signing | P0 | Sign payment with x402 client | - Uses createPaymentHeader()<br>- Official x402 client library<br>- Proper signature formatting<br>- Handles cancellation | 🟢 Complete |
+| Status Feedback | P0 | Show loading/success/error states | - Loading spinner during process<br>- Success message display<br>- Error message display<br>- Auto-close on success | 🟢 Complete |
+| Branding Footer | P1 | CryptoMeACoffee attribution | - Link to cryptomeacoffee.com<br>- Coffee icon<br>- Subtle styling | 🟢 Complete |
+| Theme Support | P1 | Light/dark theme | - CSS variables<br>- Auto dark mode detection<br>- Theme switching | 🟢 Complete |
+| Coinbase Onramp | P2 | Optional "Get more USDC" button | - Integrates Coinbase Onramp<br>- Helps non-crypto users buy USDC<br>- Requires CDP Client API key | 🔴 Not Started |
 
 **Technical Requirements:**
 - Use **Viem** (v2.x) for wallet interaction (not raw window.ethereum)
