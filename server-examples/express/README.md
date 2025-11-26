@@ -79,9 +79,29 @@ Health check endpoint.
 ### GET /
 Service information.
 
+## ✨ Features
+
+### Dynamic Pricing
+- **Accepts any donation amount** from $0.01 to $1,000,000
+- Automatically configures x402 payment requirements based on user input
+- No static pricing limitations
+
+### Email Notifications (Optional)
+- **Receive instant email alerts** when donations are received
+- **Async/non-blocking** - doesn't slow down widget response
+- **Fully optional** - works without email configuration
+- **Supports any SMTP provider** - Gmail, SendGrid, Mailgun, etc.
+
+### Message Support
+- Supporters can include optional messages (up to 500 characters)
+- Messages delivered in request body and email notifications
+- Perfect for thank-you notes and community engagement
+
 ## 🔧 Configuration
 
 ### Environment Variables
+
+#### Required Configuration
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
@@ -89,10 +109,30 @@ Service information.
 | `WALLET_ADDRESS` | **Yes** | - | Your wallet address (where donations go) |
 | `NETWORK` | No | base-sepolia | Network: "base-sepolia" or "base" |
 | `FACILITATOR_URL` | No | https://x402.org/facilitator | x402 facilitator endpoint |
-| `DEFAULT_DONATION_AMOUNT` | No | 1.00 | Default donation amount (USD) |
-| `MIN_DONATION_AMOUNT` | No | 0.01 | Minimum donation (USD) |
-| `MAX_DONATION_AMOUNT` | No | 1000.00 | Maximum donation (USD) |
 | `CORS_ORIGIN` | No | http://localhost:8000 | Allowed CORS origin |
+
+#### Optional: Email Notifications
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `EMAIL_HOST` | No | - | SMTP server (e.g., smtp.gmail.com) |
+| `EMAIL_PORT` | No | 587 | SMTP port |
+| `EMAIL_SECURE` | No | false | Use TLS (true/false) |
+| `EMAIL_USER` | No | - | SMTP username/email |
+| `EMAIL_PASS` | No | - | SMTP password/app password |
+| `NOTIFICATION_EMAIL` | No | - | Where to send donation alerts |
+
+**Email Setup Example (Gmail):**
+```env
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_SECURE=false
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-password
+NOTIFICATION_EMAIL=your-email@gmail.com
+```
+
+Note: Gmail requires an [App Password](https://support.google.com/accounts/answer/185833), not your regular password.
 
 ### Testnet vs Mainnet
 
@@ -200,10 +240,30 @@ Check that `CORS_ORIGIN` in `.env` matches your frontend URL.
 
 After getting this working:
 1. ✅ Test full donation flow with widget
-2. 📝 Add database to store donations
-3. 📧 Add email notifications
+2. ✅ Configure email notifications (optional)
+3. 📝 Add database to store donations
 4. 📊 Add analytics tracking
 5. 🚀 Deploy to production (Railway, Render, Fly.io)
+
+## 📧 Email Notification Details
+
+When enabled, you'll receive beautifully formatted emails for each donation:
+
+**Email includes:**
+- 💰 Donation amount in USDC
+- 💬 Supporter's message (if provided)
+- 🌐 Network used (testnet/mainnet)
+- ⏰ Timestamp
+
+**Performance:**
+- Emails send asynchronously in the background
+- Widget response time is not affected
+- Errors are logged but don't break the donation flow
+
+**Privacy:**
+- Messages are NOT stored on the blockchain (too expensive)
+- Messages are only sent to your server/email
+- You control all message data
 
 ---
 

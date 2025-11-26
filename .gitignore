@@ -47,3 +47,6 @@ temp/
 *secret*
 *private*
 credentials.json
+
+# Development tools
+chrome-devtools-mcp
