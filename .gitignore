@@ -9,6 +9,7 @@ dist/
 build/
 *.min.js
 *.min.css
+*.tgz
 
 # Environment variables
 .env

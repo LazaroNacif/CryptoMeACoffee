@@ -1,0 +1,42 @@
+# Keep everything from .gitignore except dist/
+# This file takes precedence over .gitignore
+
+# Copy most .gitignore rules
+node_modules/
+*.log
+.DS_Store
+.env*
+
+# DON'T exclude dist/ (override .gitignore)
+# dist/ will be included
+
+# Explicitly exclude development files
+chrome-devtools-mcp/
+examples/
+server-examples/
+tests/
+docs/
+.claude/
+config/
+scripts/
+
+# Exclude source except styles
+src/*.js
+src/*.ts
+
+# Exclude config files
+vite.config.js
+*.config.js
+*.config.ts
+
+# Exclude all MD files except README
+*.md
+!README.md
+
+# Exclude IDE and OS
+.vscode/
+.idea/
+Thumbs.db
+
+# Exclude tarballs
+*.tgz
