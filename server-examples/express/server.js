@@ -8,6 +8,11 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { paymentMiddleware } from 'x402-express';
 import nodemailer from 'nodemailer';
+import DOMPurify from 'isomorphic-dompurify';
+import { body, validationResult } from 'express-validator';
+import rateLimit from 'express-rate-limit';
+import mongoSanitize from 'express-mongo-sanitize';
+import xss from 'xss-clean';
 
 // Load environment variables
 dotenv.config();
@@ -17,6 +22,10 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware - with strict false to allow multiple reads
 app.use(express.json({ strict: false }));
+
+// Request sanitization - prevent NoSQL injection and XSS
+app.use(mongoSanitize()); // Prevent NoSQL injection
+app.use(xss()); // Prevent XSS in request data
 
 // CORS Configuration - Allow multiple origins
 const allowedOrigins = [
@@ -28,8 +37,15 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true);
+    // In production, require origin header for security
+    if (!origin && process.env.NODE_ENV === 'production') {
+      return callback(new Error('Origin header required'));
+    }
+
+    // Allow localhost in development (no origin header)
+    if (!origin && process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
 
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
@@ -39,6 +55,16 @@ app.use(cors({
   },
   credentials: true
 }));
+
+// HTTPS enforcement in production
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.header('x-forwarded-proto') !== 'https') {
+      return res.redirect(301, `https://${req.header('host')}${req.url}`);
+    }
+    next();
+  });
+}
 
 // Validate required environment variables
 if (!process.env.WALLET_ADDRESS) {
@@ -73,6 +99,33 @@ const USDC_ADDRESSES = {
   'base-sepolia': '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
   'base': '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
 };
+
+// Rate limiting for donation endpoint - prevent DOS attacks
+const donationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Max 5 requests per window per IP
+  message: {
+    success: false,
+    error: 'Too many donation attempts. Please try again later.'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  // Skip rate limiting for successful payments
+  skip: (req, res) => res.statusCode < 400,
+});
+
+// Input validation for donation endpoint
+const validateDonation = [
+  body('amount')
+    .isFloat({ min: 0.01, max: 1000000 })
+    .withMessage('Amount must be between $0.01 and $1,000,000'),
+  body('message')
+    .optional()
+    .trim()
+    .isLength({ max: 500 })
+    .withMessage('Message must be 500 characters or less')
+    .escape() // Prevent XSS
+];
 
 // x402 Payment Middleware Configuration
 // This middleware handles the 402 Payment Required protocol automatically
@@ -144,7 +197,16 @@ app.use((req, res, next) => {
 
 // Donation endpoint
 // This is only reached if payment verification succeeds
-app.post('/api/donate', async (req, res) => {
+app.post('/api/donate', donationLimiter, validateDonation, async (req, res) => {
+  // Check validation results
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      success: false,
+      errors: errors.array()
+    });
+  }
+
   const { amount, message } = req.body;
 
   console.log('✅ Payment verified and accepted!');
@@ -153,6 +215,9 @@ app.post('/api/donate', async (req, res) => {
 
   // Send email notification asynchronously (non-blocking)
   if (emailTransporter && process.env.NOTIFICATION_EMAIL) {
+    // Sanitize message to prevent XSS in email
+    const sanitizedMessage = DOMPurify.sanitize(message || 'No message');
+
     emailTransporter.sendMail({
       from: process.env.EMAIL_USER,
       to: process.env.NOTIFICATION_EMAIL,
@@ -160,7 +225,7 @@ app.post('/api/donate', async (req, res) => {
       html: `
         <h2>New Donation Received!</h2>
         <p><strong>Amount:</strong> $${amount} USDC</p>
-        <p><strong>Message:</strong> ${message || 'No message'}</p>
+        <p><strong>Message:</strong> ${sanitizedMessage}</p>
         <p><strong>Network:</strong> ${process.env.NETWORK}</p>
         <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
         <hr>
