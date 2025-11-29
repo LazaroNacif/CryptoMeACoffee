@@ -16,6 +16,7 @@
 After completing x402 compliance refactoring (Sprint 1.5), we successfully implemented a floating donation widget matching Buy Me a Coffee's UX:
 
 **Completed Features:**
+
 - ✅ Floating circular button (bottom-right, configurable position)
 - ✅ Modal popup with Buy Me a Coffee visual design
 - ✅ Message support (500 character limit)
@@ -24,6 +25,7 @@ After completing x402 compliance refactoring (Sprint 1.5), we successfully imple
 - ✅ Build successful (133 KB gzipped)
 
 **See:**
+
 - `docs/NPM_DISTRIBUTION_PLAN.md` - Complete NPM publication plan
 - `PROGRESS_TRACKER.md` - Detailed sprint progress
 - `src/widget.js` - Floating widget implementation
@@ -33,15 +35,19 @@ After completing x402 compliance refactoring (Sprint 1.5), we successfully imple
 ## 🎯 Executive Summary
 
 ### Product Vision
+
 An open-source, self-hosted donation widget toolkit that enables content creators to accept cryptocurrency donations via the x402 protocol. Simple to install, zero fees, no intermediaries.
 
 ### Problem Statement
+
 Current donation platforms charge fees (5-10%), require account creation, and hold funds in escrow. Creators need a simple, zero-fee solution that gives them full control and instant settlement.
 
 ### Solution
+
 A plug-and-play JavaScript widget + backend examples that creators can add to any website in under 5 minutes. Donations go directly to creator wallets via x402 protocol with zero platform fees.
 
 ### Target Users
+
 Content creators (bloggers, developers, artists, educators) who want to accept crypto donations without complexity.
 
 ---
@@ -89,6 +95,7 @@ Content creators (bloggers, developers, artists, educators) who want to accept c
 ### Key Architecture Decisions
 
 **✅ Use Official x402 Packages (CRITICAL):**
+
 - **Server:** `x402-express` middleware (NOT custom code)
 - **Client:** `viem` for wallet interaction (NOT raw Web3)
 - **Facilitator:** Official Coinbase facilitator (automatic verification)
@@ -96,6 +103,7 @@ Content creators (bloggers, developers, artists, educators) who want to accept c
 > **⚠️ IMPORTANT:** We must NEVER reimplement what x402 already provides. Our role is UI/UX, not protocol verification.
 
 **✅ What We Build (Our Value-Add):**
+
 - 🎨 **Beautiful Widget UI** - Custom button designs, themes, animations
 - 📚 **Integration Guides** - Platform-specific setup instructions
 - 🔧 **Backend Examples** - Express, Next.js, Vercel Edge examples using x402-express
@@ -103,6 +111,7 @@ Content creators (bloggers, developers, artists, educators) who want to accept c
 - 🎯 **Creator UX** - Simplified configuration and deployment
 
 **✅ What x402 Handles (Don't Touch):**
+
 - ✅ Payment signature verification (Coinbase Facilitator)
 - ✅ EIP-712 validation (x402-express middleware)
 - ✅ Blockchain settlement (x402 protocol)
@@ -111,6 +120,7 @@ Content creators (bloggers, developers, artists, educators) who want to accept c
 - ✅ On-chain transaction execution (facilitator)
 
 **❌ What We Must NOT Build:**
+
 - ❌ Custom payment verification logic
 - ❌ Manual signature validation
 - ❌ Direct blockchain interaction for payments
@@ -159,6 +169,7 @@ Content creators (bloggers, developers, artists, educators) who want to accept c
 ```
 
 **Violation Examples:**
+
 ```typescript
 // ❌ WRONG - Custom verification (violates boundary)
 export const verifyPayment = async (signature: string) => {
@@ -257,15 +268,18 @@ cryptomeacoffee/
 ### Official x402 Packages (Core Dependencies)
 
 **Server-Side:**
+
 - **x402-express** - Official x402 middleware for Express.js
 - **@coinbase/x402** - Mainnet facilitator package
 - Handles: 402 responses, payment verification, blockchain settlement
 
 **Client-Side:**
+
 - **Viem** (v2.x) - Modern Ethereum library for wallet interaction
 - Handles: Wallet connection, typed data signing, network switching
 
 **Client-Side (Optional Alternatives):**
+
 - **x402-fetch** - Official client for fetch API
 - **x402-axios** - Official client for axios
 - Note: We use Viem directly, but these are available for different approaches
@@ -273,18 +287,21 @@ cryptomeacoffee/
 ### What We Build (Custom)
 
 **Frontend:**
+
 - Widget UI/UX (HTML + CSS)
 - Button components and states
 - Custom amount modal
 - Loading/success/error animations
 
 **Backend (Thin Layer):**
+
 - Rate limiting (on top of x402-express)
 - Custom donation logic
 - Thank you messages
 - Analytics hooks (optional)
 
 **Documentation:**
+
 - Setup guides
 - Security checklist
 - Platform-specific examples
@@ -293,12 +310,14 @@ cryptomeacoffee/
 ### Official x402 Facilitator
 
 **Testnet:**
+
 - URL: `https://x402.org/facilitator`
 - Networks: Base Sepolia, Solana Devnet
 - Free to use
 - No authentication required
 
 **Mainnet:**
+
 - Package: `@coinbase/x402`
 - Networks: Base Mainnet
 - Fee-free USDC payments
@@ -308,6 +327,7 @@ cryptomeacoffee/
   - Obtain from: https://portal.cdp.coinbase.com
 
 **What Facilitator Provides:**
+
 - ✅ Signature verification (automatic)
 - ✅ Nonce management (automatic)
 - ✅ Replay attack prevention (automatic)
@@ -318,10 +338,12 @@ cryptomeacoffee/
 ### Blockchain Layer
 
 **Network:** Base (Ethereum L2)
+
 - **Mainnet:** Chain ID 8453
 - **Testnet:** Base Sepolia (Chain ID 84532)
 
 **Token:** USDC (Circle's USD Coin)
+
 - **Base Mainnet:** `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`
 - **Base Sepolia:** `0x036CbD53842c5426634e7929541eC2318f3dCF7e`
 - EIP-3009 compliant (gasless transfers)
@@ -329,12 +351,14 @@ cryptomeacoffee/
 ### Development Tools
 
 **Testing:**
+
 - Jest for unit tests
 - Playwright for E2E tests
 - Base Sepolia testnet
 - Circle USDC faucet
 
 **Build:**
+
 - Vite for bundling
 - TypeScript for type safety
 - ESLint for code quality
@@ -346,25 +370,27 @@ cryptomeacoffee/
 ### MVP (Minimum Viable Product)
 
 #### 1.1 Frontend Widget (Floating - Buy Me a Coffee Style)
+
 **Status:** 🟢 Complete (Testing Phase)
 
-| Feature | Priority | Description | Acceptance Criteria | Status |
-|---------|----------|-------------|---------------------|--------|
-| Floating Button | P0 | Circular floating button (bottom-right) | - 60px circular button<br>- Configurable position (Left/Right)<br>- Configurable margins (x/y)<br>- Hover/active animations<br>- Coffee icon SVG | 🟢 Complete |
-| Modal Interface | P0 | Buy Me a Coffee style popup | - Dark overlay background<br>- Centered white card<br>- Smooth open/close animations<br>- ESC key to close<br>- Overlay click to close<br>- Responsive design | 🟢 Complete |
-| Preset Amounts | P0 | Quick amount selection buttons | - Shows 3 configurable amounts (+1, +3, +5)<br>- Pill-style buttons<br>- Selected state styling<br>- Responsive layout | 🟢 Complete |
-| Custom Amount | P0 | Manual amount entry | - Input with $ prefix<br>- Min/max validation<br>- Decimal support<br>- Gray background styling | 🟢 Complete |
-| Message Support | P0 | Optional supporter message | - Textarea (500 char limit)<br>- Character counter (0/500)<br>- Placeholder text<br>- Auto-resize (3 rows min)<br>- Sent with payment | 🟢 Complete |
-| Auto-Initialization | P0 | Zero-config setup | - Reads script tag data attributes<br>- Auto-renders on DOM ready<br>- No manual JavaScript needed<br>- Window namespace access | 🟢 Complete |
-| Wallet Connection | P0 | Connect via Viem wallet client | - Detects wallet automatically<br>- Requests account access<br>- Handles rejection gracefully<br>- MetaMask + Coinbase Wallet | 🟢 Complete |
-| Network Detection | P0 | Verify correct blockchain network | - Detects current network via Viem<br>- Prompts to switch if wrong<br>- Adds network if missing<br>- Base Sepolia + Base mainnet | 🟢 Complete |
-| Payment Signing | P0 | Sign payment with x402 client | - Uses createPaymentHeader()<br>- Official x402 client library<br>- Proper signature formatting<br>- Handles cancellation | 🟢 Complete |
-| Status Feedback | P0 | Show loading/success/error states | - Loading spinner during process<br>- Success message display<br>- Error message display<br>- Auto-close on success | 🟢 Complete |
-| Branding Footer | P1 | CryptoMeACoffee attribution | - Link to cryptomeacoffee.com<br>- Coffee icon<br>- Subtle styling | 🟢 Complete |
-| Theme Support | P1 | Light/dark theme | - CSS variables<br>- Auto dark mode detection<br>- Theme switching | 🟢 Complete |
-| Coinbase Onramp | P2 | Optional "Get more USDC" button | - Integrates Coinbase Onramp<br>- Helps non-crypto users buy USDC<br>- Requires CDP Client API key | 🔴 Not Started |
+| Feature             | Priority | Description                             | Acceptance Criteria                                                                                                                                           | Status         |
+| ------------------- | -------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| Floating Button     | P0       | Circular floating button (bottom-right) | - 60px circular button<br>- Configurable position (Left/Right)<br>- Configurable margins (x/y)<br>- Hover/active animations<br>- Coffee icon SVG              | 🟢 Complete    |
+| Modal Interface     | P0       | Buy Me a Coffee style popup             | - Dark overlay background<br>- Centered white card<br>- Smooth open/close animations<br>- ESC key to close<br>- Overlay click to close<br>- Responsive design | 🟢 Complete    |
+| Preset Amounts      | P0       | Quick amount selection buttons          | - Shows 3 configurable amounts (+1, +3, +5)<br>- Pill-style buttons<br>- Selected state styling<br>- Responsive layout                                        | 🟢 Complete    |
+| Custom Amount       | P0       | Manual amount entry                     | - Input with $ prefix<br>- Min/max validation<br>- Decimal support<br>- Gray background styling                                                               | 🟢 Complete    |
+| Message Support     | P0       | Optional supporter message              | - Textarea (500 char limit)<br>- Character counter (0/500)<br>- Placeholder text<br>- Auto-resize (3 rows min)<br>- Sent with payment                         | 🟢 Complete    |
+| Auto-Initialization | P0       | Zero-config setup                       | - Reads script tag data attributes<br>- Auto-renders on DOM ready<br>- No manual JavaScript needed<br>- Window namespace access                               | 🟢 Complete    |
+| Wallet Connection   | P0       | Connect via Viem wallet client          | - Detects wallet automatically<br>- Requests account access<br>- Handles rejection gracefully<br>- MetaMask + Coinbase Wallet                                 | 🟢 Complete    |
+| Network Detection   | P0       | Verify correct blockchain network       | - Detects current network via Viem<br>- Prompts to switch if wrong<br>- Adds network if missing<br>- Base Sepolia + Base mainnet                              | 🟢 Complete    |
+| Payment Signing     | P0       | Sign payment with x402 client           | - Uses createPaymentHeader()<br>- Official x402 client library<br>- Proper signature formatting<br>- Handles cancellation                                     | 🟢 Complete    |
+| Status Feedback     | P0       | Show loading/success/error states       | - Loading spinner during process<br>- Success message display<br>- Error message display<br>- Auto-close on success                                           | 🟢 Complete    |
+| Branding Footer     | P1       | CryptoMeACoffee attribution             | - Link to cryptomeacoffee.com<br>- Coffee icon<br>- Subtle styling                                                                                            | 🟢 Complete    |
+| Theme Support       | P1       | Light/dark theme                        | - CSS variables<br>- Auto dark mode detection<br>- Theme switching                                                                                            | 🟢 Complete    |
+| Coinbase Onramp     | P2       | Optional "Get more USDC" button         | - Integrates Coinbase Onramp<br>- Helps non-crypto users buy USDC<br>- Requires CDP Client API key                                                            | 🔴 Not Started |
 
 **Technical Requirements:**
+
 - Use **Viem** (v2.x) for wallet interaction (not raw window.ethereum)
 - Use **Wagmi** (optional) for React implementation
 - Pure JavaScript widget with no framework dependencies for vanilla usage
@@ -372,6 +398,7 @@ cryptomeacoffee/
 - Modern browsers (ES6+)
 
 **Key Libraries:**
+
 ```json
 {
   "dependencies": {
@@ -381,6 +408,7 @@ cryptomeacoffee/
 ```
 
 **Testing Criteria:**
+
 - [x] Widget renders on vanilla HTML
 - [x] Wallet connection works via Viem
 - [x] Network switching via Viem works correctly
@@ -392,16 +420,18 @@ cryptomeacoffee/
 ---
 
 #### 1.2 Server-Side Examples
+
 **Status:** 🟡 In Progress
 
-| Example | Priority | Description | Acceptance Criteria | Status |
-|---------|----------|-------------|---------------------|--------|
-| Express.js | P0 | Basic Node.js server with x402-express | - Uses official x402-express middleware<br>- Returns 402 on initial request<br>- Facilitator verifies payment<br>- Returns success on valid payment | 🟢 Complete |
-| Next.js Middleware | P0 | Using official x402-next package | - Uses x402-next middleware<br>- Works on Vercel<br>- TypeScript support<br>- Middleware-based (not API routes) | 🔴 Not Started |
-| Vercel Edge Function | P1 | Ultra-fast edge deployment | - Adapted from x402-express<br>- < 100ms response time<br>- Global deployment | 🔴 Not Started |
-| Cloudflare Worker | P1 | Edge compute alternative | - Adapted for Workers environment<br>- KV storage for nonces (optional)<br>- < 50ms p99 latency | 🔴 Not Started |
+| Example              | Priority | Description                            | Acceptance Criteria                                                                                                                                 | Status         |
+| -------------------- | -------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| Express.js           | P0       | Basic Node.js server with x402-express | - Uses official x402-express middleware<br>- Returns 402 on initial request<br>- Facilitator verifies payment<br>- Returns success on valid payment | 🟢 Complete    |
+| Next.js Middleware   | P0       | Using official x402-next package       | - Uses x402-next middleware<br>- Works on Vercel<br>- TypeScript support<br>- Middleware-based (not API routes)                                     | 🔴 Not Started |
+| Vercel Edge Function | P1       | Ultra-fast edge deployment             | - Adapted from x402-express<br>- < 100ms response time<br>- Global deployment                                                                       | 🔴 Not Started |
+| Cloudflare Worker    | P1       | Edge compute alternative               | - Adapted for Workers environment<br>- KV storage for nonces (optional)<br>- < 50ms p99 latency                                                     | 🔴 Not Started |
 
 **Technical Requirements:**
+
 - Use **x402-express** official package (not custom middleware)
 - Use official **Coinbase facilitator**:
   - Testnet: `https://x402.org/facilitator`
@@ -411,12 +441,13 @@ cryptomeacoffee/
 - Dynamic pricing support (based on request body)
 
 **Package Dependencies:**
+
 ```json
 {
   "dependencies": {
     "express": "^4.18.0",
     "x402-express": "latest",
-    "x402-next": "latest",        // For Next.js projects
+    "x402-next": "latest", // For Next.js projects
     "@coinbase/x402": "latest",
     "dotenv": "^16.0.0"
   }
@@ -424,75 +455,80 @@ cryptomeacoffee/
 ```
 
 **Next.js Example (Using x402-next):**
+
 ```typescript
 // middleware.ts
-import { paymentMiddleware } from "x402-next";
-import { facilitator } from "@coinbase/x402";
+import { paymentMiddleware } from 'x402-next';
+import { facilitator } from '@coinbase/x402';
 
 export const middleware = paymentMiddleware(
   process.env.WALLET_ADDRESS,
   {
-    "/protected": {
-      price: "$1.00",
-      network: "base-sepolia",
+    '/protected': {
+      price: '$1.00',
+      network: 'base-sepolia',
       config: {
-        description: "Support this creator"
-      }
-    }
+        description: 'Support this creator',
+      },
+    },
   },
   facilitator
 );
 
 export const config = {
-  matcher: ["/protected/:path*"]
+  matcher: ['/protected/:path*'],
 };
 ```
 
 **Example Implementation (Express):**
+
 ```javascript
-import express from "express";
-import { paymentMiddleware } from "x402-express";
+import express from 'express';
+import { paymentMiddleware } from 'x402-express';
 
 const app = express();
 
-app.use(paymentMiddleware(
-  process.env.WALLET_ADDRESS,
-  {
-    "POST /api/donate": {
-      price: "$1.00", // or dynamic based on req.body.amount
-      network: process.env.NETWORK || "base-sepolia",
-      config: {
-        description: "Support this creator with a crypto donation",
-        discoverable: true, // Enable x402 Bazaar listing
-        inputSchema: {
-          type: "object",
-          properties: {
-            amount: {
-              type: "number",
-              description: "Donation amount in USD",
-              minimum: 0.01
-            }
-          }
-        }
-      }
+app.use(
+  paymentMiddleware(
+    process.env.WALLET_ADDRESS,
+    {
+      'POST /api/donate': {
+        price: '$1.00', // or dynamic based on req.body.amount
+        network: process.env.NETWORK || 'base-sepolia',
+        config: {
+          description: 'Support this creator with a crypto donation',
+          discoverable: true, // Enable x402 Bazaar listing
+          inputSchema: {
+            type: 'object',
+            properties: {
+              amount: {
+                type: 'number',
+                description: 'Donation amount in USD',
+                minimum: 0.01,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      url: process.env.FACILITATOR_URL || 'https://x402.org/facilitator',
     }
-  },
-  { 
-    url: process.env.FACILITATOR_URL || "https://x402.org/facilitator"
-  }
-));
+  )
+);
 
 // Your donation endpoint logic
-app.post("/api/donate", (req, res) => {
+app.post('/api/donate', (req, res) => {
   res.json({
     success: true,
-    message: "Thank you for your donation!",
-    amount: req.body.amount
+    message: 'Thank you for your donation!',
+    amount: req.body.amount,
   });
 });
 ```
 
 **Testing Criteria:**
+
 - [x] Express example runs locally with x402-express
 - [ ] Next.js deploys to Vercel with official middleware
 - [ ] Edge function handles concurrent requests
@@ -505,18 +541,20 @@ app.post("/api/donate", (req, res) => {
 ---
 
 #### 1.3 Documentation
+
 **Status:** 🔴 Not Started
 
-| Document | Priority | Description | Acceptance Criteria |
-|----------|----------|-------------|---------------------|
-| README.md | P0 | Project overview and quick start | - Clear value proposition<br>- 30-second pitch<br>- Quick start in 5 minutes |
-| SETUP-GUIDE.md | P0 | Complete implementation guide | - Step-by-step instructions<br>- Platform-specific guides<br>- Troubleshooting section |
-| SECURITY-CHECKLIST.md | P0 | Security best practices | - Pre-launch checklist<br>- Common vulnerabilities<br>- Mitigation strategies |
-| API-REFERENCE.md | P1 | Widget API documentation | - All configuration options<br>- Method signatures<br>- Code examples |
-| CUSTOMIZATION.md | P1 | Styling and theming guide | - CSS customization<br>- Theme creation<br>- Logo guidelines |
-| FAQ.md | P1 | Frequently asked questions | - Setup questions<br>- Technical issues<br>- Best practices |
+| Document              | Priority | Description                      | Acceptance Criteria                                                                    |
+| --------------------- | -------- | -------------------------------- | -------------------------------------------------------------------------------------- |
+| README.md             | P0       | Project overview and quick start | - Clear value proposition<br>- 30-second pitch<br>- Quick start in 5 minutes           |
+| SETUP-GUIDE.md        | P0       | Complete implementation guide    | - Step-by-step instructions<br>- Platform-specific guides<br>- Troubleshooting section |
+| SECURITY-CHECKLIST.md | P0       | Security best practices          | - Pre-launch checklist<br>- Common vulnerabilities<br>- Mitigation strategies          |
+| API-REFERENCE.md      | P1       | Widget API documentation         | - All configuration options<br>- Method signatures<br>- Code examples                  |
+| CUSTOMIZATION.md      | P1       | Styling and theming guide        | - CSS customization<br>- Theme creation<br>- Logo guidelines                           |
+| FAQ.md                | P1       | Frequently asked questions       | - Setup questions<br>- Technical issues<br>- Best practices                            |
 
 **Testing Criteria:**
+
 - [ ] New user can set up in <5 minutes following docs
 - [ ] All code examples are tested and work
 - [ ] Security checklist covers all critical items
@@ -526,17 +564,19 @@ app.post("/api/donate", (req, res) => {
 ---
 
 #### 1.4 Visual Assets
+
 **Status:** 🔴 Not Started
 
-| Asset | Priority | Description | Acceptance Criteria |
-|-------|----------|-------------|---------------------|
-| Logo - Primary | P0 | Main logo (coffee + crypto theme) | - SVG format<br>- Scalable<br>- Works on light/dark bg |
-| Logo - Variations | P1 | Different color/size variants | - White version<br>- Dark version<br>- Icon-only version |
-| Button Designs | P0 | Pre-styled button templates | - 3-4 design options<br>- Light/dark themes<br>- Different sizes |
-| GitHub Assets | P1 | Social preview, banner | - Open Graph image (1200x630)<br>- Repository banner<br>- Demo GIF/video |
-| Demo Screenshots | P1 | Example implementations | - Desktop view<br>- Mobile view<br>- Success states |
+| Asset             | Priority | Description                       | Acceptance Criteria                                                      |
+| ----------------- | -------- | --------------------------------- | ------------------------------------------------------------------------ |
+| Logo - Primary    | P0       | Main logo (coffee + crypto theme) | - SVG format<br>- Scalable<br>- Works on light/dark bg                   |
+| Logo - Variations | P1       | Different color/size variants     | - White version<br>- Dark version<br>- Icon-only version                 |
+| Button Designs    | P0       | Pre-styled button templates       | - 3-4 design options<br>- Light/dark themes<br>- Different sizes         |
+| GitHub Assets     | P1       | Social preview, banner            | - Open Graph image (1200x630)<br>- Repository banner<br>- Demo GIF/video |
+| Demo Screenshots  | P1       | Example implementations           | - Desktop view<br>- Mobile view<br>- Success states                      |
 
 **Testing Criteria:**
+
 - [ ] Logo renders clearly at all sizes
 - [ ] Buttons match design specs
 - [ ] All assets are optimized (<50KB each)
@@ -563,18 +603,20 @@ Testing Pyramid:
 ### Test Categories
 
 #### 1. Unit Tests
+
 **Target Coverage:** 80%
 
-| Component | Test Cases | Status |
-|-----------|------------|--------|
-| Widget Constructor | Valid/invalid config, defaults | 🔴 |
-| Payment Payload Builder | EIP-712 structure, all networks | 🔴 |
-| Network Detection | Chain ID matching, switching | 🔴 |
-| Signature Generation | Valid typed data, error handling | 🔴 |
-| UI State Management | All states transition correctly | 🔴 |
-| Amount Validation | Min/max, decimal handling, edge cases | 🔴 |
+| Component               | Test Cases                            | Status |
+| ----------------------- | ------------------------------------- | ------ |
+| Widget Constructor      | Valid/invalid config, defaults        | 🔴     |
+| Payment Payload Builder | EIP-712 structure, all networks       | 🔴     |
+| Network Detection       | Chain ID matching, switching          | 🔴     |
+| Signature Generation    | Valid typed data, error handling      | 🔴     |
+| UI State Management     | All states transition correctly       | 🔴     |
+| Amount Validation       | Min/max, decimal handling, edge cases | 🔴     |
 
 **Tools:**
+
 - Jest for JavaScript testing
 - Test coverage reports
 - CI/CD integration
@@ -582,18 +624,20 @@ Testing Pyramid:
 ---
 
 #### 2. Integration Tests
+
 **Focus:** End-to-end payment flows
 
-| Scenario | Steps | Expected Result | Status |
-|----------|-------|-----------------|--------|
-| Happy Path - Preset Amount | 1. Click $5 button<br>2. Connect wallet<br>3. Sign payment<br>4. Verify | Success message, funds received | 🔴 |
-| Happy Path - Custom Amount | 1. Click custom<br>2. Enter $7.50<br>3. Sign<br>4. Verify | Custom amount processed | 🔴 |
-| Wrong Network | 1. User on Ethereum<br>2. Widget expects Base<br>3. Prompt switch | Network switched, payment continues | 🔴 |
-| User Rejection | 1. Click donate<br>2. Reject wallet signature | Clear error, can retry | 🔴 |
-| Network Failure | 1. Disconnect internet<br>2. Try payment | Timeout error, helpful message | 🔴 |
-| Replay Attack | 1. Complete payment<br>2. Replay signature | Server rejects duplicate | 🔴 |
+| Scenario                   | Steps                                                                   | Expected Result                     | Status |
+| -------------------------- | ----------------------------------------------------------------------- | ----------------------------------- | ------ |
+| Happy Path - Preset Amount | 1. Click $5 button<br>2. Connect wallet<br>3. Sign payment<br>4. Verify | Success message, funds received     | 🔴     |
+| Happy Path - Custom Amount | 1. Click custom<br>2. Enter $7.50<br>3. Sign<br>4. Verify               | Custom amount processed             | 🔴     |
+| Wrong Network              | 1. User on Ethereum<br>2. Widget expects Base<br>3. Prompt switch       | Network switched, payment continues | 🔴     |
+| User Rejection             | 1. Click donate<br>2. Reject wallet signature                           | Clear error, can retry              | 🔴     |
+| Network Failure            | 1. Disconnect internet<br>2. Try payment                                | Timeout error, helpful message      | 🔴     |
+| Replay Attack              | 1. Complete payment<br>2. Replay signature                              | Server rejects duplicate            | 🔴     |
 
 **Test Environments:**
+
 - Base Sepolia Testnet (primary)
 - Local hardhat node
 - Base Mainnet (final validation)
@@ -602,18 +646,19 @@ Testing Pyramid:
 
 #### 3. Security Tests
 
-| Test | Description | Priority | Status |
-|------|-------------|----------|--------|
-| Signature Validation | Verify EIP-712 signatures properly | P0 | 🔴 |
-| Nonce Uniqueness | Prevent replay attacks | P0 | 🔴 |
-| Amount Tampering | Prevent client-side amount changes | P0 | 🔴 |
-| Recipient Verification | Ensure funds go to correct address | P0 | 🔴 |
-| Rate Limiting | Prevent spam/DOS attacks | P0 | 🔴 |
-| CORS Configuration | Proper origin restrictions | P1 | 🔴 |
-| XSS Prevention | No script injection via widget | P0 | 🔴 |
-| Private Key Exposure | Never expose keys in client | P0 | 🔴 |
+| Test                   | Description                        | Priority | Status |
+| ---------------------- | ---------------------------------- | -------- | ------ |
+| Signature Validation   | Verify EIP-712 signatures properly | P0       | 🔴     |
+| Nonce Uniqueness       | Prevent replay attacks             | P0       | 🔴     |
+| Amount Tampering       | Prevent client-side amount changes | P0       | 🔴     |
+| Recipient Verification | Ensure funds go to correct address | P0       | 🔴     |
+| Rate Limiting          | Prevent spam/DOS attacks           | P0       | 🔴     |
+| CORS Configuration     | Proper origin restrictions         | P1       | 🔴     |
+| XSS Prevention         | No script injection via widget     | P0       | 🔴     |
+| Private Key Exposure   | Never expose keys in client        | P0       | 🔴     |
 
 **Security Audit:**
+
 - [ ] Self-review against OWASP Top 10
 - [ ] Third-party security review (if budget allows)
 - [ ] Bug bounty program (post-launch)
@@ -622,26 +667,26 @@ Testing Pyramid:
 
 #### 4. Browser/Wallet Compatibility
 
-| Browser | MetaMask | Coinbase Wallet | WalletConnect | Status |
-|---------|----------|-----------------|---------------|--------|
-| Chrome Desktop | ✓ | ✓ | ✓ | 🔴 |
-| Firefox Desktop | ✓ | ✓ | ✓ | 🔴 |
-| Safari Desktop | ✓ | ✓ | ✓ | 🔴 |
-| Edge Desktop | ✓ | ✓ | ✓ | 🔴 |
-| Chrome Mobile | ✓ | ✓ | ✓ | 🔴 |
-| Safari Mobile | ✓ | ✓ | ✓ | 🔴 |
+| Browser         | MetaMask | Coinbase Wallet | WalletConnect | Status |
+| --------------- | -------- | --------------- | ------------- | ------ |
+| Chrome Desktop  | ✓        | ✓               | ✓             | 🔴     |
+| Firefox Desktop | ✓        | ✓               | ✓             | 🔴     |
+| Safari Desktop  | ✓        | ✓               | ✓             | 🔴     |
+| Edge Desktop    | ✓        | ✓               | ✓             | 🔴     |
+| Chrome Mobile   | ✓        | ✓               | ✓             | 🔴     |
+| Safari Mobile   | ✓        | ✓               | ✓             | 🔴     |
 
 ---
 
 #### 5. Performance Tests
 
-| Metric | Target | Test Method | Status |
-|--------|--------|-------------|--------|
-| Widget Load Time | < 500ms | Lighthouse | 🔴 |
-| Payment Completion | < 5s | End-to-end timing | 🔴 |
-| Bundle Size | < 50KB | Webpack bundle analyzer | 🔴 |
-| Server Response | < 200ms | Load testing (k6) | 🔴 |
-| Concurrent Users | 100 req/s | Stress testing | 🔴 |
+| Metric             | Target    | Test Method             | Status |
+| ------------------ | --------- | ----------------------- | ------ |
+| Widget Load Time   | < 500ms   | Lighthouse              | 🔴     |
+| Payment Completion | < 5s      | End-to-end timing       | 🔴     |
+| Bundle Size        | < 50KB    | Webpack bundle analyzer | 🔴     |
+| Server Response    | < 200ms   | Load testing (k6)       | 🔴     |
+| Concurrent Users   | 100 req/s | Stress testing          | 🔴     |
 
 ---
 
@@ -649,15 +694,16 @@ Testing Pyramid:
 
 **Test Users:** 5-10 creators across different platforms
 
-| Criteria | Success Metric | Test Method |
-|----------|----------------|-------------|
-| Setup Time | < 5 minutes | Timed task completion |
-| Setup Success | 90% complete without help | Observation + survey |
-| Documentation Clarity | 4/5 rating | Post-test survey |
-| Payment Success Rate | > 95% | Transaction monitoring |
-| User Satisfaction | 4/5 rating | NPS survey |
+| Criteria              | Success Metric            | Test Method            |
+| --------------------- | ------------------------- | ---------------------- |
+| Setup Time            | < 5 minutes               | Timed task completion  |
+| Setup Success         | 90% complete without help | Observation + survey   |
+| Documentation Clarity | 4/5 rating                | Post-test survey       |
+| Payment Success Rate  | > 95%                     | Transaction monitoring |
+| User Satisfaction     | 4/5 rating                | NPS survey             |
 
 **UAT Phases:**
+
 1. **Alpha:** Internal team + 2-3 friendly users
 2. **Beta:** 10 real creators, private launch
 3. **Public:** Open to all with monitoring
@@ -669,6 +715,7 @@ Testing Pyramid:
 ### Sprint Planning (2-week sprints)
 
 #### Sprint 1: Foundation (Week 1-2)
+
 **Goal:** Basic widget + Express example using official x402 packages
 **Status:** 🟡 In Progress (95% complete - Final debugging)
 
@@ -682,6 +729,7 @@ Testing Pyramid:
 - [ ] Test on Base Sepolia testnet (browser cache blocker)
 
 **Success Criteria:**
+
 - [x] Widget displays and connects wallet via Viem
 - [x] Server uses x402-express middleware (not custom code)
 - [x] Returns 402 with proper payment requirements
@@ -691,6 +739,7 @@ Testing Pyramid:
 ---
 
 #### Sprint 2: Payment Flow (Week 3-4)
+
 **Goal:** Complete payment signing and verification using official tools
 **Status:** 🟡 Partially Complete (Early Start)
 
@@ -704,6 +753,7 @@ Testing Pyramid:
 - [ ] Test full flow with official facilitator (pending browser cache fix)
 
 **Success Criteria:**
+
 - [ ] End-to-end payment works on testnet using official packages (pending)
 - [x] Viem handles wallet signing (no custom EIP-712 code)
 - [ ] Facilitator verifies payment automatically (pending final test)
@@ -713,6 +763,7 @@ Testing Pyramid:
 ---
 
 #### Sprint 3: Documentation & Polish (Week 5-6)
+
 **Goal:** Production-ready with complete docs
 
 - [ ] Write README.md with quick start
@@ -725,6 +776,7 @@ Testing Pyramid:
 - [ ] Create demo video
 
 **Success Criteria:**
+
 - New user can set up in <5 minutes
 - All documentation complete
 - Visual assets ready
@@ -733,6 +785,7 @@ Testing Pyramid:
 ---
 
 #### Sprint 4: Additional Examples (Week 7-8)
+
 **Goal:** Support major platforms using x402 official packages
 
 - [ ] Create Next.js API route example with x402-express
@@ -744,6 +797,7 @@ Testing Pyramid:
 - [ ] Test on Base mainnet with small amounts
 
 **Success Criteria:**
+
 - 3+ server examples using official x402 packages
 - Integration tests passing
 - Endpoints discoverable in x402 Bazaar
@@ -752,6 +806,7 @@ Testing Pyramid:
 ---
 
 #### Sprint 5: Launch Prep (Week 9-10)
+
 **Goal:** Public launch ready
 
 - [ ] Conduct security audit
@@ -764,6 +819,7 @@ Testing Pyramid:
 - [ ] Create video walkthrough
 
 **Success Criteria:**
+
 - Zero critical security issues
 - 90% UAT success rate
 - All launch materials ready
@@ -773,29 +829,29 @@ Testing Pyramid:
 
 ### Feature Status Legend
 
-| Symbol | Status | Description |
-|--------|--------|-------------|
-| 🔴 | Not Started | Not yet begun |
-| 🟡 | In Progress | Actively being worked on |
-| 🟢 | Complete | Done and tested |
-| 🔵 | In Review | Awaiting review/approval |
-| ⚫ | Blocked | Waiting on dependency |
-| ⚪ | Backlog | Planned for future |
+| Symbol | Status      | Description              |
+| ------ | ----------- | ------------------------ |
+| 🔴     | Not Started | Not yet begun            |
+| 🟡     | In Progress | Actively being worked on |
+| 🟢     | Complete    | Done and tested          |
+| 🔵     | In Review   | Awaiting review/approval |
+| ⚫     | Blocked     | Waiting on dependency    |
+| ⚪     | Backlog     | Planned for future       |
 
 ---
 
 ## 🎯 Key Milestones
 
-| Milestone | Target Date | Description | Status |
-|-----------|-------------|-------------|--------|
-| M1: Repository Created | Nov 15 | GitHub repo initialized, basic structure | 🟢 Complete |
-| M2: Widget Renders | Nov 15 | Widget displays and connects wallet | 🟢 Complete |
-| M3: Testnet Payment Works | Nov 16 | First successful testnet donation | 🟡 In Progress (95%) |
-| M4: Documentation Complete | Dec 13 | All core docs written | 🔴 Not Started |
-| M5: Multiple Platform Support | Dec 27 | Express, Next.js, Vercel working | 🔴 Not Started |
-| M6: Beta Launch | Jan 3 | 5 creators using in production | 🔴 Not Started |
-| M7: Public Launch | Jan 10 | Product Hunt launch, public release | 🔴 Not Started |
-| M8: First 100 Users | Jan 24 | 100 creators actively using | 🔴 Not Started |
+| Milestone                     | Target Date | Description                              | Status               |
+| ----------------------------- | ----------- | ---------------------------------------- | -------------------- |
+| M1: Repository Created        | Nov 15      | GitHub repo initialized, basic structure | 🟢 Complete          |
+| M2: Widget Renders            | Nov 15      | Widget displays and connects wallet      | 🟢 Complete          |
+| M3: Testnet Payment Works     | Nov 16      | First successful testnet donation        | 🟡 In Progress (95%) |
+| M4: Documentation Complete    | Dec 13      | All core docs written                    | 🔴 Not Started       |
+| M5: Multiple Platform Support | Dec 27      | Express, Next.js, Vercel working         | 🔴 Not Started       |
+| M6: Beta Launch               | Jan 3       | 5 creators using in production           | 🔴 Not Started       |
+| M7: Public Launch             | Jan 10      | Product Hunt launch, public release      | 🔴 Not Started       |
+| M8: First 100 Users           | Jan 24      | 100 creators actively using              | 🔴 Not Started       |
 
 ---
 
@@ -804,6 +860,7 @@ Testing Pyramid:
 ### Technical Validation
 
 **Must Pass Before Launch:**
+
 - [ ] All P0 features implemented and tested
 - [ ] Security checklist 100% complete
 - [ ] Zero critical bugs
@@ -818,6 +875,7 @@ Testing Pyramid:
 ### Business Validation
 
 **Success Indicators:**
+
 - [ ] 10+ beta users successfully deployed
 - [ ] Average setup time < 5 minutes
 - [ ] User satisfaction > 4/5
@@ -830,6 +888,7 @@ Testing Pyramid:
 ### Community Validation
 
 **Pre-Launch:**
+
 - [ ] 5+ contributors to codebase
 - [ ] 50+ GitHub stars
 - [ ] Active Discord/Telegram community
@@ -843,6 +902,7 @@ Testing Pyramid:
 ### Technical Validation
 
 **Must Pass Before Launch:**
+
 - [ ] All P0 features implemented using official x402 packages
 - [ ] Server uses x402-express middleware (not custom code)
 - [ ] Client uses Viem for wallet interaction
@@ -861,6 +921,7 @@ Testing Pyramid:
 ### User Validation
 
 **Success Indicators:**
+
 - [ ] 5+ beta users successfully deployed
 - [ ] Average setup time < 5 minutes
 - [ ] Documentation is clear and complete
@@ -895,17 +956,20 @@ Testing Pyramid:
 ### Official Resources We Leverage
 
 **Documentation:**
+
 - Official x402 docs: https://docs.cdp.coinbase.com/x402/
 - GitHub examples: https://github.com/coinbase/x402
 - Community Discord: https://discord.gg/invite/cdp
 
 **Packages:**
+
 - `x402-express` - Express.js middleware
 - `@coinbase/x402` - Mainnet facilitator
 - Official TypeScript types included
 
 **Discovery Layer:**
 When creators deploy with `discoverable: true`, their donation endpoints automatically appear in:
+
 - **x402 Bazaar** - Official discovery platform for x402 services
 - Searchable by AI agents and users
 - Free listing (no fees)
@@ -913,6 +977,7 @@ When creators deploy with `discoverable: true`, their donation endpoints automat
 ### What This Gives Us
 
 **Automatic Features:**
+
 - ✅ Payment verification (handled by facilitator)
 - ✅ Security (signatures, nonces, replay prevention)
 - ✅ Gas sponsorship (users don't pay gas)
@@ -920,6 +985,7 @@ When creators deploy with `discoverable: true`, their donation endpoints automat
 - ✅ Discovery (x402 Bazaar listing)
 
 **Community Benefits:**
+
 - ✅ Best practices from Coinbase engineers
 - ✅ Active development and updates
 - ✅ Security audits by Coinbase
@@ -957,31 +1023,32 @@ While we use official x402 packages, we provide:
 
 ## 🔐 Risk Assessment
 
-| Risk | Severity | Likelihood | Mitigation |
-|------|----------|------------|------------|
-| Security vulnerability | Critical | Medium | Thorough testing, security audit, bug bounty |
-| x402 protocol changes | High | Low | Monitor protocol updates, maintain flexibility |
-| Wallet compatibility issues | Medium | Medium | Extensive testing, fallback options |
-| Low adoption rate | Medium | Medium | Strong marketing, excellent docs, community |
-| Regulatory concerns | Medium | Low | Operate as tool, not service; no custody |
-| Competition | Low | High | Open source advantage, zero fees |
-| Blockchain congestion | Medium | Low | Multi-chain support, L2 focus |
+| Risk                        | Severity | Likelihood | Mitigation                                     |
+| --------------------------- | -------- | ---------- | ---------------------------------------------- |
+| Security vulnerability      | Critical | Medium     | Thorough testing, security audit, bug bounty   |
+| x402 protocol changes       | High     | Low        | Monitor protocol updates, maintain flexibility |
+| Wallet compatibility issues | Medium   | Medium     | Extensive testing, fallback options            |
+| Low adoption rate           | Medium   | Medium     | Strong marketing, excellent docs, community    |
+| Regulatory concerns         | Medium   | Low        | Operate as tool, not service; no custody       |
+| Competition                 | Low      | High       | Open source advantage, zero fees               |
+| Blockchain congestion       | Medium   | Low        | Multi-chain support, L2 focus                  |
 
 ---
 
 ## 📅 Review Schedule
 
-| Review Type | Frequency | Notes |
-|-------------|-----------|-------|
-| Sprint Planning | Every 2 weeks | Plan next 2 weeks of work |
-| Security Review | Pre-launch | Before going public |
-| User Feedback | After beta testing | Incorporate feedback before launch |
+| Review Type     | Frequency          | Notes                              |
+| --------------- | ------------------ | ---------------------------------- |
+| Sprint Planning | Every 2 weeks      | Plan next 2 weeks of work          |
+| Security Review | Pre-launch         | Before going public                |
+| User Feedback   | After beta testing | Incorporate feedback before launch |
 
 ---
 
 ## 📚 References & Resources
 
 ### Official x402 Protocol Resources
+
 - **x402 Documentation:** https://docs.cdp.coinbase.com/x402/welcome
 - **x402 GitBook:** https://x402.gitbook.io/x402
 - **x402 GitHub Repository:** https://github.com/coinbase/x402
@@ -991,6 +1058,7 @@ While we use official x402 packages, we provide:
 - **CDP Portal (API Keys):** https://portal.cdp.coinbase.com
 
 ### Official Packages
+
 - **x402-express:** npm package for Express.js middleware
 - **x402-next:** npm package for Next.js middleware
 - **@coinbase/x402:** Mainnet facilitator package
@@ -1000,23 +1068,27 @@ While we use official x402 packages, we provide:
 - **Wagmi:** https://wagmi.sh - React Hooks for Ethereum (optional)
 
 ### Blockchain Technical References
+
 - **EIP-712 Specification:** https://eips.ethereum.org/EIPS/eip-712
 - **EIP-3009 (Transfer Authorization):** https://eips.ethereum.org/EIPS/eip-3009
 - **Base Network Docs:** https://docs.base.org
 - **USDC Contract Addresses:** https://www.circle.com/en/usdc
 
 ### Testing Resources
+
 - **Base Sepolia Explorer:** https://sepolia.basescan.org
 - **Base Mainnet Explorer:** https://basescan.org
 - **Circle USDC Faucet:** https://faucet.circle.com
 - **x402 Testnet Facilitator:** https://x402.org/facilitator
 
 ### x402 Ecosystem
+
 - **x402 Bazaar:** Discovery platform for x402 services
 - **x402 Official Site:** https://www.x402.org
 - **Coinbase Developer Platform:** https://www.coinbase.com/developer-platform
 
 ### Inspiration & Competitors
+
 - Buy Me a Coffee: https://www.buymeacoffee.com
 - Ko-fi: https://ko-fi.com
 - Gitcoin Grants: https://gitcoin.co
@@ -1054,12 +1126,14 @@ A feature is considered "done" when:
 After Sprint 1 reached 95% completion, we conducted a comprehensive architecture review and discovered critical misalignment with x402 protocol best practices:
 
 **Problems Identified:**
+
 1. ❌ Built custom payment verification (x402-express does this automatically)
 2. ❌ Manual signature validation (Coinbase Facilitator handles this)
 3. ❌ Not leveraging official x402 packages correctly
 4. ❌ Violating architecture boundaries (implementing protocol layer)
 
 **Impact:**
+
 - High priority - must fix before launch
 - Does not invalidate Sprint 1 work (UI/UX remains valuable)
 - Estimated 3 days to refactor properly
@@ -1069,18 +1143,21 @@ After Sprint 1 reached 95% completion, we conducted a comprehensive architecture
 **See:** `REFACTORING_PLAN.md` for detailed 3-phase plan
 
 **Phase 1: Install & Configure (Day 1)**
+
 - Research official x402 packages
 - Install x402-express, @coinbase/x402
 - Remove custom verification code
 - Create backup branch
 
 **Phase 2: Refactor Servers (Day 2)**
+
 - Replace custom middleware with x402-express
 - Configure Coinbase Facilitator
 - Test 402 responses
 - Update error handling
 
 **Phase 3: Update Widget & Docs (Day 3)**
+
 - Refactor widget payment flow
 - Use server-provided payment requirements
 - Update all documentation
@@ -1089,6 +1166,7 @@ After Sprint 1 reached 95% completion, we conducted a comprehensive architecture
 #### Success Criteria
 
 Refactoring complete when:
+
 - [ ] Zero custom verification code remains
 - [ ] All servers use x402-express middleware
 - [ ] Coinbase Facilitator validates all payments
@@ -1107,17 +1185,18 @@ Refactoring complete when:
 
 ## 📝 Change Log
 
-| Date | Version | Changes | Author |
-|------|---------|---------|--------|
-| 2025-11-08 | 1.0.0 | Initial PRD created | [Your name] |
-| 2025-11-16 | 1.0.1 | Updated progress: Sprint 1 95% complete, widget and Express server done | [Your name] |
-| 2025-11-19 | 1.1.0 | **MAJOR UPDATE**: Architecture review and refactoring plan<br>- Added architecture boundaries section<br>- Added refactoring notice<br>- Clarified what we build vs what x402 handles<br>- Added violation examples<br>- Created REFACTORING_PLAN.md | [Your name] |
+| Date       | Version | Changes                                                                                                                                                                                                                                              | Author      |
+| ---------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| 2025-11-08 | 1.0.0   | Initial PRD created                                                                                                                                                                                                                                  | [Your name] |
+| 2025-11-16 | 1.0.1   | Updated progress: Sprint 1 95% complete, widget and Express server done                                                                                                                                                                              | [Your name] |
+| 2025-11-19 | 1.1.0   | **MAJOR UPDATE**: Architecture review and refactoring plan<br>- Added architecture boundaries section<br>- Added refactoring notice<br>- Clarified what we build vs what x402 handles<br>- Added violation examples<br>- Created REFACTORING_PLAN.md | [Your name] |
 
 ---
 
 ## 💬 Feedback & Questions
 
 For questions or feedback on this PRD:
+
 - GitHub Discussions: [Link when available]
 - Discord: [Link when available]
 - Email: [Your email]
@@ -1127,6 +1206,7 @@ For questions or feedback on this PRD:
 ## 📋 Current Action Items
 
 **Immediate (Sprint 1.5 - Nov 19-21):**
+
 1. ✅ Architecture review complete
 2. ✅ Refactoring plan created
 3. ⏳ Begin Phase 1: Research & install x402 packages
@@ -1134,8 +1214,8 @@ For questions or feedback on this PRD:
 5. ⏳ Execute Phase 3: Update widget & documentation
 
 **After Refactoring (Sprint 2):**
+
 1. Complete first testnet transaction (x402 compliant)
 2. Write comprehensive documentation
 3. Add unit and integration tests
 4. Prepare for beta testing
-

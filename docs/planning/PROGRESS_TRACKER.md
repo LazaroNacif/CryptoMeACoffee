@@ -8,7 +8,9 @@ Last Updated: November 25, 2025
 **Priority:** P1 - Complete end-to-end testing, then NPM publication
 
 ### Summary
+
 **Sprint 3 Progress (Nov 25)!** Recent achievements:
+
 - ✅ Dynamic donation amounts (server now accepts variable amounts)
 - ✅ Email notification system (nodemailer integration)
 - ✅ Async/non-blocking email delivery
@@ -17,6 +19,7 @@ Last Updated: November 25, 2025
 - 🟡 End-to-end testing in progress
 
 **Previous Sprint 2 Complete (Nov 23):**
+
 - ✅ Floating widget with Buy Me a Coffee visual style
 - ✅ Modal popup design matching modern donation platforms
 - ✅ Message support (500 character limit)
@@ -25,6 +28,7 @@ Last Updated: November 25, 2025
 - ✅ Build successful (133 KB gzipped)
 
 **See:**
+
 - `docs/NPM_DISTRIBUTION_PLAN.md` - Complete NPM publication strategy
 - `docs/E2E_TEST_REPORT.md` - End-to-end testing report and checklist
 - `src/widget.js` - New floating widget implementation
@@ -46,6 +50,7 @@ Last Updated: November 25, 2025
 ### ✅ Done (Sprint 2 - Nov 23, 2025)
 
 #### NPM Distribution Planning
+
 - [x] Research NPM publication requirements
 - [x] Analyze bundle compatibility with CDN usage
 - [x] Verify x402 client library bundling
@@ -59,6 +64,7 @@ Last Updated: November 25, 2025
 **Outcome:** Complete 60+ page NPM distribution guide ready to execute
 
 #### Floating Widget Redesign
+
 - [x] Redesign `src/widget.js` for floating button architecture
 - [x] Implement circular floating button (60px, bottom-right)
 - [x] Create modal overlay with dark background
@@ -73,6 +79,7 @@ Last Updated: November 25, 2025
 **Outcome:** Functional floating widget with smooth UX
 
 #### Message Support Implementation
+
 - [x] Add message state management
 - [x] Create message textarea (500 char limit)
 - [x] Implement character counter (0/500 display)
@@ -83,9 +90,10 @@ Last Updated: November 25, 2025
 **Outcome:** Supporters can include optional messages with donations
 
 #### Auto-Initialization Feature
+
 - [x] Implement script tag data attribute parsing
 - [x] Create auto-init function (executes on DOM ready)
-- [x] Add configuration via data-* attributes
+- [x] Add configuration via data-\* attributes
 - [x] Support: wallet, api, creator-name, color, position, margins
 - [x] Test auto-initialization on page load
 - [x] Store widget instance in window.CryptoMeACoffeeWidget
@@ -93,6 +101,7 @@ Last Updated: November 25, 2025
 **Outcome:** Zero-config setup - just add script tag!
 
 #### CSS Redesign (Buy Me a Coffee Style)
+
 - [x] Redesign `src/styles.css` completely
 - [x] Create floating button styles (circular, shadow, hover)
 - [x] Build modal overlay styles (semi-transparent dark bg)
@@ -111,9 +120,10 @@ Last Updated: November 25, 2025
 **Outcome:** Professional, modern UI matching Buy Me a Coffee aesthetic
 
 #### Example Updates
+
 - [x] Update `examples/vanilla-html/index.html`
 - [x] Add auto-initialization demo
-- [x] Document all data-* attributes
+- [x] Document all data-\* attributes
 - [x] Create usage examples
 - [x] Add configuration reference
 - [x] Update page content to explain floating widget
@@ -121,6 +131,7 @@ Last Updated: November 25, 2025
 **Outcome:** Clear, working example for creators to copy
 
 #### Build & Verification
+
 - [x] Run `npm run build` successfully
 - [x] Verify UMD bundle size: 459.92 KB → 133.53 KB gzipped ✅
 - [x] Verify ES module bundle: 646.21 KB → 158.40 KB gzipped ✅
@@ -135,6 +146,7 @@ Last Updated: November 25, 2025
 ### 🟡 In Progress (Sprint 3 - Testing Phase Active)
 
 #### Server Enhancements ✅ COMPLETE (Nov 25)
+
 - [x] Implement dynamic pricing for variable donation amounts
 - [x] Fix static $1.00 price limitation
 - [x] Preserve request body through middleware chain
@@ -148,6 +160,7 @@ Last Updated: November 25, 2025
 **Status:** Server ready with enhanced features
 
 #### Test Environment Setup ✅ COMPLETE
+
 - [x] Create E2E test report template
 - [x] Start Express server (localhost:3000)
 - [x] Start Vite dev server (localhost:5173)
@@ -164,15 +177,18 @@ Last Updated: November 25, 2025
 ### 🔴 To Do (Sprint 3 - Testing & NPM Publication)
 
 #### End-to-End Testing (Priority: P0)
+
 **Status:** 🟡 Environment ready, manual testing required
 
 **Automated Setup Complete:**
+
 - [x] Start Express server (localhost:3000) ✅
 - [x] Open vanilla HTML example in browser ✅
 - [x] Verify all assets load (widget.umd.js, styles.css) ✅
 - [x] Create comprehensive test report ✅
 
 **Manual Testing Required:**
+
 - [ ] Verify floating button appears and is positioned correctly
 - [ ] Test modal open/close (button click, ESC, overlay)
 - [ ] Test preset amount selection ($1, $3, $5)
@@ -189,6 +205,7 @@ Last Updated: November 25, 2025
 **Test Report:** See `docs/E2E_TEST_REPORT.md` for detailed checklist
 
 #### NPM Publication (Priority: P1)
+
 - [ ] Update package.json (use template from NPM plan)
 - [ ] Create .npmignore file
 - [ ] Create NPM-focused README.md
@@ -201,9 +218,10 @@ Last Updated: November 25, 2025
 - [ ] Verify widget loads from CDN
 
 #### Documentation (Priority: P1)
+
 - [ ] Update main README.md with floating widget
 - [ ] Create WIDGET_CONFIGURATION.md
-- [ ] Document all data-* attributes
+- [ ] Document all data-\* attributes
 - [ ] Add troubleshooting guide
 - [ ] Update TESTING_GUIDE.md
 - [ ] Create migration guide (inline → floating)
@@ -213,10 +231,12 @@ Last Updated: November 25, 2025
 ## 📋 Previous Sprints
 
 ### Sprint 1.5 - x402 Protocol Compliance ✅ COMPLETE
+
 **Sprint Dates:** Nov 19-21 (3 days)
 **Sprint Status:** ✅ Complete
 
 #### Phase 2: Widget Simplification (Day 2) ✅ COMPLETE
+
 - [x] Simplify widget payment signing logic in `src/widget.js`
 - [x] Remove custom EIP-712 domain/types construction
 - [x] Use official x402 client library (createPaymentHeader, selectPaymentRequirements)
@@ -227,6 +247,7 @@ Last Updated: November 25, 2025
 - [x] Fix browser polyfill issues (vite.config.js) ✅ Nov 21, 2025
 
 #### Phase 3: Documentation (Partially Complete)
+
 - [x] Created Phase 2 documentation (PHASE2_WIDGET_SIMPLIFICATION.md)
 - [ ] Update README.md with Phase 1 findings
 - [ ] Create X402_INTEGRATION.md documentation
@@ -237,10 +258,12 @@ Last Updated: November 25, 2025
 ---
 
 ### Sprint 1 - Foundation ✅ COMPLETE
+
 **Sprint Dates:** Nov 15-18
 **Sprint Status:** ✅ Complete (95%, paused for refactoring)
 
 #### Completed
+
 - [x] Repository setup
 - [x] Widget core UI (inline version)
 - [x] Wallet integration (Viem)
@@ -258,6 +281,7 @@ Last Updated: November 25, 2025
 ## ✅ All Completed Features
 
 ### Repository Setup
+
 - [x] Initialize git repository
 - [x] Set up project structure (src/, docs/, assets/, server-examples/)
 - [x] Initialize package.json with dependencies
@@ -266,6 +290,7 @@ Last Updated: November 25, 2025
 - [x] Create README skeleton
 
 ### Widget (Floating - Buy Me a Coffee Style)
+
 - [x] Circular floating button (configurable position)
 - [x] Modal popup interface
 - [x] Preset amount buttons (+1, +3, +5)
@@ -277,12 +302,13 @@ Last Updated: November 25, 2025
 - [x] Responsive design (mobile/tablet/desktop)
 - [x] Light/dark theme support
 - [x] Auto-initialization from script tag
-- [x] Configuration via data-* attributes
+- [x] Configuration via data-\* attributes
 - [x] x402 payment integration (official client)
 - [x] Viem wallet connection
 - [x] Network detection and switching
 
 ### Wallet Integration
+
 - [x] Viem package integration (v2.39.3)
 - [x] Wallet detection (MetaMask + Coinbase Wallet)
 - [x] connectWallet() method
@@ -293,6 +319,7 @@ Last Updated: November 25, 2025
 - [x] Error handling (rejection, no accounts, etc.)
 
 ### Server (Express with x402)
+
 - [x] Express server setup
 - [x] x402-express middleware integration
 - [x] USDC token configuration (Base Sepolia + Mainnet)
@@ -305,6 +332,7 @@ Last Updated: November 25, 2025
 - [x] Server README documentation
 
 ### Payment Flow (x402 Official Client)
+
 - [x] Official x402 client integration
 - [x] createPaymentHeader() usage
 - [x] selectPaymentRequirements() usage
@@ -316,6 +344,7 @@ Last Updated: November 25, 2025
 - [x] Replay attack prevention (automatic)
 
 ### Build System
+
 - [x] Vite configuration
 - [x] UMD bundle generation (459.92 KB → 133.53 KB gzipped)
 - [x] ES module generation (646.21 KB → 158.40 KB gzipped)
@@ -324,6 +353,7 @@ Last Updated: November 25, 2025
 - [x] Build optimization
 
 ### Documentation
+
 - [x] NPM_DISTRIBUTION_PLAN.md (60+ pages)
 - [x] PROGRESS_TRACKER.md (this file)
 - [x] CryptoMeACoffee_PRD.md
@@ -336,6 +366,7 @@ Last Updated: November 25, 2025
 ## 🧪 Testing Status
 
 ### Unit Tests (Target: 80% coverage)
+
 - [ ] Widget constructor validates config
 - [ ] Payment payload builder
 - [ ] Network detection
@@ -344,6 +375,7 @@ Last Updated: November 25, 2025
 - [ ] Message character limit enforcement
 
 ### Integration Tests
+
 - [ ] Happy path: Preset amount donation
 - [ ] Happy path: Custom amount donation
 - [ ] Happy path: Donation with message
@@ -354,6 +386,7 @@ Last Updated: November 25, 2025
 - [ ] Modal open/close functionality
 
 ### Manual Testing (To Do)
+
 - [ ] Floating widget renders
 - [ ] Floating button position (Left/Right)
 - [ ] Modal opens on button click
@@ -379,6 +412,7 @@ Last Updated: November 25, 2025
 ## 🚀 Deployment Checklist
 
 ### Pre-Launch (Testnet)
+
 - [ ] End-to-end testing complete
 - [ ] All manual tests passing
 - [ ] Deploy Express example to Railway/Render
@@ -387,6 +421,7 @@ Last Updated: November 25, 2025
 - [ ] Document testnet setup
 
 ### Pre-Launch (NPM)
+
 - [ ] package.json configured
 - [ ] .npmignore created
 - [ ] NPM-focused README written
@@ -395,6 +430,7 @@ Last Updated: November 25, 2025
 - [ ] Version number set (1.1.0 for floating widget)
 
 ### Launch Day (NPM)
+
 - [ ] npm publish executed
 - [ ] Package visible on npmjs.com
 - [ ] unpkg CDN tested
@@ -403,6 +439,7 @@ Last Updated: November 25, 2025
 - [ ] Update examples with CDN URLs
 
 ### Pre-Launch (Mainnet)
+
 - [ ] Security audit
 - [ ] All tests passing
 - [ ] Documentation complete
@@ -410,6 +447,7 @@ Last Updated: November 25, 2025
 - [ ] Test transaction on mainnet
 
 ### Public Launch
+
 - [ ] GitHub repository public
 - [ ] Documentation site live
 - [ ] Social media posts
@@ -423,11 +461,13 @@ Last Updated: November 25, 2025
 ### Current Status: No Blockers! 🎉
 
 All previous blockers resolved:
+
 - ✅ x402 compliance achieved (Sprint 1.5)
 - ✅ Widget redesign complete (Sprint 2)
 - ✅ NPM distribution plan ready (Sprint 2)
 
 ### Next Steps Require Testing Only
+
 - Testing floating widget functionality
 - Verifying message support works
 - End-to-end payment with message
@@ -436,24 +476,25 @@ All previous blockers resolved:
 
 ## 🎯 Upcoming Milestones
 
-| Milestone | Target Date | Status |
-|-----------|-------------|--------|
-| M1: Repository Created | Nov 15 | ✅ Complete |
-| M2: Widget Renders (Inline) | Nov 15 | ✅ Complete |
-| M3: x402 Compliance | Nov 21 | ✅ Complete |
-| M4: Floating Widget Complete | Nov 23 | ✅ Complete |
-| M5: NPM Distribution Plan | Nov 23 | ✅ Complete |
-| M6: End-to-End Testing | Nov 24 | 🟡 Pending |
-| M7: NPM Publication | Nov 25 | 🟡 Planned |
-| M8: Documentation Complete | Nov 30 | 🔴 In Progress |
-| M9: Beta Launch | Dec 15 | 🔴 Planned |
-| M10: Public Launch | Jan 10 | 🔴 Planned |
+| Milestone                    | Target Date | Status         |
+| ---------------------------- | ----------- | -------------- |
+| M1: Repository Created       | Nov 15      | ✅ Complete    |
+| M2: Widget Renders (Inline)  | Nov 15      | ✅ Complete    |
+| M3: x402 Compliance          | Nov 21      | ✅ Complete    |
+| M4: Floating Widget Complete | Nov 23      | ✅ Complete    |
+| M5: NPM Distribution Plan    | Nov 23      | ✅ Complete    |
+| M6: End-to-End Testing       | Nov 24      | 🟡 Pending     |
+| M7: NPM Publication          | Nov 25      | 🟡 Planned     |
+| M8: Documentation Complete   | Nov 30      | 🔴 In Progress |
+| M9: Beta Launch              | Dec 15      | 🔴 Planned     |
+| M10: Public Launch           | Jan 10      | 🔴 Planned     |
 
 ---
 
 ## 📞 Quick Links
 
 ### Essential
+
 - **PRD:** `/CryptoMeACoffee_PRD.md`
 - **NPM Plan:** `/docs/NPM_DISTRIBUTION_PLAN.md`
 - **Widget:** `/src/widget.js`
@@ -461,6 +502,7 @@ All previous blockers resolved:
 - **Demo:** `/examples/vanilla-html/index.html`
 
 ### Resources
+
 - [x402 Protocol Docs](https://docs.cdp.coinbase.com/x402/)
 - [x402 GitHub](https://github.com/coinbase/x402)
 - [Base Network Docs](https://docs.base.org)
@@ -468,6 +510,7 @@ All previous blockers resolved:
 - [Circle USDC Faucet](https://faucet.circle.com)
 
 ### Tools
+
 - [Base Sepolia Explorer](https://sepolia.basescan.org)
 - [Base Mainnet Explorer](https://basescan.org)
 - [NPM Registry](https://npmjs.com)
@@ -479,12 +522,14 @@ All previous blockers resolved:
 ## 🏆 Sprint Velocity & Burndown
 
 ### Sprint 2: Floating Widget (Nov 23) ✅ COMPLETE
+
 **Total Story Points:** 26
 **Completed:** 26
 **Remaining:** 0
 **Progress:** 100%
 
 **Completed:**
+
 - NPM Distribution Planning: 5 points ✅
 - Widget Redesign: 8 points ✅
 - Message Support: 4 points ✅
@@ -493,6 +538,7 @@ All previous blockers resolved:
 - Example Updates: 2 points ✅
 
 **Burndown Chart:**
+
 ```
 26 │ ●
 23 │
@@ -512,28 +558,33 @@ All previous blockers resolved:
 ---
 
 ### Sprint 1.5: x402 Refactoring (Nov 19-21) ✅ COMPLETE
+
 **Total Story Points:** 21
 **Completed:** 17
 **Remaining:** 4 (documentation deferred)
 **Progress:** 81%
 
 **Completed:**
+
 - Phase 1: Research & Install x402: 5 points ✅
 - Phase 2: Widget Simplification: 4 points ✅
 - Phase 2: Testing & Verification: 4 points ✅
 - Browser Polyfill Fix: 4 points ✅
 
 **Remaining:**
+
 - Phase 3: Documentation: 4 points (deferred to Sprint 3)
 
 ---
 
 ### Sprint 1: Foundation (Nov 15-18) - PAUSED at 95%
+
 **Total Story Points:** 34
 **Completed:** 32
 **Progress:** 95%
 
 **Completed:**
+
 - Repository Setup: 5 points ✅
 - Widget Core UI: 9 points ✅
 - Wallet Integration: 8 points ✅
@@ -549,6 +600,7 @@ All previous blockers resolved:
 ### November 25, 2025 (Monday)
 
 **Completed Today:**
+
 - ✅ Fixed dynamic pricing issue - server now accepts variable donation amounts ($1, $2.5, $5, etc.)
 - ✅ Resolved message handling bug - request body now preserved through middleware chain
 - ✅ Installed nodemailer for email notifications
@@ -561,11 +613,13 @@ All previous blockers resolved:
 - ✅ Updated PROGRESS_TRACKER.md
 
 **Key Fixes:**
+
 1. **Dynamic Pricing:** Server was enforcing static $1.00 price. Now reads amount from request body and creates dynamic x402 payment requirements.
 2. **Message Delivery:** Request body was being consumed by middleware. Now preserved using callback pattern.
 3. **Email Performance:** Email sending now happens in background without blocking user response.
 
 **Next Steps:**
+
 - Complete comprehensive end-to-end testing with real wallet
 - Test email notifications with actual SMTP configuration
 - Verify message delivery from widget to server logs/email
@@ -575,6 +629,7 @@ All previous blockers resolved:
 **Blockers:** None!
 
 **Testing Status:**
+
 - Environment: ✅ All 3 servers running
 - Dynamic pricing: ✅ Working
 - Message handling: ✅ Fixed
@@ -582,6 +637,7 @@ All previous blockers resolved:
 - Widget: 🟡 Needs manual testing with wallet
 
 **Notes:**
+
 - Server is now production-ready with optional email notifications
 - Dynamic pricing allows any donation amount ($0.01 - $1,000,000)
 - Email notifications are async and don't slow down widget response
@@ -591,6 +647,7 @@ All previous blockers resolved:
 ### November 23, 2025 (Saturday)
 
 **Completed Today:**
+
 - ✅ Researched NPM publication feasibility
 - ✅ Created comprehensive NPM distribution plan (60+ pages)
 - ✅ Redesigned widget to floating Buy Me a Coffee style
@@ -608,6 +665,7 @@ All previous blockers resolved:
 - ✅ Opened demo in browser - all assets loaded successfully
 
 **Next Session:**
+
 - Complete manual UI testing (floating button, modal, interactions)
 - Test payment flow with MetaMask/Coinbase Wallet
 - Verify message delivery to server
@@ -618,12 +676,14 @@ All previous blockers resolved:
 **Blockers:** None!
 
 **Testing Status:**
+
 - Test environment: ✅ Ready
 - Servers running: ✅ Express (port 3000) + HTTP (port 8080)
 - Demo page: ✅ http://localhost:8080/examples/vanilla-html/index.html
 - Test report: ✅ docs/E2E_TEST_REPORT.md
 
 **Notes:**
+
 - Floating widget looks professional and matches Buy Me a Coffee UX
 - Bundle size increased slightly (13 KB) but still acceptable
 - Ready for testing phase
@@ -633,6 +693,7 @@ All previous blockers resolved:
 ### November 21, 2025 (Thursday)
 
 **Completed:**
+
 - ✅ Widget now uses official x402 client library
 - ✅ createPaymentHeader() and selectPaymentRequirements() integrated
 - ✅ Browser polyfill issues fixed
@@ -640,6 +701,7 @@ All previous blockers resolved:
 - ✅ Payment flow verified in browser console
 
 **Notes:**
+
 - x402 refactoring successful
 - Widget simplified from 400 lines of custom EIP-712 to 50 lines using official library
 
@@ -648,6 +710,7 @@ All previous blockers resolved:
 ### November 19-20, 2025
 
 **Completed:**
+
 - ✅ Architecture review identified x402 compliance issues
 - ✅ Created comprehensive refactoring plan
 - ✅ Researched official x402 packages
@@ -655,6 +718,7 @@ All previous blockers resolved:
 - ✅ Created backup branches
 
 **Notes:**
+
 - Important pivot - caught architectural issues before launch
 - Decision to use official x402 client was correct
 
@@ -663,6 +727,7 @@ All previous blockers resolved:
 ## 🎉 Wins & Celebrations
 
 ### Sprint 2 Wins (Nov 23, 2025)
+
 - [x] 🎨 Floating widget looks AMAZING - matches Buy Me a Coffee perfectly!
 - [x] 💬 Message support implemented and working
 - [x] 🚀 Auto-initialization makes setup incredibly easy
@@ -672,12 +737,14 @@ All previous blockers resolved:
 - [x] 🎯 Sprint completed in 1 day (planned for 2 days!)
 
 ### Sprint 1.5 Wins (Nov 19-21, 2025)
+
 - [x] 🔧 Fixed browser polyfill issues (vite.config.js) - Nov 21
 - [x] ✅ End-to-end payment tested on testnet - Nov 21
 - [x] 🎯 First successful testnet transaction (x402 compliant) - Nov 21
 - [x] 🎉 Widget simplified to use official x402 client - Nov 21
 
 ### Sprint 1 Wins (Nov 15-18, 2025)
+
 - [x] ✨ First commit to repository - Nov 15
 - [x] 🎨 Widget UI complete with light/dark themes - Nov 15
 - [x] 📱 Responsive design working - Nov 15
@@ -686,6 +753,7 @@ All previous blockers resolved:
 - [x] 🔐 EIP-712 payment signing complete - Nov 16
 
 ### Upcoming Wins
+
 - [ ] First end-to-end test with floating widget + message
 - [ ] First NPM package publication
 - [ ] First widget loaded from CDN
@@ -701,6 +769,7 @@ All previous blockers resolved:
 ### Technical Learnings
 
 **November 23, 2025 - Floating Widget & NPM Planning:**
+
 1. **Bundle Size Management**
    - Added 13 KB for floating widget features (modal, message support)
    - Still under 500 KB total (133 KB gzipped) - acceptable
@@ -725,6 +794,7 @@ All previous blockers resolved:
    - Lesson: Study successful products for UX inspiration
 
 **November 19-21, 2025 - x402 Compliance:**
+
 1. **Don't Reinvent Protocol Layers**
    - x402-express handles verification automatically
    - Our value is UI/UX, not protocol implementation
@@ -741,6 +811,7 @@ All previous blockers resolved:
 ### Process Learnings
 
 **November 23, 2025:**
+
 1. **Sprint Planning Accuracy**
    - Estimated 2 days, completed in 1 day
    - Breaking down tasks well enabled efficient execution
@@ -752,6 +823,7 @@ All previous blockers resolved:
    - Lesson: Document as you go, not after
 
 **November 19-21, 2025:**
+
 1. **PRD Compliance Matters**
    - PRD stated "use x402-express" - should have followed closer
    - Lesson: Treat PRD as source of truth
@@ -765,15 +837,18 @@ All previous blockers resolved:
 ## 🎯 Next Sprint Planning
 
 ### Sprint 3: Testing & NPM Publication (Nov 24-26)
+
 **Sprint Goal:** Complete testing, publish to NPM, deploy demo
 **Sprint Duration:** 3 days
 
 **Planned Work:**
+
 - Day 1: End-to-end testing + bug fixes
 - Day 2: NPM publication + CDN verification
 - Day 3: Documentation updates + demo deployment
 
 **Story Points:** 18
+
 - Testing: 6 points
 - NPM Publication: 6 points
 - Documentation: 4 points
@@ -782,6 +857,7 @@ All previous blockers resolved:
 ---
 
 **Status Legend:**
+
 - 🔴 Not Started / Red
 - 🟡 In Progress / Yellow
 - 🔵 In Review / Blue
