@@ -17,6 +17,7 @@
 import { createPaymentHeader, selectPaymentRequirements } from 'x402/client';
 import { createWalletClient, custom } from 'viem';
 import { baseSepolia, base } from 'viem/chains';
+import { logger } from './logger.js';
 
 class CryptoMeACoffee {
   constructor(config = {}) {
@@ -44,19 +45,19 @@ class CryptoMeACoffee {
       // Advanced
       minAmount: config.minAmount || 0.01,
       maxAmount: config.maxAmount || 1000000,
-      ...config
+      ...config,
     };
 
     this.state = {
-      modalOpen: false,           // NEW: Track modal visibility
+      modalOpen: false, // NEW: Track modal visibility
       connected: false,
       loading: false,
       error: null,
       selectedAmount: null,
-      customAmount: '',           // NEW: Separate custom amount input
+      customAmount: '', // NEW: Separate custom amount input
       userAddress: null,
       currentChainId: null,
-      message: ''                 // NEW: Message from supporter
+      message: '', // NEW: Message from supporter
     };
 
     this.elements = {};
@@ -80,13 +81,13 @@ class CryptoMeACoffee {
       'base-sepolia': {
         chain: baseSepolia,
         id: 84532,
-        name: 'Base Sepolia'
+        name: 'Base Sepolia',
       },
-      'base': {
+      base: {
         chain: base,
         id: 8453,
-        name: 'Base'
-      }
+        name: 'Base',
+      },
     };
 
     this.targetNetwork = this.networks[this.config.network];
@@ -97,10 +98,18 @@ class CryptoMeACoffee {
 
   // Check if wallet is available
   isWalletAvailable() {
-    if (typeof window === 'undefined') return false;
-    if (typeof window.ethereum !== 'undefined') return true;
-    if (typeof window.coinbaseWalletExtension !== 'undefined') return true;
-    if (window.ethereum?.providers && window.ethereum.providers.length > 0) return true;
+    if (typeof window === 'undefined') {
+      return false;
+    }
+    if (typeof window.ethereum !== 'undefined') {
+      return true;
+    }
+    if (typeof window.coinbaseWalletExtension !== 'undefined') {
+      return true;
+    }
+    if (window.ethereum?.providers && window.ethereum.providers.length > 0) {
+      return true;
+    }
     return false;
   }
 
@@ -135,7 +144,7 @@ class CryptoMeACoffee {
 
       // Request account access
       const accounts = await provider.request({
-        method: 'eth_requestAccounts'
+        method: 'eth_requestAccounts',
       });
 
       if (!accounts || accounts.length === 0) {
@@ -153,10 +162,10 @@ class CryptoMeACoffee {
       this.walletClient = createWalletClient({
         account: this.state.userAddress,
         chain: this.targetNetwork.chain,
-        transport: custom(provider)
+        transport: custom(provider),
       });
 
-      console.log('✅ Viem wallet client created:', this.walletClient);
+      logger.log('✅ Viem wallet client created:', this.walletClient);
 
       // Check if on correct network
       if (this.state.currentChainId !== this.targetNetwork.id) {
@@ -184,7 +193,7 @@ class CryptoMeACoffee {
     try {
       await provider.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: targetChainIdHex }]
+        params: [{ chainId: targetChainIdHex }],
       });
 
       this.state.currentChainId = this.targetNetwork.id;
@@ -193,13 +202,15 @@ class CryptoMeACoffee {
         try {
           await provider.request({
             method: 'wallet_addEthereumChain',
-            params: [{
-              chainId: targetChainIdHex,
-              chainName: this.targetNetwork.name,
-              rpcUrls: this.targetNetwork.chain.rpcUrls.default.http,
-              nativeCurrency: this.targetNetwork.chain.nativeCurrency,
-              blockExplorerUrls: [this.targetNetwork.chain.blockExplorers.default.url]
-            }]
+            params: [
+              {
+                chainId: targetChainIdHex,
+                chainName: this.targetNetwork.name,
+                rpcUrls: this.targetNetwork.chain.rpcUrls.default.http,
+                nativeCurrency: this.targetNetwork.chain.nativeCurrency,
+                blockExplorerUrls: [this.targetNetwork.chain.blockExplorers.default.url],
+              },
+            ],
           });
 
           this.state.currentChainId = this.targetNetwork.id;
@@ -217,7 +228,7 @@ class CryptoMeACoffee {
   // Process x402 payment using official client library
   async processPayment() {
     try {
-      console.log('🔄 Step 1: Requesting payment details from server...');
+      logger.log('🔄 Step 1: Requesting payment details from server...');
 
       const amount = this.state.selectedAmount || parseFloat(this.state.customAmount);
 
@@ -229,12 +240,12 @@ class CryptoMeACoffee {
       const initialResponse = await fetch(this.config.apiEndpoint, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           amount: amount,
-          message: this.state.message // ✅ Include message
-        })
+          message: this.state.message, // ✅ Include message
+        }),
       });
 
       // Should get 402 Payment Required
@@ -243,7 +254,7 @@ class CryptoMeACoffee {
       }
 
       const paymentDetails = await initialResponse.json();
-      console.log('💳 Payment details received:', paymentDetails);
+      logger.log('💳 Payment details received:', paymentDetails);
 
       if (!paymentDetails.accepts || paymentDetails.accepts.length === 0) {
         throw new Error('No payment options available');
@@ -256,9 +267,9 @@ class CryptoMeACoffee {
         'exact'
       );
 
-      console.log('🎯 Selected payment requirements:', paymentRequirements);
+      logger.log('🎯 Selected payment requirements:', paymentRequirements);
 
-      console.log('✍️ Step 2: Creating payment header using x402 client...');
+      logger.log('✍️ Step 2: Creating payment header using x402 client...');
 
       // ✅ USE OFFICIAL x402 CLIENT LIBRARY
       const paymentHeader = await createPaymentHeader(
@@ -267,36 +278,36 @@ class CryptoMeACoffee {
         paymentRequirements
       );
 
-      console.log('💳 Payment header created:', paymentHeader.substring(0, 100) + '...');
+      logger.log('💳 Payment header created:', paymentHeader.substring(0, 100) + '...');
 
-      console.log('📤 Step 3: Submitting payment to server...');
+      logger.log('📤 Step 3: Submitting payment to server...');
 
       // Step 3: Submit payment with x402-generated header
       const paymentResponse = await fetch(this.config.apiEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-PAYMENT': paymentHeader
+          'X-PAYMENT': paymentHeader,
         },
         body: JSON.stringify({
           amount: amount,
-          message: this.state.message // ✅ Include message
-        })
+          message: this.state.message, // ✅ Include message
+        }),
       });
 
       if (!paymentResponse.ok) {
         const errorData = await paymentResponse.json().catch(() => ({}));
-        const errorMessage = errorData.error || errorData.message || `Payment failed (${paymentResponse.status})`;
+        const errorMessage =
+          errorData.error || errorData.message || `Payment failed (${paymentResponse.status})`;
         throw new Error(errorMessage);
       }
 
       const result = await paymentResponse.json();
-      console.log('✅ Payment successful:', result);
+      logger.log('✅ Payment successful:', result);
 
       this.showSuccess();
-
     } catch (error) {
-      console.error('❌ Payment error:', error);
+      logger.error('❌ Payment error:', error);
       throw error;
     }
   }
@@ -317,7 +328,7 @@ class CryptoMeACoffee {
     const overlay = this.elements.container.querySelector('.cmac-modal-overlay');
     if (overlay) {
       overlay.classList.remove('show');
-      setTimeout(() => overlay.style.display = 'none', 200);
+      setTimeout(() => (overlay.style.display = 'none'), 200);
     }
     // Reset form
     this.resetForm();
@@ -332,34 +343,36 @@ class CryptoMeACoffee {
     const customInput = this.elements.container.querySelector('.cmac-custom-amount');
     const messageInput = this.elements.container.querySelector('.cmac-message-input');
 
-    if (customInput) customInput.value = '';
+    if (customInput) {
+      customInput.value = '';
+    }
     if (messageInput) {
       messageInput.value = '';
       this.updateCharCounter();
     }
 
     // Deselect amount buttons
-    this.elements.container.querySelectorAll('.cmac-preset-btn').forEach(btn => {
+    this.elements.container.querySelectorAll('.cmac-preset-btn').forEach((btn) => {
       btn.classList.remove('selected');
     });
   }
 
   // NEW: Handle preset amount click
   handlePresetAmount(amount) {
-    console.log('💰 Preset amount clicked:', amount);
+    logger.log('💰 Preset amount clicked:', amount);
     this.state.selectedAmount = amount;
     this.state.customAmount = ''; // Clear custom amount
 
     // Update input field to show selected preset amount
     const customInput = this.elements.container.querySelector('.cmac-custom-amount');
-    console.log('Input field found:', customInput);
+    logger.log('Input field found:', customInput);
     if (customInput) {
       customInput.value = amount;
-      console.log('Input field updated to:', amount);
+      logger.log('Input field updated to:', amount);
     }
 
     // Update button states
-    this.elements.container.querySelectorAll('.cmac-preset-btn').forEach(btn => {
+    this.elements.container.querySelectorAll('.cmac-preset-btn').forEach((btn) => {
       if (parseFloat(btn.dataset.amount) === amount) {
         btn.classList.add('selected');
       } else {
@@ -373,7 +386,7 @@ class CryptoMeACoffee {
     this.state.customAmount = value;
     if (value) {
       this.state.selectedAmount = null; // Deselect preset amounts
-      this.elements.container.querySelectorAll('.cmac-preset-btn').forEach(btn => {
+      this.elements.container.querySelectorAll('.cmac-preset-btn').forEach((btn) => {
         btn.classList.remove('selected');
       });
     }
@@ -402,7 +415,9 @@ class CryptoMeACoffee {
       // Validate amount
       const amount = this.state.selectedAmount || parseFloat(this.state.customAmount);
       if (!amount || amount < this.config.minAmount || amount > this.config.maxAmount) {
-        this.showError(`Please enter an amount between $${this.config.minAmount} and $${this.config.maxAmount}`);
+        this.showError(
+          `Please enter an amount between $${this.config.minAmount} and $${this.config.maxAmount}`
+        );
         return;
       }
 
@@ -418,9 +433,8 @@ class CryptoMeACoffee {
 
       // Process payment
       await this.processPayment();
-
     } catch (error) {
-      console.error('Support error:', error);
+      logger.error('Support error:', error);
       this.showError(error.message || 'Failed to process donation');
     } finally {
       this.setLoading(false);
@@ -455,9 +469,10 @@ class CryptoMeACoffee {
     const xMargin = this.config.xMargin + 'px';
     const yMargin = this.config.yMargin + 'px';
 
-    const floatButtonStyle = position === 'left'
-      ? `left: ${xMargin}; bottom: ${yMargin};`
-      : `right: ${xMargin}; bottom: ${yMargin};`;
+    const floatButtonStyle =
+      position === 'left'
+        ? `left: ${xMargin}; bottom: ${yMargin};`
+        : `right: ${xMargin}; bottom: ${yMargin};`;
 
     // Use logo if provided, otherwise use SVG icon
     const buttonContent = this.config.logoUrl
@@ -500,11 +515,15 @@ class CryptoMeACoffee {
               />
             </div>
             <div class="cmac-preset-amounts">
-              ${this.config.presetAmounts.map(amount => `
+              ${this.config.presetAmounts
+                .map(
+                  (amount) => `
                 <button class="cmac-preset-btn" data-amount="${amount}">
                   $${amount}
                 </button>
-              `).join('')}
+              `
+                )
+                .join('')}
             </div>
           </div>
 
@@ -552,7 +571,9 @@ class CryptoMeACoffee {
     // Close on overlay click
     const overlay = container.querySelector('.cmac-modal-overlay');
     overlay?.addEventListener('click', (e) => {
-      if (e.target === overlay) this.closeModal();
+      if (e.target === overlay) {
+        this.closeModal();
+      }
     });
 
     // ESC key to close modal
@@ -564,11 +585,11 @@ class CryptoMeACoffee {
 
     // Preset amount buttons
     const presetBtns = container.querySelectorAll('.cmac-preset-btn');
-    console.log('🔘 Found preset buttons:', presetBtns.length);
-    presetBtns.forEach(btn => {
-      console.log('🔘 Attaching listener to button:', btn.dataset.amount);
+    logger.log('🔘 Found preset buttons:', presetBtns.length);
+    presetBtns.forEach((btn) => {
+      logger.log('🔘 Attaching listener to button:', btn.dataset.amount);
       btn.addEventListener('click', () => {
-        console.log('🔘 Button clicked!', btn.dataset.amount);
+        logger.log('🔘 Button clicked!', btn.dataset.amount);
         const amount = parseFloat(btn.dataset.amount);
         this.handlePresetAmount(amount);
       });
@@ -592,7 +613,9 @@ class CryptoMeACoffee {
   }
 
   formatAddress(address) {
-    if (!address) return '';
+    if (!address) {
+      return '';
+    }
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   }
 
@@ -647,12 +670,42 @@ class CryptoMeACoffee {
 }
 
 // AUTO-INITIALIZATION from script tag
-(function() {
-  if (typeof window === 'undefined') return;
+(function () {
+  if (typeof window === 'undefined') {
+    return;
+  }
 
   // Find the script tag with data attributes
-  const currentScript = document.currentScript ||
-    document.querySelector('script[data-name="CMAC-Widget"]');
+  const currentScript =
+    document.currentScript || document.querySelector('script[data-name="CMAC-Widget"]');
+
+  function initWidget() {
+    const config = {
+      walletAddress: currentScript.dataset.wallet,
+      apiEndpoint: currentScript.dataset.api,
+      creatorName: currentScript.dataset.creatorName || 'this creator',
+      message: currentScript.dataset.message || 'Thanks for the coffee!',
+      color: currentScript.dataset.color || '#5F7FFF',
+      position: currentScript.dataset.position || 'Right',
+      xMargin: currentScript.dataset.xMargin || '18',
+      yMargin: currentScript.dataset.yMargin || '18',
+      network: currentScript.dataset.network || 'base-sepolia',
+      theme: currentScript.dataset.theme || 'light',
+      logoUrl: currentScript.dataset.logoUrl || null,
+    };
+
+    // Parse preset amounts if provided
+    if (currentScript.dataset.presetAmounts) {
+      try {
+        config.presetAmounts = JSON.parse(currentScript.dataset.presetAmounts);
+      } catch (e) {
+        logger.warn('Invalid presetAmounts format, using defaults');
+      }
+    }
+
+    window.CryptoMeACoffeeWidget = new CryptoMeACoffee(config);
+    window.CryptoMeACoffeeWidget.render('body');
+  }
 
   if (currentScript && currentScript.dataset.wallet && currentScript.dataset.api) {
     // Wait for DOM to be ready
@@ -660,34 +713,6 @@ class CryptoMeACoffee {
       document.addEventListener('DOMContentLoaded', initWidget);
     } else {
       initWidget();
-    }
-
-    function initWidget() {
-      const config = {
-        walletAddress: currentScript.dataset.wallet,
-        apiEndpoint: currentScript.dataset.api,
-        creatorName: currentScript.dataset.creatorName || 'this creator',
-        message: currentScript.dataset.message || 'Thanks for the coffee!',
-        color: currentScript.dataset.color || '#5F7FFF',
-        position: currentScript.dataset.position || 'Right',
-        xMargin: currentScript.dataset.xMargin || '18',
-        yMargin: currentScript.dataset.yMargin || '18',
-        network: currentScript.dataset.network || 'base-sepolia',
-        theme: currentScript.dataset.theme || 'light',
-        logoUrl: currentScript.dataset.logoUrl || null
-      };
-
-      // Parse preset amounts if provided
-      if (currentScript.dataset.presetAmounts) {
-        try {
-          config.presetAmounts = JSON.parse(currentScript.dataset.presetAmounts);
-        } catch (e) {
-          console.warn('Invalid presetAmounts format, using defaults');
-        }
-      }
-
-      window.CryptoMeACoffeeWidget = new CryptoMeACoffee(config);
-      window.CryptoMeACoffeeWidget.render('body');
     }
   }
 })();

@@ -5,6 +5,7 @@
   "description": "Open-source, self-hosted donation widget for accepting cryptocurrency donations via x402 protocol. Zero fees, direct to wallet.",
   "main": "dist/widget.umd.js",
   "module": "dist/widget.es.js",
+  "types": "dist/widget.d.ts",
   "unpkg": "dist/widget.umd.js",
   "jsdelivr": "dist/widget.umd.js",
   "exports": {
@@ -19,6 +20,7 @@
     "dist/widget.umd.js.map",
     "dist/widget.es.js",
     "dist/widget.es.js.map",
+    "dist/widget.d.ts",
     "dist/widget-*.mjs",
     "dist/widget-*.mjs.map",
     "src/styles.css",
