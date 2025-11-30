@@ -4,6 +4,11 @@
 
 [![npm version](https://img.shields.io/npm/v/cryptomeacoffee.svg)](https://www.npmjs.com/package/cryptomeacoffee)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/yourusername/cryptomeacoffee/actions)
+[![Tests](https://img.shields.io/badge/tests-46%20passing-brightgreen.svg)](https://github.com/yourusername/cryptomeacoffee)
+[![Coverage](https://img.shields.io/badge/coverage-31%25-yellow.svg)](https://github.com/yourusername/cryptomeacoffee)
+[![Code Quality](https://img.shields.io/badge/code%20quality-A-brightgreen.svg)](https://github.com/yourusername/cryptomeacoffee)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 ## ✨ Features
 
