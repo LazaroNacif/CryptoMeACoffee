@@ -68,16 +68,16 @@
     "buymeacoffee",
     "kofi"
   ],
-  "author": "",
+  "author": "Pedro Lazaro Nacif",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/LazaroNacif/CryptoMeACoffee.git"
   },
   "bugs": {
-    "url": ""
+    "url": "https://github.com/LazaroNacif/CryptoMeACoffee/issues"
   },
-  "homepage": "",
+  "homepage": "https://github.com/LazaroNacif/CryptoMeACoffee#readme",
   "engines": {
     "node": ">=16.0.0"
   },
