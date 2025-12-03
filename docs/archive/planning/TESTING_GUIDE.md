@@ -219,7 +219,7 @@ describe('Amount Validation', () => {
 - Transaction visible on block explorer
 
 **Test Result:** [ ] Pass [ ] Fail  
-**Notes:** **********\_**********
+**Notes:** ****\*\*****\_****\*\*****
 
 ---
 
@@ -247,7 +247,7 @@ describe('Amount Validation', () => {
 - Exact amount transferred
 
 **Test Result:** [ ] Pass [ ] Fail  
-**Notes:** **********\_**********
+**Notes:** ****\*\*****\_****\*\*****
 
 ---
 
@@ -286,7 +286,7 @@ describe('Amount Validation', () => {
 - Rejection handled gracefully
 
 **Test Result:** [ ] Pass [ ] Fail  
-**Notes:** **********\_**********
+**Notes:** ****\*\*****\_****\*\*****
 
 ---
 
@@ -312,7 +312,7 @@ describe('Amount Validation', () => {
 - No console errors
 
 **Test Result:** [ ] Pass [ ] Fail  
-**Notes:** **********\_**********
+**Notes:** ****\*\*****\_****\*\*****
 
 ---
 
@@ -339,7 +339,7 @@ describe('Amount Validation', () => {
 - Doesn't confuse with other errors
 
 **Test Result:** [ ] Pass [ ] Fail  
-**Notes:** **********\_**********
+**Notes:** ****\*\*****\_****\*\*****
 
 ---
 
@@ -364,7 +364,7 @@ describe('Amount Validation', () => {
 - Retry doesn't duplicate payment
 
 **Test Result:** [ ] Pass [ ] Fail  
-**Notes:** **********\_**********
+**Notes:** ****\*\*****\_****\*\*****
 
 ---
 
@@ -391,7 +391,7 @@ describe('Amount Validation', () => {
 - Burp Suite or similar proxy
 
 **Test Result:** [ ] Pass [ ] Fail  
-**Critical Issues:** **********\_**********
+**Critical Issues:** ****\*\*****\_****\*\*****
 
 ---
 
@@ -415,7 +415,7 @@ describe('Amount Validation', () => {
 - No duplicate transactions
 
 **Test Result:** [ ] Pass [ ] Fail  
-**Critical Issues:** **********\_**********
+**Critical Issues:** ****\*\*****\_****\*\*****
 
 ---
 
@@ -439,7 +439,7 @@ describe('Amount Validation', () => {
 - Headers indicate reset time
 
 **Test Result:** [ ] Pass [ ] Fail  
-**Notes:** **********\_**********
+**Notes:** ****\*\*****\_****\*\*****
 
 ---
 
@@ -456,7 +456,7 @@ describe('Amount Validation', () => {
 | DOM manipulation         | Attempt to inject via DOM       | Widget unaffected              | [ ]       |
 
 **Test Result:** [ ] Pass [ ] Fail  
-**Critical Issues:** **********\_**********
+**Critical Issues:** ****\*\*****\_****\*\*****
 
 ---
 
@@ -480,7 +480,7 @@ describe('Amount Validation', () => {
 - Never logged or transmitted
 
 **Test Result:** [ ] Pass [ ] Fail  
-**Critical Issues:** **********\_**********
+**Critical Issues:** ****\*\*****\_****\*\*****
 
 ---
 
@@ -660,7 +660,7 @@ Instructions: "Install CryptoMeACoffee on your website. We'll time how long it t
 
 1. How difficult was setup? (1-5, 5=very easy) **\_**
 2. Was documentation clear? (1-5) **\_**
-3. What was confusing? **********\_**********
+3. What was confusing? ****\*\*****\_****\*\*****
 
 ---
 
@@ -797,9 +797,9 @@ Instructions: "Intentionally use the wrong network. Can you fix it?"
 ```markdown
 # Test Summary Report
 
-**Date:** ****\_\_\_****
-**Tester:** ****\_\_\_****
-**Build Version:** ****\_\_\_****
+**Date:** \***\*\_\_\_\*\***
+**Tester:** \***\*\_\_\_\*\***
+**Build Version:** \***\*\_\_\_\*\***
 
 ## Executive Summary
 
@@ -819,7 +819,7 @@ Instructions: "Intentionally use the wrong network. Can you fix it?"
 ## Sign-off
 
 Ready for launch: [ ] Yes [ ] No
-Reason: **********\_**********
+Reason: ****\*\*****\_****\*\*****
 ```
 
 ---
@@ -844,28 +844,28 @@ Reason: **********\_**********
 - [ ] All unit tests passing (>80% coverage)
 - [ ] All integration scenarios tested
 - [ ] No critical bugs
-- **Signed off by:** ****\_**** Date: **\_**
+- **Signed off by:** \***\*\_\*\*** Date: **\_**
 
 ### Phase 2: Security
 
 - [ ] All security tests passing
 - [ ] Vulnerability scan clean
 - [ ] Security checklist complete
-- **Signed off by:** ****\_**** Date: **\_**
+- **Signed off by:** \***\*\_\*\*** Date: **\_**
 
 ### Phase 3: UAT
 
 - [ ] 5 users tested successfully
 - [ ] Average satisfaction >4/5
 - [ ] All feedback addressed
-- **Signed off by:** ****\_**** Date: **\_**
+- **Signed off by:** \***\*\_\*\*** Date: **\_**
 
 ### Final Launch Approval
 
 - [ ] All phases complete
 - [ ] Documentation verified
 - [ ] Deployment tested
-- **Approved by:** ****\_**** Date: **\_**
+- **Approved by:** \***\*\_\*\*** Date: **\_**
 
 ---
 

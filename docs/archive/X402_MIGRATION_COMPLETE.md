@@ -16,12 +16,14 @@ The CryptoMeACoffee project has been successfully migrated to use the **official
 ### 1. Widget Implementation
 
 **Before:**
+
 - ❌ `src/widget.js` - Manual EIP-712 signing (~400 lines)
 - ❌ Custom nonce generation
 - ❌ Manual x402 payload construction
 - ❌ Hardcoded domain parameters
 
 **After:**
+
 - ✅ `src/widget.js` - Uses official x402 client library (~200 lines)
 - ✅ Automatic signature creation via `createPaymentHeader()`
 - ✅ Viem wallet client integration
@@ -77,10 +79,12 @@ const paymentHeader = await createPaymentHeader(
 ### 2. Build Configuration
 
 **Before:**
+
 - ❌ Built from `src/widget-x402.js`
 - ❌ Output: `dist/widget-x402.umd.js`
 
 **After:**
+
 - ✅ Builds from `src/widget.js`
 - ✅ Output: `dist/widget.umd.js`
 - ✅ Includes x402 + viem bundled
@@ -88,27 +92,31 @@ const paymentHeader = await createPaymentHeader(
 ### 3. Example Files
 
 **Before:**
+
 - `examples/vanilla-html/index.html` - Used old widget
 - `examples/vanilla-html/index-x402.html` - Used new widget
 
 **After:**
+
 - ✅ `examples/vanilla-html/index.html` - Primary example (uses official x402 client)
 - 🗄️ `examples/vanilla-html/index-legacy.html` - Old example (archived)
 
 ### 4. Package Configuration
 
 **Before:**
+
 ```json
 {
-  "main": "src/widget.js",  // Pointed to old manual implementation
+  "main": "src/widget.js", // Pointed to old manual implementation
   "description": "..."
 }
 ```
 
 **After:**
+
 ```json
 {
-  "main": "dist/widget.umd.js",  // Points to built bundle with x402
+  "main": "dist/widget.umd.js", // Points to built bundle with x402
   "description": "... (using official x402 client library)"
 }
 ```
@@ -117,15 +125,15 @@ const paymentHeader = await createPaymentHeader(
 
 ## 📊 Compliance Status
 
-| Component | Before | After | Status |
-|-----------|--------|-------|--------|
-| **Server** | x402-express middleware | x402-express middleware | ✅ No change needed (already perfect) |
-| **Widget** | Manual EIP-712 | Official x402 client | ✅ Fixed |
-| **Payment Flow** | Custom implementation | `createPaymentHeader()` | ✅ Fixed |
-| **Dependencies** | Installed but unused | Properly integrated | ✅ Fixed |
-| **Examples** | Mixed old/new | Single official version | ✅ Fixed |
-| **Build Output** | widget-x402.umd.js | widget.umd.js | ✅ Fixed |
-| **Documentation** | Unclear | Clear and consistent | ✅ Fixed |
+| Component         | Before                  | After                   | Status                                |
+| ----------------- | ----------------------- | ----------------------- | ------------------------------------- |
+| **Server**        | x402-express middleware | x402-express middleware | ✅ No change needed (already perfect) |
+| **Widget**        | Manual EIP-712          | Official x402 client    | ✅ Fixed                              |
+| **Payment Flow**  | Custom implementation   | `createPaymentHeader()` | ✅ Fixed                              |
+| **Dependencies**  | Installed but unused    | Properly integrated     | ✅ Fixed                              |
+| **Examples**      | Mixed old/new           | Single official version | ✅ Fixed                              |
+| **Build Output**  | widget-x402.umd.js      | widget.umd.js           | ✅ Fixed                              |
+| **Documentation** | Unclear                 | Clear and consistent    | ✅ Fixed                              |
 
 ---
 
@@ -199,16 +207,16 @@ CryptoMeACoffee/
 
 ## 🔍 Comparison with Official Examples
 
-| Pattern | Official Example | Our Implementation | Match |
-|---------|-----------------|-------------------|-------|
-| **Import x402 client** | `import { createPaymentHeader } from 'x402/client'` | Same | ✅ |
-| **Import viem** | `import { createWalletClient, custom } from 'viem'` | Same | ✅ |
-| **Create wallet client** | `createWalletClient({ account, chain, transport })` | Same | ✅ |
-| **Select requirements** | Uses `selectPaymentRequirements()` | Same | ✅ |
-| **Create header** | `await createPaymentHeader(client, version, requirements)` | Same | ✅ |
-| **Server middleware** | `app.use(paymentMiddleware(...))` | Same | ✅ |
-| **EIP-712 domain** | `extra: { name: 'USDC', version: '2' }` | Same | ✅ |
-| **Facilitator** | `{ url: 'https://x402.org/facilitator' }` | Same | ✅ |
+| Pattern                  | Official Example                                           | Our Implementation | Match |
+| ------------------------ | ---------------------------------------------------------- | ------------------ | ----- |
+| **Import x402 client**   | `import { createPaymentHeader } from 'x402/client'`        | Same               | ✅    |
+| **Import viem**          | `import { createWalletClient, custom } from 'viem'`        | Same               | ✅    |
+| **Create wallet client** | `createWalletClient({ account, chain, transport })`        | Same               | ✅    |
+| **Select requirements**  | Uses `selectPaymentRequirements()`                         | Same               | ✅    |
+| **Create header**        | `await createPaymentHeader(client, version, requirements)` | Same               | ✅    |
+| **Server middleware**    | `app.use(paymentMiddleware(...))`                          | Same               | ✅    |
+| **EIP-712 domain**       | `extra: { name: 'USDC', version: '2' }`                    | Same               | ✅    |
+| **Facilitator**          | `{ url: 'https://x402.org/facilitator' }`                  | Same               | ✅    |
 
 **Result:** 🎉 **100% MATCH** with official patterns
 
@@ -219,6 +227,7 @@ CryptoMeACoffee/
 ### Before (Manual Implementation)
 
 **Cons:**
+
 - ❌ 400+ lines of payment logic
 - ❌ Custom EIP-712 construction prone to errors
 - ❌ Manual nonce generation (security risk)
@@ -230,6 +239,7 @@ CryptoMeACoffee/
 ### After (Official Client)
 
 **Pros:**
+
 - ✅ ~50 lines of payment logic
 - ✅ Library handles EIP-712 correctly
 - ✅ Library handles nonce generation
@@ -247,11 +257,13 @@ CryptoMeACoffee/
 **Lesson:** Don't reinvent the wheel. Official libraries exist for a reason.
 
 **What We Did Wrong:**
+
 - Implemented custom EIP-712 signing
 - Built manual x402 payload construction
 - Created custom nonce generation
 
 **What We Should Have Done:**
+
 - Check for official x402 client library first
 - Use `createPaymentHeader()` from the start
 - Let library handle complexity
@@ -261,6 +273,7 @@ CryptoMeACoffee/
 **Lesson:** Official examples show the correct way to integrate.
 
 **What Helped:**
+
 - Reviewing Coinbase x402 GitHub repository
 - Studying QuickNode tutorial
 - Comparing our approach with working examples
@@ -311,14 +324,14 @@ CryptoMeACoffee/
 
 ## 📊 Migration Metrics
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| **Payment Logic LOC** | ~400 lines | ~50 lines | 87.5% reduction |
-| **Dependencies Used** | 0/2 (0%) | 2/2 (100%) | +100% |
-| **Official Pattern Match** | 0% | 100% | +100% |
-| **Code Complexity** | High | Low | Significant |
-| **Maintainability** | Difficult | Easy | Significant |
-| **Protocol Compliance** | Custom | Official | Complete |
+| Metric                     | Before     | After      | Improvement     |
+| -------------------------- | ---------- | ---------- | --------------- |
+| **Payment Logic LOC**      | ~400 lines | ~50 lines  | 87.5% reduction |
+| **Dependencies Used**      | 0/2 (0%)   | 2/2 (100%) | +100%           |
+| **Official Pattern Match** | 0%         | 100%       | +100%           |
+| **Code Complexity**        | High       | Low        | Significant     |
+| **Maintainability**        | Difficult  | Easy       | Significant     |
+| **Protocol Compliance**    | Custom     | Official   | Complete        |
 
 ---
 
@@ -340,6 +353,7 @@ CryptoMeACoffee/
 The CryptoMeACoffee project is now **100% compliant** with x402 best practices. The widget uses the official x402 client library throughout, matching Coinbase's official examples perfectly.
 
 ### What Changed:
+
 - ✅ Widget refactored to use official x402 client
 - ✅ Manual EIP-712 implementation removed
 - ✅ Viem wallet client integrated
@@ -348,6 +362,7 @@ The CryptoMeACoffee project is now **100% compliant** with x402 best practices. 
 - ✅ Package configuration updated
 
 ### Why This Matters:
+
 - Official library handles all protocol complexity
 - Guaranteed compatibility with x402 Facilitator
 - Automatic updates when protocol changes
@@ -355,6 +370,7 @@ The CryptoMeACoffee project is now **100% compliant** with x402 best practices. 
 - Matches production-grade examples
 
 ### Ready for:
+
 - ✅ Production testing
 - ✅ Mainnet deployment
 - ✅ Public release

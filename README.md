@@ -107,9 +107,61 @@ const widget = new CryptoMeACoffee({
 
 ## 🖥️ Server Setup Required
 
-This widget requires a backend server running x402-express middleware.
+This widget requires a backend server running x402-express middleware. Choose your deployment method:
 
-**Quick Backend Setup (Express):**
+### Option 1: Vercel (Serverless - Easiest) ⚡
+
+Perfect for low-medium traffic, zero server management:
+
+```bash
+# Clone and deploy
+git clone https://github.com/yourusername/cryptomeacoffee
+cd server-examples/vercel
+cp .env.example .env
+# Edit .env with your WALLET_ADDRESS
+npm install
+vercel deploy
+```
+
+**Benefits:**
+
+- Deploy in 60 seconds
+- Free tier: 100k requests/month
+- Auto-scaling
+- No server maintenance
+
+**See:** [server-examples/vercel/README.md](server-examples/vercel/README.md)
+
+---
+
+### Option 2: Netlify (Serverless Alternative) 🌊
+
+Similar to Vercel with excellent Git integration:
+
+```bash
+# Clone and deploy
+git clone https://github.com/yourusername/cryptomeacoffee
+cd server-examples/netlify
+cp .env.example .env
+# Edit .env with your WALLET_ADDRESS
+npm install
+netlify deploy
+```
+
+**Benefits:**
+
+- Deploy in 60 seconds
+- Free tier: 125k requests/month
+- Deploy previews for PRs
+- Excellent Git workflow
+
+**See:** [server-examples/netlify/README.md](server-examples/netlify/README.md)
+
+---
+
+### Option 3: Express (Traditional Server) 🖥️
+
+Full control, best for high traffic or custom requirements:
 
 ```bash
 # Clone repository
@@ -125,41 +177,23 @@ npm install
 npm start
 ```
 
-**Minimal Express Server:**
+**Deploy to:** Railway, Render, Fly.io, VPS
 
-```javascript
-import express from 'express';
-import { paymentMiddleware } from 'x402-express';
+**See:** [server-examples/express/README.md](server-examples/express/README.md)
 
-const app = express();
+---
 
-app.use(
-  paymentMiddleware(
-    process.env.WALLET_ADDRESS,
-    {
-      'POST /api/donate': {
-        price: '$1.00',
-        network: 'base-sepolia',
-        config: { description: 'Support this creator' },
-      },
-    },
-    { url: 'https://x402.org/facilitator' }
-  )
-);
+### 📊 Deployment Comparison
 
-app.post('/api/donate', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Thank you!',
-    amount: req.body.amount,
-    supporterMessage: req.body.message,
-  });
-});
-
-app.listen(3000);
-```
-
-See [server examples](https://github.com/yourusername/cryptomeacoffee/tree/main/server-examples) for complete implementations.
+| Feature         | Vercel         | Netlify        | Express      |
+| --------------- | -------------- | -------------- | ------------ |
+| **Setup Time**  | 1 min          | 1 min          | 5 min        |
+| **Free Tier**   | 100k req/month | 125k req/month | N/A          |
+| **Cold Starts** | ~500ms         | ~500ms         | None         |
+| **Max Timeout** | 10s (60s Pro)  | 10s (26s Pro)  | Unlimited    |
+| **Scaling**     | Automatic      | Automatic      | Manual       |
+| **Best For**    | Quick deploys  | Git workflows  | High traffic |
+| **Cost (idle)** | $0             | $0             | Server cost  |
 
 ## 📖 Documentation
 
@@ -170,6 +204,8 @@ Comprehensive guides available in the [`docs/`](docs/) directory:
 - **[Security Checklist](docs/SECURITY-CHECKLIST.md)** - Pre-launch security validation
 - **[FAQ](docs/FAQ.md)** - Frequently asked questions (20+ Q&A)
 - **[Customization](docs/CUSTOMIZATION.md)** - Themes, colors, and styling
+- **[Vercel Deployment](docs/DEPLOY_VERCEL.md)** - Serverless deployment guide
+- **[Server Examples](server-examples/)** - Vercel, Netlify, Express templates
 
 ## 🌐 Browser Support
 

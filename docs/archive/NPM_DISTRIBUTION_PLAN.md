@@ -14,6 +14,7 @@ The CryptoMeACoffee widget is fully compatible with NPM distribution and CDN del
 ### Key Findings
 
 **✅ What's Working:**
+
 - x402 client library properly bundled (~80 KB)
 - Viem integration correctly included (~350 KB)
 - UMD format compatible with `<script>` tags
@@ -23,6 +24,7 @@ The CryptoMeACoffee widget is fully compatible with NPM distribution and CDN del
 - Browser-only code, fully compatible
 
 **⚠️ What Needs Fixing:**
+
 - package.json missing NPM publication fields (2 hours)
 - No .npmignore file to control published files (15 minutes)
 - README needs NPM-focused version (1 hour)
@@ -51,17 +53,18 @@ export default defineConfig({
     lib: {
       entry: 'src/widget.js',
       name: 'CryptoMeACoffee',
-      formats: ['es', 'umd']
+      formats: ['es', 'umd'],
     },
     rollupOptions: {
-      external: [],  // ✅ Bundles everything (x402 + viem)
-      output: { globals: {} }
-    }
-  }
+      external: [], // ✅ Bundles everything (x402 + viem)
+      output: { globals: {} },
+    },
+  },
 });
 ```
 
 **Analysis:**
+
 - ✅ Correct approach: Bundles x402 and viem dependencies
 - ✅ UMD format: Compatible with `<script>` tags
 - ✅ ES format: Compatible with modern bundlers
@@ -79,6 +82,7 @@ dist/
 ```
 
 **Bundle Composition:**
+
 - Viem: ~350 KB (78%)
 - x402: ~80 KB (18%)
 - Widget code: ~17 KB (4%)
@@ -96,6 +100,7 @@ import { createPaymentHeader, selectPaymentRequirements } from 'x402/client';
 ```
 
 **Bundled x402 Functions:**
+
 - `createPaymentHeader()` - Official payment signing
 - `selectPaymentRequirements()` - Payment option selection
 - All EIP-712 signing utilities
@@ -103,6 +108,7 @@ import { createPaymentHeader, selectPaymentRequirements } from 'x402/client';
 - Authorization structure creation
 
 **Compatibility:**
+
 - ✅ x402@0.7.2 supports both ESM and CJS
 - ✅ Vite correctly resolves `x402/client` subpath
 - ✅ All functions available in bundled output
@@ -112,12 +118,14 @@ import { createPaymentHeader, selectPaymentRequirements } from 'x402/client';
 ### Viem Integration
 
 **Bundled Viem Functions:**
+
 ```javascript
 import { createWalletClient, custom } from 'viem';
 import { baseSepolia, base } from 'viem/chains';
 ```
 
 **Included:**
+
 - `createWalletClient()` - Wallet client creation
 - `custom()` transport - window.ethereum integration
 - Chain configs (Base, Base Sepolia)
@@ -125,6 +133,7 @@ import { baseSepolia, base } from 'viem/chains';
 - Transaction signing utilities
 
 **Compatibility:**
+
 - ✅ viem@2.39.3 fully browser-compatible
 - ✅ No Node.js dependencies
 - ✅ Uses native browser APIs
@@ -141,7 +150,7 @@ import { baseSepolia, base } from 'viem/chains';
   "name": "cryptomeacoffee",
   "version": "1.0.0",
   "description": "Open-source, self-hosted donation widget...",
-  "main": "dist/widget.umd.js",  // ✅ GOOD
+  "main": "dist/widget.umd.js", // ✅ GOOD
   "scripts": {
     "build": "vite build"
   },
@@ -194,12 +203,7 @@ import { baseSepolia, base } from 'viem/chains';
     "./styles.css": "./src/styles.css"
   },
 
-  "files": [
-    "dist/",
-    "src/styles.css",
-    "README.md",
-    "LICENSE"
-  ],
+  "files": ["dist/", "src/styles.css", "README.md", "LICENSE"],
 
   "keywords": [
     "crypto",
@@ -306,7 +310,7 @@ Thumbs.db
 
 #### C. Create NPM-Focused README.md
 
-```markdown
+````markdown
 # CryptoMeACoffee
 
 > Accept USDC donations on your website via x402 protocol. Zero fees, self-hosted, fully open-source.
@@ -318,23 +322,24 @@ Thumbs.db
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <link rel="stylesheet" href="https://unpkg.com/cryptomeacoffee@1/src/styles.css">
-</head>
-<body>
-  <div id="donation-widget"></div>
+  <head>
+    <link rel="stylesheet" href="https://unpkg.com/cryptomeacoffee@1/src/styles.css" />
+  </head>
+  <body>
+    <div id="donation-widget"></div>
 
-  <script src="https://unpkg.com/cryptomeacoffee@1/dist/widget.umd.js"></script>
-  <script>
-    const widget = new CryptoMeACoffee({
-      walletAddress: '0xYourAddress',
-      apiEndpoint: 'https://your-api.com/api/donate'
-    });
-    widget.render('donation-widget');
-  </script>
-</body>
+    <script src="https://unpkg.com/cryptomeacoffee@1/dist/widget.umd.js"></script>
+    <script>
+      const widget = new CryptoMeACoffee({
+        walletAddress: '0xYourAddress',
+        apiEndpoint: 'https://your-api.com/api/donate',
+      });
+      widget.render('donation-widget');
+    </script>
+  </body>
 </html>
 ```
+````
 
 ### Via NPM
 
@@ -348,7 +353,7 @@ import 'cryptomeacoffee/styles.css';
 
 const widget = new CryptoMeACoffee({
   walletAddress: '0xYourAddress',
-  apiEndpoint: 'https://your-api.com/api/donate'
+  apiEndpoint: 'https://your-api.com/api/donate',
 });
 
 widget.render('donation-widget');
@@ -359,18 +364,18 @@ widget.render('donation-widget');
 ```javascript
 const widget = new CryptoMeACoffee({
   // Required
-  walletAddress: '0x...',        // Your wallet address
-  apiEndpoint: 'https://...',    // Your x402 server endpoint
+  walletAddress: '0x...', // Your wallet address
+  apiEndpoint: 'https://...', // Your x402 server endpoint
 
   // Optional
-  presetAmounts: [1, 3, 5],      // Preset donation amounts (USD)
-  theme: 'light',                // 'light' or 'dark'
-  network: 'base-sepolia',       // 'base-sepolia' or 'base'
+  presetAmounts: [1, 3, 5], // Preset donation amounts (USD)
+  theme: 'light', // 'light' or 'dark'
+  network: 'base-sepolia', // 'base-sepolia' or 'base'
   buttonText: '☕ Buy me a coffee',
   successMessage: 'Thank you for your support!',
-  logoUrl: null,                 // Custom logo URL
-  minAmount: 0.01,               // Minimum donation (USD)
-  maxAmount: 1000                // Maximum donation (USD)
+  logoUrl: null, // Custom logo URL
+  minAmount: 0.01, // Minimum donation (USD)
+  maxAmount: 1000, // Maximum donation (USD)
 });
 ```
 
@@ -428,7 +433,8 @@ MIT - See [LICENSE](LICENSE) file
 
 - [GitHub Issues](https://github.com/yourusername/cryptomeacoffee/issues)
 - [GitHub Discussions](https://github.com/yourusername/cryptomeacoffee/discussions)
-```
+
+````
 
 ---
 
@@ -442,15 +448,17 @@ MIT - See [LICENSE](LICENSE) file
 # Update author, repository URLs
 # Add exports, unpkg, jsdelivr fields
 # Add files whitelist
-```
+````
 
 **Step 1.2: Create .npmignore**
+
 ```bash
 # Create file from section 4B
 # Verify with: npm pack --dry-run
 ```
 
 **Step 1.3: Create NPM-focused README.md**
+
 ```bash
 # Write condensed README for npm
 # Include CDN and npm usage examples
@@ -458,6 +466,7 @@ MIT - See [LICENSE](LICENSE) file
 ```
 
 **Step 1.4: Verify Build**
+
 ```bash
 npm run build
 ls -lh dist/
@@ -467,12 +476,14 @@ ls -lh dist/
 ### Phase 2: Test Package Locally (1 hour)
 
 **Step 2.1: Create Test Tarball**
+
 ```bash
 npm pack
 # Creates: cryptomeacoffee-1.0.0.tgz
 ```
 
 **Step 2.2: Test in Clean Project**
+
 ```bash
 mkdir /tmp/test-cryptomeacoffee
 cd /tmp/test-cryptomeacoffee
@@ -506,6 +517,7 @@ open test.html
 ```
 
 **Step 2.3: Verify Package Contents**
+
 ```bash
 tar -tzf cryptomeacoffee-1.0.0.tgz
 
@@ -523,6 +535,7 @@ tar -tzf cryptomeacoffee-1.0.0.tgz
 ### Phase 3: Publish to NPM (30 minutes)
 
 **Step 3.1: NPM Account Setup**
+
 ```bash
 # If you don't have an account
 npm adduser
@@ -532,6 +545,7 @@ npm login
 ```
 
 **Step 3.2: Verify Package Name**
+
 ```bash
 npm view cryptomeacoffee
 # Should return 404 (name available)
@@ -539,12 +553,14 @@ npm view cryptomeacoffee
 ```
 
 **Step 3.3: Dry Run**
+
 ```bash
 npm publish --dry-run
 # Review output, verify files list
 ```
 
 **Step 3.4: Publish**
+
 ```bash
 npm publish
 
@@ -553,6 +569,7 @@ npm publish
 ```
 
 **Step 3.5: Verify Publication**
+
 ```bash
 npm view cryptomeacoffee
 
@@ -563,38 +580,42 @@ open https://www.npmjs.com/package/cryptomeacoffee
 ### Phase 4: Test CDN Delivery (30 minutes)
 
 **Step 4.1: Wait for CDN Propagation**
+
 ```
 Wait 5-10 minutes for unpkg/jsDelivr to index the package
 ```
 
 **Step 4.2: Test unpkg**
+
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <link rel="stylesheet" href="https://unpkg.com/cryptomeacoffee@1/src/styles.css">
-</head>
-<body>
-  <div id="widget"></div>
-  <script src="https://unpkg.com/cryptomeacoffee@1/dist/widget.umd.js"></script>
-  <script>
-    const widget = new CryptoMeACoffee({
-      walletAddress: '0x518Cb6A5475097Ac3dDe6D2AF98F7cb1593262FB',
-      apiEndpoint: 'https://your-server.vercel.app/api/donate',
-      network: 'base-sepolia'
-    });
-    widget.render('widget');
-  </script>
-</body>
+  <head>
+    <link rel="stylesheet" href="https://unpkg.com/cryptomeacoffee@1/src/styles.css" />
+  </head>
+  <body>
+    <div id="widget"></div>
+    <script src="https://unpkg.com/cryptomeacoffee@1/dist/widget.umd.js"></script>
+    <script>
+      const widget = new CryptoMeACoffee({
+        walletAddress: '0x518Cb6A5475097Ac3dDe6D2AF98F7cb1593262FB',
+        apiEndpoint: 'https://your-server.vercel.app/api/donate',
+        network: 'base-sepolia',
+      });
+      widget.render('widget');
+    </script>
+  </body>
 </html>
 ```
 
 **Step 4.3: Test jsDelivr**
+
 ```html
 <script src="https://cdn.jsdelivr.net/npm/cryptomeacoffee@1/dist/widget.umd.js"></script>
 ```
 
 **Step 4.4: End-to-End Payment Test**
+
 - Load widget from CDN
 - Connect MetaMask/Coinbase Wallet
 - Select donation amount
@@ -610,18 +631,21 @@ Wait 5-10 minutes for unpkg/jsDelivr to index the package
 ### Pre-Publication Tests
 
 ✅ **Package Structure**
+
 ```bash
 npm pack --dry-run
 # Verify only necessary files included
 ```
 
 ✅ **UMD Bundle**
+
 ```bash
 # Check global namespace
 grep "window.CryptoMeACoffee" dist/widget.umd.js
 ```
 
 ✅ **Dependencies Bundled**
+
 ```bash
 # Verify x402 included
 grep "createPaymentHeader" dist/widget.umd.js
@@ -630,6 +654,7 @@ grep "createWalletClient" dist/widget.umd.js
 ```
 
 ✅ **No Server Code**
+
 ```bash
 # Should find nothing
 grep "require('fs')" dist/widget.umd.js
@@ -639,6 +664,7 @@ grep "require('http')" dist/widget.umd.js
 ### Post-Publication Tests
 
 ✅ **NPM Installation**
+
 ```bash
 npm install cryptomeacoffee
 node -e "const W = require('cryptomeacoffee'); console.log(typeof W);"
@@ -646,13 +672,15 @@ node -e "const W = require('cryptomeacoffee'); console.log(typeof W);"
 ```
 
 ✅ **CDN Loading**
+
 ```javascript
 // In browser console
-typeof CryptoMeACoffee  // Should be 'function'
-typeof window.CryptoMeACoffee  // Should be 'function'
+typeof CryptoMeACoffee; // Should be 'function'
+typeof window.CryptoMeACoffee; // Should be 'function'
 ```
 
 ✅ **Widget Functionality**
+
 - [ ] Widget renders
 - [ ] Wallet connection works
 - [ ] Network detection/switching works
@@ -661,6 +689,7 @@ typeof window.CryptoMeACoffee  // Should be 'function'
 - [ ] Success/error states display
 
 ✅ **Cross-Browser**
+
 - [ ] Chrome Desktop
 - [ ] Firefox Desktop
 - [ ] Safari Desktop
@@ -745,6 +774,7 @@ Gzipped: 132 KB (compression ratio: 3.4x)
 ### CDN URLs
 
 **unpkg (Recommended):**
+
 ```
 https://unpkg.com/cryptomeacoffee@1.0.0/dist/widget.umd.js
 https://unpkg.com/cryptomeacoffee@1/dist/widget.umd.js  (latest v1.x)
@@ -752,6 +782,7 @@ https://unpkg.com/cryptomeacoffee/dist/widget.umd.js     (latest)
 ```
 
 **jsDelivr (Alternative):**
+
 ```
 https://cdn.jsdelivr.net/npm/cryptomeacoffee@1.0.0/dist/widget.umd.js
 https://cdn.jsdelivr.net/npm/cryptomeacoffee@1/dist/widget.umd.js
@@ -764,6 +795,7 @@ https://cdn.jsdelivr.net/npm/cryptomeacoffee@1/dist/widget.umd.js
 - **2.0.x** - Breaking API changes (if needed)
 
 Use semantic versioning:
+
 - Patch (1.0.1): Bug fixes
 - Minor (1.1.0): New features, backwards compatible
 - Major (2.0.0): Breaking changes
@@ -775,6 +807,7 @@ Use semantic versioning:
 ### Current State: ✅ 95% Ready for NPM
 
 **Working:**
+
 - ✅ Build system bundles x402 + viem correctly
 - ✅ UMD format compatible with CDN
 - ✅ ES module available for bundlers
@@ -783,6 +816,7 @@ Use semantic versioning:
 - ✅ Reasonable bundle size (132 KB gzipped)
 
 **Needs Work:**
+
 - ⚠️ package.json missing NPM fields (2 hours)
 - ⚠️ .npmignore file needed (15 minutes)
 - ⚠️ NPM-focused README needed (1 hour)

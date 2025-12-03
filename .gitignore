@@ -51,3 +51,4 @@ credentials.json
 
 # Development tools
 chrome-devtools-mcp
+.claude/

@@ -1,4 +1,4 @@
-# Deploying to Vercel (Serverless)
+run# Deploying to Vercel (Serverless)
 
 Vercel specializes in serverless deployments and is perfect for frontend-heavy applications. This guide shows how to deploy CryptoMeACoffee's backend as a Vercel serverless function.
 

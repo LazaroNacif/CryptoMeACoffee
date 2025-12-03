@@ -1,0 +1,18 @@
+[build]
+  functions = "netlify/functions"
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+
+[[redirects]]
+  from = "/api/donate"
+  to = "/.netlify/functions/donate"
+  status = 200
+  force = true
+
+[functions]
+  node_bundler = "esbuild"

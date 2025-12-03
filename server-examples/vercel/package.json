@@ -1,0 +1,35 @@
+{
+  "name": "cryptomeacoffee-vercel",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Vercel serverless function for CryptoMeACoffee donations",
+  "main": "api/donate.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel",
+    "deploy:prod": "vercel --prod"
+  },
+  "keywords": [
+    "crypto",
+    "donations",
+    "x402",
+    "vercel",
+    "serverless",
+    "usdc"
+  ],
+  "author": "Pedro Lazaro Nacif",
+  "license": "MIT",
+  "dependencies": {
+    "@coinbase/x402": "^0.7.1",
+    "x402-express": "^0.7.0",
+    "express-validator": "^7.3.1",
+    "isomorphic-dompurify": "^2.33.0",
+    "nodemailer": "^7.0.10"
+  },
+  "devDependencies": {
+    "vercel": "^37.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

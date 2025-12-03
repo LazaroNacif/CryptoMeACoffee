@@ -170,71 +170,57 @@
 
     <!-- Info Banner -->
     <div class="info-banner">
-      <h2>>>> NEW FLOATING WIDGET STYLE!</h2>
-      <p style="margin-bottom: 1rem; font-size: 0.7rem;">THIS VERSION FEATURES:</p>
+      <h2>>>> ACCEPT CRYPTO DONATIONS ON ANY WEBSITE</h2>
+      <p style="margin-bottom: 1rem; font-size: 0.7rem;">A MODERN, OPEN-SOURCE DONATION WIDGET THAT:</p>
       <ul>
-        <li><strong>FLOATING BUTTON</strong> - Bottom-right corner</li>
-        <li><strong>MODAL POPUP</strong> - Clean, centered design</li>
-        <li><strong>MESSAGE SUPPORT</strong> - Optional supporter messages (500 chars)</li>
-        <li><strong>AUTO-INITIALIZATION</strong> - Just add script tag with data attributes</li>
-        <li><strong>X402 COMPLIANT</strong> - Official client library integration</li>
+        <li><strong>GASLESS DONATIONS</strong> - Supporters pay zero gas fees via x402 protocol</li>
+        <li><strong>DEVELOPER FRIENDLY</strong> - Drop-in widget + backend in minutes</li>
+        <li><strong>BLOCKCHAIN NATIVE</strong> - Built on Base with USDC for stability</li>
       </ul>
     </div>
 
     <!-- Demo Section -->
     <div class="demo-section">
       <div class="demo-card">
-        <h2>>>> LOOK AT THE BOTTOM-RIGHT!</h2>
+        <h2>>>> WHY CRYPTOMEACOFFEE?</h2>
         <p>
-          Click the floating coffee button in the bottom-right corner to see the donation modal.
+          Traditional payment processors take 3-5% fees and add friction. With CryptoMeACoffee, your supporters send USDC directly to your wallet.
         </p>
         <p>
-          The widget uses <span class="highlight">OFFICIAL X402 CLIENT LIBRARY</span> with Viem for wallet interaction.
+          The <span class="highlight">X402 PROTOCOL</span> eliminates gas fees for donors, making crypto donations as easy as traditional payments.
         </p>
         <div class="cta">
-          CLICK THE BUTTON TO TEST THE WIDGET!
+          TRY THE WIDGET IN THE CORNER!
         </div>
       </div>
 
       <div class="demo-card">
-        <h2>>>> SUPER EASY SETUP</h2>
+        <h2>>>> GETTING STARTED</h2>
         <p>
-          Just add one script tag to your website:
+          Deploy the included backend, add one script tag to your site, and you're live in under 5 minutes:
         </p>
         <div class="code-block"><code>&lt;script data-name="CMAC-Widget"
-        src="widget.min.js"
-        data-wallet="0x..."
-        data-api="https://your-api.com/donate"
-        data-creator-name="Your Name"
-        data-color="#5F7FFF"
-        data-position="Right"&gt;&lt;/script&gt;</code></div>
+  src="https://unpkg.com/cryptomeacoffee/dist/widget.min.js"
+  data-wallet="0x..."
+  data-api="https://your-api.com/donate"
+  data-creator-name="Your Name"&gt;
+&lt;/script&gt;</code></div>
         <p style="margin-top: 1rem;">
-          That's it! The widget auto-initializes and renders the floating button.
+          That's it! The widget auto-initializes and renders.
         </p>
       </div>
 
       <div class="demo-card">
-        <h2>>>> MESSAGE SUPPORT</h2>
+        <h2>>>> OPEN SOURCE</h2>
         <p>
-          Supporters can now include an optional message (up to 500 characters) with their donations.
+          CryptoMeACoffee is 100% open source and free to use. No hidden fees, no lock-in, no proprietary platforms.
         </p>
         <p>
-          Messages are sent in the request body along with the amount, and your backend receives them automatically.
+          Supporters can send messages with donations and you get instant email notifications.
         </p>
-      </div>
-
-      <div class="demo-card">
-        <h2>>>> CONFIGURATION OPTIONS</h2>
-        <ul style="line-height: 1.8;">
-          <li><code>data-wallet</code> - Your wallet address (required)</li>
-          <li><code>data-api</code> - Your backend endpoint (required)</li>
-          <li><code>data-creator-name</code> - Display name in modal</li>
-          <li><code>data-color</code> - Button color (hex)</li>
-          <li><code>data-position</code> - "Left" or "Right"</li>
-          <li><code>data-x_margin</code> - Horizontal margin (px)</li>
-          <li><code>data-y_margin</code> - Vertical margin (px)</li>
-          <li><code>data-network</code> - "base-sepolia" or "base"</li>
-        </ul>
+        <p>
+          MIT Licensed with clear guides, documentation and examples. Use it as you like it!
+        </p>
       </div>
     </div>
   </div>
