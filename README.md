@@ -4,10 +4,10 @@
 
 [![npm version](https://img.shields.io/npm/v/cryptomeacoffee.svg)](https://www.npmjs.com/package/cryptomeacoffee)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/yourusername/cryptomeacoffee/actions)
-[![Tests](https://img.shields.io/badge/tests-46%20passing-brightgreen.svg)](https://github.com/yourusername/cryptomeacoffee)
-[![Coverage](https://img.shields.io/badge/coverage-31%25-yellow.svg)](https://github.com/yourusername/cryptomeacoffee)
-[![Code Quality](https://img.shields.io/badge/code%20quality-A-brightgreen.svg)](https://github.com/yourusername/cryptomeacoffee)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/LazaroNacif/cryptomeacoffee/actions)
+[![Tests](https://img.shields.io/badge/tests-46%20passing-brightgreen.svg)](https://github.com/LazaroNacif/cryptomeacoffee)
+[![Coverage](https://img.shields.io/badge/coverage-31%25-yellow.svg)](https://github.com/LazaroNacif/cryptomeacoffee)
+[![Code Quality](https://img.shields.io/badge/code%20quality-A-brightgreen.svg)](https://github.com/LazaroNacif/cryptomeacoffee)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 ## ✨ Features
@@ -115,7 +115,7 @@ Perfect for low-medium traffic, zero server management:
 
 ```bash
 # Clone and deploy
-git clone https://github.com/yourusername/cryptomeacoffee
+git clone https://github.com/LazaroNacif/cryptomeacoffee
 cd server-examples/vercel
 cp .env.example .env
 # Edit .env with your WALLET_ADDRESS
@@ -140,7 +140,7 @@ Similar to Vercel with excellent Git integration:
 
 ```bash
 # Clone and deploy
-git clone https://github.com/yourusername/cryptomeacoffee
+git clone https://github.com/LazaroNacif/cryptomeacoffee
 cd server-examples/netlify
 cp .env.example .env
 # Edit .env with your WALLET_ADDRESS
@@ -165,7 +165,7 @@ Full control, best for high traffic or custom requirements:
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/cryptomeacoffee
+git clone https://github.com/LazaroNacif/cryptomeacoffee
 cd server-examples/express
 
 # Configure environment
@@ -276,15 +276,15 @@ MIT - See [LICENSE](LICENSE) file
 
 ## 🔗 Links
 
-- [GitHub Repository](https://github.com/yourusername/cryptomeacoffee)
+- [GitHub Repository](https://github.com/LazaroNacif/cryptomeacoffee)
 - [NPM Package](https://www.npmjs.com/package/cryptomeacoffee)
-- [Report Issues](https://github.com/yourusername/cryptomeacoffee/issues)
+- [Report Issues](https://github.com/LazaroNacif/cryptomeacoffee/issues)
 - [x402 Protocol Docs](https://docs.cdp.coinbase.com/x402/)
 
 ## 💬 Support
 
-- [GitHub Issues](https://github.com/yourusername/cryptomeacoffee/issues)
-- [GitHub Discussions](https://github.com/yourusername/cryptomeacoffee/discussions)
+- [GitHub Issues](https://github.com/LazaroNacif/cryptomeacoffee/issues)
+- [GitHub Discussions](https://github.com/LazaroNacif/cryptomeacoffee/discussions)
 
 ---
 

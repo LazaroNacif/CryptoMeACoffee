@@ -476,7 +476,7 @@ class CryptoMeACoffee {
 
     // Use logo if provided, otherwise use SVG icon
     const buttonContent = this.config.logoUrl
-      ? `<img src="${this.config.logoUrl}" alt="Support" style="width: 32px; height: 32px; object-fit: contain;" />`
+      ? `<img src="${this.config.logoUrl}" alt="Support" style="width: 73%; height: 73%; object-fit: contain;" />`
       : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M2 21h19v-3H2v3zM20 8H4V5h16v3zm0 6c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" fill="white"/>
         </svg>`;
