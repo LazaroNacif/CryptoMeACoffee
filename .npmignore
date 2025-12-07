@@ -1,42 +1,74 @@
-# Keep everything from .gitignore except dist/
-# This file takes precedence over .gitignore
+# GitHub-specific files
+.github/
+.git/
+.gitignore
+.gitattributes
 
-# Copy most .gitignore rules
-node_modules/
-*.log
-.DS_Store
-.env*
-
-# DON'T exclude dist/ (override .gitignore)
-# dist/ will be included
-
-# Explicitly exclude development files
-chrome-devtools-mcp/
-examples/
-server-examples/
+# Development files
 tests/
+*.test.js
+*.spec.js
+coverage/
+.nyc_output/
+
+# Documentation
 docs/
-.claude/
-config/
-scripts/
-
-# Exclude source except styles
-src/*.js
-src/*.ts
-
-# Exclude config files
-vite.config.js
-*.config.js
-*.config.ts
-
-# Exclude all MD files except README
 *.md
 !README.md
+!LICENSE.md
+!CHANGELOG.md
 
-# Exclude IDE and OS
+# Examples
+examples/
+server-examples/
+
+# Archived files
+.archived/
+
+# Build and development tools
+.eslintrc.*
+.eslintignore
+.prettierrc
+.prettierignore
+jest.config.js
+vite.config.js
+rollup.config.js
+webpack.config.js
+tsconfig.json
+
+# IDE files
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
 Thumbs.db
 
-# Exclude tarballs
-*.tgz
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Lock files (keep package-lock for reproducibility)
+# but exclude yarn/pnpm locks
+yarn.lock
+pnpm-lock.yaml
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Temporary files
+tmp/
+temp/
+.cache/
+
+# Husky hooks
+.husky/
+
+# Source maps (optional - uncomment if you don't want to ship them)
+# *.map

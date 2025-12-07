@@ -1,0 +1,68 @@
+version: 2
+
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "LazaroNacif"
+    assignees:
+      - "LazaroNacif"
+    labels:
+      - "dependencies"
+      - "automerge"
+    commit-message:
+      prefix: "⬆️"
+      prefix-development: "⬆️ [dev]"
+      include: "scope"
+    
+    # Semantic versioning preferences
+    versioning-strategy: increase
+    
+    # Group dependency updates
+    groups:
+      # Group all production dependencies together
+      production:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "@types/*"
+          - "eslint*"
+          - "prettier*"
+          - "@testing-library/*"
+          - "jest*"
+          - "vite*"
+      
+      # Group all development dependencies together
+      development:
+        dependency-type: "development"
+        patterns:
+          - "*"
+    
+    # Ignore specific dependencies (if needed)
+    ignore:
+      # Ignore major version updates for viem (handle manually)
+      - dependency-name: "viem"
+        update-types: ["version-update:semver-major"]
+      
+      # Ignore patch updates for stable dependencies
+      # - dependency-name: "*"
+      #   update-types: ["version-update:semver-patch"]
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "⬆️ [ci]"

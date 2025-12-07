@@ -1,0 +1,157 @@
+name: Bug Report
+description: Report a bug or issue with CryptoMeACoffee
+title: "[Bug]: "
+labels: ["bug", "triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the form below.
+
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      description: Which version of CryptoMeACoffee are you using?
+      options:
+        - 1.1.x (latest)
+        - 1.0.x
+        - main branch
+        - Other (specify in description)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: deployment
+    attributes:
+      label: Deployment Method
+      description: How are you deploying the server?
+      options:
+        - Vercel (Serverless)
+        - Netlify (Serverless)
+        - Express (Traditional)
+        - Other (specify in description)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: network
+    attributes:
+      label: Network
+      description: Which network are you using?
+      options:
+        - base-sepolia (testnet)
+        - base (mainnet)
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: What happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Initialize widget with...
+        2. Click on...
+        3. Enter amount...
+        4. See error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: I expected...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: Instead, I got...
+    validations:
+      required: true
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Console Errors
+      description: Any error messages from browser console or server logs
+      placeholder: Paste console output here...
+      render: shell
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: Your widget configuration (remove sensitive data!)
+      placeholder: |
+        const widget = new CryptoMeACoffee({
+          walletAddress: '0x...',
+          apiEndpoint: 'https://...',
+          // ...other config
+        });
+      render: javascript
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      description: Which browser are you using?
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - Mobile Safari (iOS)
+        - Chrome (Android)
+        - Other (specify in description)
+    validations:
+      required: false
+
+  - type: dropdown
+    id: wallet
+    attributes:
+      label: Wallet
+      description: Which wallet are you using?
+      options:
+        - MetaMask
+        - Coinbase Wallet
+        - Rainbow
+        - Other (specify in description)
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other information that might help us fix this bug
+      placeholder: Screenshots, links, etc.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have removed all sensitive information (wallet addresses, API keys, etc.)
+          required: true
+        - label: I am using a supported version (1.0.x or higher)
+          required: true

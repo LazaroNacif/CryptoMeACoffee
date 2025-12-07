@@ -1,0 +1,89 @@
+name: Question
+description: Ask a question about CryptoMeACoffee
+title: "[Question]: "
+labels: ["question", "triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question? We're here to help!
+        
+        **Before asking:**
+        - Check the [FAQ](../docs/FAQ.md)
+        - Search [existing discussions](https://github.com/LazaroNacif/CryptoMeACoffee/discussions)
+        - Review the [documentation](../docs/)
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Question Category
+      description: What is your question about?
+      options:
+        - Installation & Setup
+        - Configuration
+        - Integration (React, Vue, etc.)
+        - Server Deployment
+        - Wallet & Transactions
+        - x402 Protocol
+        - Customization & Styling
+        - Security & Privacy
+        - Troubleshooting
+        - Best Practices
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know?
+      placeholder: How do I...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Any additional context that might help us answer your question
+      placeholder: |
+        I'm trying to...
+        I've already tried...
+        Here's my setup...
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Relevant Code
+      description: If applicable, share relevant code snippets
+      placeholder: |
+        const widget = new CryptoMeACoffee({
+          // your config
+        });
+      render: javascript
+
+  - type: dropdown
+    id: docs-checked
+    attributes:
+      label: Documentation Checked
+      description: Have you checked the documentation?
+      options:
+        - Yes, I've checked the docs
+        - No, I haven't checked yet
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have searched existing issues and discussions
+          required: true
+        - label: I have checked the FAQ
+          required: false
+        - label: I have reviewed the relevant documentation
+          required: false
