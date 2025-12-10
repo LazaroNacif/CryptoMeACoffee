@@ -1,8 +1,8 @@
 # Dependencies
 node_modules/
-package-lock.json
 yarn.lock
 pnpm-lock.yaml
+# Note: package-lock.json is intentionally tracked for reproducible builds
 
 # Build outputs
 dist/
