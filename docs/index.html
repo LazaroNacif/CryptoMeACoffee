@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CryptoMeACoffee - Web3 Donation Widget Demo</title>
+
+  <!-- Pixel Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Press Start 2P', -apple-system, BlinkMacSystemFont, 'Segoe UI', monospace;
+      background: #1E7BFF;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      image-rendering: pixelated;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 2rem;
+    }
+
+    .header .logo {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 1.5rem;
+      image-rendering: pixelated;
+      filter: drop-shadow(4px 4px 0px rgba(0, 0, 0, 0.3));
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #0A1E4A;
+      text-shadow: 3px 3px 0px rgba(255, 255, 255, 0.3);
+      letter-spacing: 2px;
+    }
+
+    .header p {
+      font-size: 0.9rem;
+      color: #0A1E4A;
+      letter-spacing: 1px;
+    }
+
+    .info-banner {
+      background: #0A1E4A;
+      border: 4px solid #FFFFFF;
+      box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      color: white;
+    }
+
+    .info-banner h2 {
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      color: #FFD700;
+      letter-spacing: 1px;
+    }
+
+    .info-banner ul {
+      margin-left: 1.5rem;
+      line-height: 2;
+      font-size: 0.7rem;
+    }
+
+    .demo-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+    }
+
+    .demo-card {
+      background: #0A1E4A;
+      border: 4px solid #FFFFFF;
+      box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3);
+      padding: 2rem;
+      color: white;
+      transition: transform 0.1s;
+    }
+
+    .demo-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.3);
+    }
+
+    .demo-card h2 {
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      color: #FFD700;
+      letter-spacing: 1px;
+    }
+
+    .demo-card p {
+      line-height: 1.8;
+      margin-bottom: 1rem;
+      font-size: 0.7rem;
+    }
+
+    .code-block {
+      background: #000000;
+      border: 2px solid #FFFFFF;
+      padding: 1rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.65rem;
+      overflow-x: auto;
+      margin-top: 1rem;
+      color: #00FF00;
+    }
+
+    .code-block code {
+      color: #00FF00;
+    }
+
+    .highlight {
+      background: #FFD700;
+      color: #0A1E4A;
+      padding: 0.2rem 0.4rem;
+      font-weight: 600;
+    }
+
+    .cta {
+      background: #FFD700;
+      color: #0A1E4A;
+      border: 4px solid #FFFFFF;
+      box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3);
+      padding: 1rem;
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .cta:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.3);
+    }
+
+    .github-link {
+      background: #0A1E4A;
+      border: 4px solid #FFFFFF;
+      box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.3);
+      padding: 1.5rem;
+      margin-top: 2rem;
+      text-align: center;
+      color: white;
+    }
+
+    .github-link a {
+      color: #FFD700;
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+
+    .github-link a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 1.5rem;
+      }
+
+      .demo-section {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <img src="assets/logos/logo_v3.png" alt="CryptoMeACoffee Logo" class="logo">
+      <h1>CRYPTO ME A COFFEE</h1>
+      <p>OPEN-SOURCE X402 DONATION WIDGET</p>
+    </div>
+
+    <!-- Info Banner -->
+    <div class="info-banner">
+      <h2>>>> ACCEPT CRYPTO DONATIONS ON ANY WEBSITE</h2>
+      <p style="margin-bottom: 1rem; font-size: 0.7rem;">A MODERN, OPEN-SOURCE DONATION WIDGET THAT:</p>
+      <ul>
+        <li><strong>GASLESS DONATIONS</strong> - Supporters pay zero gas fees via x402 protocol</li>
+        <li><strong>DEVELOPER FRIENDLY</strong> - Drop-in widget + backend in minutes</li>
+        <li><strong>BLOCKCHAIN NATIVE</strong> - Built on Base with USDC for stability</li>
+      </ul>
+    </div>
+
+    <!-- Demo Section -->
+    <div class="demo-section">
+      <div class="demo-card">
+        <h2>WHY CRYPTO ME A COFFEE?</h2>
+        <p>
+          Traditional payment processors take 3-5% fees and add friction. With CryptoMeACoffee, your supporters send USDC directly to your wallet.
+        </p>
+        <p>
+          The <span class="highlight">X402 PROTOCOL</span> eliminates gas fees for donors, making crypto donations as easy as traditional payments.
+        </p>
+        <div class="cta">
+          TRY THE WIDGET IN THE CORNER!
+        </div>
+      </div>
+
+      <div class="demo-card">
+        <h2>GETTING STARTED</h2>
+        <p>
+          Deploy the included backend, add one script tag to your site, and you're live in under 5 minutes:
+        </p>
+        <div class="code-block"><code>&lt;script data-name="CMAC-Widget"
+  src="https://unpkg.com/cryptomeacoffee/dist/widget.min.js"
+  data-wallet="0x..."
+  data-api="https://your-api.com/donate"
+  data-creator-name="Your Name"&gt;
+&lt;/script&gt;</code></div>
+        <p style="margin-top: 1rem;">
+          That's it! The widget auto-initializes and renders.
+        </p>
+      </div>
+
+      <div class="demo-card">
+        <h2>OPEN SOURCE</h2>
+        <p>
+          CryptoMeACoffee is 100% open source and free to use. No hidden fees, no lock-in, no proprietary platforms.
+        </p>
+        <p>
+          Supporters can send messages with donations and you get instant email notifications.
+        </p>
+        <p>
+          MIT Licensed with clear guides, documentation and examples. Use it as you like it!
+        </p>
+      </div>
+    </div>
+
+    <!-- GitHub Link -->
+    <div class="github-link">
+      <p style="margin-bottom: 0.5rem; font-size: 0.7rem;">Check out the source code:</p>
+      <a href="https://github.com/LazaroNacif/CryptoMeACoffee" target="_blank">
+        >>> GITHUB.COM/LAZARONACIF/CRYPTOMEACOFFEE <<<
+      </a>
+    </div>
+  </div>
+
+  <!-- Widget Script - Using unpkg CDN -->
+  <script
+    data-name="CMAC-Widget"
+    src="https://unpkg.com/cryptomeacoffee@latest/dist/widget.min.js"
+    data-wallet="0x518Cb6A5475097Ac3dDe6D2AF98F7cb1593262FB"
+    data-api="https://cryptomeacoffee-demo.herokuapp.com/api/donate"
+    data-creator-name="CryptoMeACoffee Demo"
+    data-message="Thanks for trying the demo!"
+    data-color="#5F7FFF"
+    data-position="Right"
+    data-x_margin="18"
+    data-y_margin="18"
+    data-network="base-sepolia"
+    data-logo-url="assets/logos/logo_CMC.svg"
+  ></script>
+
+  <script>
+    // Widget auto-initializes! No manual JavaScript needed.
+    // The floating button should appear in the bottom-right corner.
+
+    // Optional: Access widget instance if you need programmatic control
+    window.addEventListener('load', () => {
+      if (window.CryptoMeACoffeeWidget) {
+        console.log('✅ Widget auto-initialized successfully!');
+        console.log('Widget instance:', window.CryptoMeACoffeeWidget);
+      }
+    });
+  </script>
+</body>
+</html>
