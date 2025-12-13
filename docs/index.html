@@ -252,6 +252,19 @@
       </div>
     </div>
 
+    <!-- Setup Instructions -->
+    <div class="info-banner" style="margin-top: 2rem; background: #FFD700; color: #0A1E4A; border-color: #0A1E4A;">
+      <h2 style="color: #0A1E4A;">>>> TO TEST THE WIDGET LOCALLY</h2>
+      <p style="margin-bottom: 0.5rem; font-size: 0.7rem; color: #0A1E4A;">Follow these steps:</p>
+      <ol style="margin-left: 1.5rem; line-height: 2; font-size: 0.7rem; color: #0A1E4A;">
+        <li>Clone the repository</li>
+        <li>Run: cd server-examples/express && npm install</li>
+        <li>Set up your .env file with required credentials</li>
+        <li>Run: npm start (starts on http://localhost:3000)</li>
+        <li>Refresh this page to see the widget in action!</li>
+      </ol>
+    </div>
+
     <!-- GitHub Link -->
     <div class="github-link">
       <p style="margin-bottom: 0.5rem; font-size: 0.7rem;">Check out the source code:</p>
@@ -266,7 +279,7 @@
     data-name="CMAC-Widget"
     src="https://unpkg.com/cryptomeacoffee@latest/dist/widget.umd.js"
     data-wallet="0x518Cb6A5475097Ac3dDe6D2AF98F7cb1593262FB"
-    data-api="https://cryptomeacoffee-demo.herokuapp.com/api/donate"
+    data-api="http://localhost:3000/api/donate"
     data-creator-name="CryptoMeACoffee Demo"
     data-message="Thanks for trying the demo!"
     data-color="#5F7FFF"
@@ -274,7 +287,6 @@
     data-x_margin="18"
     data-y_margin="18"
     data-network="base-sepolia"
-    data-logo-url="assets/logos/logo_CMC.svg"
   ></script>
 
   <script>
