@@ -10,6 +10,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
+  <!-- Widget Styles -->
+  <link rel="stylesheet" href="./styles.css">
+
   <style>
     * {
       margin: 0;
@@ -274,20 +277,45 @@
     </div>
   </div>
 
-  <!-- Widget Script - Using unpkg CDN -->
-  <script
-    data-name="CMAC-Widget"
-    src="https://unpkg.com/cryptomeacoffee@latest/dist/widget.umd.js"
-    data-wallet="0x518Cb6A5475097Ac3dDe6D2AF98F7cb1593262FB"
-    data-api="https://bucolic-cannoli-49fd18.netlify.app/api/donate"
-    data-creator-name="CryptoMeACoffee Demo"
-    data-message="Thanks for trying the demo!"
-    data-color="#5F7FFF"
-    data-position="Right"
-    data-x_margin="18"
-    data-y_margin="18"
-    data-network="base-sepolia"
-  ></script>
+  <!-- Import map for ES module dependencies -->
+  <script type="importmap">
+    {
+      "imports": {
+        "x402/client": "https://esm.sh/x402@0.7.1/client",
+        "viem": "https://esm.sh/viem@2.21.54",
+        "viem/chains": "https://esm.sh/viem@2.21.54/chains"
+      }
+    }
+  </script>
+
+  <!-- Widget Script - Using local fixed version -->
+  <script type="module">
+    import CryptoMeACoffee from './widget.js';
+
+    // Initialize widget on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initWidget);
+    } else {
+      initWidget();
+    }
+
+    function initWidget() {
+      const config = {
+        walletAddress: '0x518Cb6A5475097Ac3dDe6D2AF98F7cb1593262FB',
+        apiEndpoint: 'https://bucolic-cannoli-49fd18.netlify.app/api/donate',
+        creatorName: 'CryptoMeACoffee Demo',
+        message: 'Thanks for trying the demo!',
+        color: '#5F7FFF',
+        position: 'Right',
+        xMargin: '18',
+        yMargin: '18',
+        network: 'base-sepolia'
+      };
+
+      window.CryptoMeACoffeeWidget = new CryptoMeACoffee(config);
+      window.CryptoMeACoffeeWidget.render('body');
+    }
+  </script>
 
   <script>
     // Widget auto-initializes! No manual JavaScript needed.
