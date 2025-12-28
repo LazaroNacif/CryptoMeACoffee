@@ -677,52 +677,5 @@ class CryptoMeACoffee {
   }
 }
 
-// AUTO-INITIALIZATION from script tag
-(function () {
-  if (typeof window === 'undefined') {
-    return;
-  }
-
-  // Find the script tag with data attributes
-  const currentScript =
-    document.currentScript || document.querySelector('script[data-name="CMAC-Widget"]');
-
-  function initWidget() {
-    const config = {
-      walletAddress: currentScript.dataset.wallet,
-      apiEndpoint: currentScript.dataset.api,
-      creatorName: currentScript.dataset.creatorName || 'this creator',
-      message: currentScript.dataset.message || 'Thanks for the coffee!',
-      color: currentScript.dataset.color || '#5F7FFF',
-      position: currentScript.dataset.position || 'Right',
-      xMargin: currentScript.dataset.xMargin || '18',
-      yMargin: currentScript.dataset.yMargin || '18',
-      network: currentScript.dataset.network || 'base-sepolia',
-      theme: currentScript.dataset.theme || 'light',
-      logoUrl: currentScript.dataset.logoUrl || null,
-    };
-
-    // Parse preset amounts if provided
-    if (currentScript.dataset.presetAmounts) {
-      try {
-        config.presetAmounts = JSON.parse(currentScript.dataset.presetAmounts);
-      } catch (e) {
-        logger.warn('Invalid presetAmounts format, using defaults');
-      }
-    }
-
-    window.CryptoMeACoffeeWidget = new CryptoMeACoffee(config);
-    window.CryptoMeACoffeeWidget.render('body');
-  }
-
-  if (currentScript && currentScript.dataset.wallet && currentScript.dataset.api) {
-    // Wait for DOM to be ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initWidget);
-    } else {
-      initWidget();
-    }
-  }
-})();
-
+// ES Module export (auto-initialization removed for ES module usage)
 export default CryptoMeACoffee;
