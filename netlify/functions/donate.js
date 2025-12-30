@@ -168,6 +168,7 @@ export async function handler(event) {
     };
 
     // Apply x402 payment middleware
+    console.log('🔄 Initializing x402 middleware...');
     const x402Middleware = paymentMiddleware(process.env.WALLET_ADDRESS, dynamicConfig, {
       url: process.env.FACILITATOR_URL || 'https://x402.org/facilitator',
     });
@@ -175,15 +176,21 @@ export async function handler(event) {
     // Wrap x402 middleware for Netlify
     x402Middleware(mockReq, mockRes, (error) => {
       if (error && !middlewareResolved) {
+        console.error('❌ x402 middleware error:', error);
         middlewareResolved = true;
         middlewareReject(error);
       } else if (!middlewareResolved) {
+        console.log('✅ x402 middleware completed');
         middlewareResolved = true;
         middlewareResolve();
       }
     });
 
-    await middlewarePromise;
+    console.log('⏳ Waiting for x402 middleware to complete...');
+    await Promise.race([
+      middlewarePromise,
+      new Promise((_, reject) => setTimeout(() => reject(new Error('x402 middleware timeout')), 25000))
+    ]);
 
     // Check if x402 middleware sent a 402 response
     if (mockResStatusCode === 402) {
