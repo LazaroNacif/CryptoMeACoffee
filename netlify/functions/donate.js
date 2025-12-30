@@ -47,6 +47,9 @@ const validateDonation = [
  * Handles x402 payment verification and donation processing
  */
 export async function handler(event) {
+  console.log('🚀 Function invoked:', event.httpMethod, event.headers.origin);
+  console.log('📋 Has X-Payment header:', !!event.headers['x-payment']);
+
   // CORS headers
   const origin = event.headers.origin;
   const allowedOrigins = process.env.CORS_ORIGIN?.split(',').map(o => o.trim()) || [];
@@ -187,10 +190,23 @@ export async function handler(event) {
     });
 
     console.log('⏳ Waiting for x402 middleware to complete...');
-    await Promise.race([
-      middlewarePromise,
-      new Promise((_, reject) => setTimeout(() => reject(new Error('x402 middleware timeout')), 25000))
-    ]);
+    try {
+      await Promise.race([
+        middlewarePromise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('x402 middleware timeout')), 25000))
+      ]);
+    } catch (middlewareError) {
+      console.error('❌ Middleware execution failed:', middlewareError);
+      return {
+        statusCode: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          success: false,
+          error: 'Payment verification failed',
+          details: process.env.NODE_ENV !== 'production' ? middlewareError.message : undefined
+        }),
+      };
+    }
 
     // Check if x402 middleware sent a 402 response
     if (mockResStatusCode === 402) {
