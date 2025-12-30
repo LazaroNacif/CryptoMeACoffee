@@ -1,7 +1,7 @@
 /**
  * CryptoMeACoffee Netlify Serverless Function
  * Handles crypto donations via x402 protocol
- * Updated: CORS configuration includes GitHub Pages
+ * Updated: CORS configuration with origin trimming for GitHub Pages
  */
 
 import { paymentMiddleware } from 'x402-express';
