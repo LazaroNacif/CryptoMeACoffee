@@ -49,7 +49,7 @@ const validateDonation = [
 export async function handler(event) {
   // CORS headers
   const origin = event.headers.origin;
-  const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [];
+  const allowedOrigins = process.env.CORS_ORIGIN?.split(',').map(o => o.trim()) || [];
 
   const corsHeaders = {
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
