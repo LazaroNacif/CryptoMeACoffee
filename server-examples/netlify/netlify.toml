@@ -1,5 +1,7 @@
 [build]
+  publish = "."
   functions = "netlify/functions"
+  command = ""
 
 [[headers]]
   for = "/api/*"
