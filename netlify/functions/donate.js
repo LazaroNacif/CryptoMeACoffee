@@ -1,11 +1,14 @@
 /**
  * CryptoMeACoffee Netlify Serverless Function
  * Handles crypto donations via x402 protocol
- * Updated: CORS configuration with origin trimming for GitHub Pages
- * Redeploy: 2025-12-30 to pick up CORS_ORIGIN env var changes
+ * Updated: Manual x402 implementation for serverless compatibility
  */
 
-import { paymentMiddleware } from 'x402-express';
+import { useFacilitator } from 'x402/verify';
+import { exact } from 'x402/schemes';
+import { processPriceToAtomicAmount, toJsonSafe } from 'x402/shared';
+import { SupportedEVMNetworks } from 'x402/types';
+import { getAddress } from 'viem';
 import nodemailer from 'nodemailer';
 import { body, validationResult } from 'express-validator';
 
@@ -125,158 +128,124 @@ export async function handler(event) {
     // Get network configuration
     const network = process.env.NETWORK || 'base-sepolia';
     const amount = requestBody?.amount || 1.0;
+    const paymentHeader = event.headers['x-payment'];
 
     console.log('📥 Incoming donation request', {
       amount,
-      hasPayment: !!event.headers['x-payment'],
+      hasPayment: !!paymentHeader,
       network,
     });
 
-    // Dynamically configure x402 middleware for this request
-    const dynamicConfig = {
-      ['POST /api/donate']: {
-        price: `$${amount.toFixed(2)}`,
-        network: network,
-        asset: {
-          address: USDC_ADDRESSES[network],
-          symbol: 'USDC',
-          decimals: 6,
+    // Validate network is supported
+    if (!SupportedEVMNetworks.includes(network)) {
+      throw new Error(`Unsupported network: ${network}`);
+    }
+
+    // Process price to atomic amount
+    const price = `$${amount.toFixed(2)}`;
+    const atomicAmountForAsset = processPriceToAtomicAmount(price, network);
+
+    if ('error' in atomicAmountForAsset) {
+      throw new Error(atomicAmountForAsset.error);
+    }
+
+    const { maxAmountRequired, asset } = atomicAmountForAsset;
+
+    // Construct payment requirements manually
+    const payTo = getAddress(process.env.WALLET_ADDRESS);
+    const assetAddress = getAddress(USDC_ADDRESSES[network]);
+    const resourceUrl = `https://${event.headers.host || 'bucolic-cannoli-49fd18.netlify.app'}/api/donate`;
+
+    const paymentRequirements = [{
+      scheme: 'exact',
+      network,
+      maxAmountRequired,
+      resource: resourceUrl,
+      description: `CryptoMeACoffee donation of $${amount.toFixed(2)} - Thank you for your support!`,
+      mimeType: 'application/json',
+      payTo,
+      maxTimeoutSeconds: 60,
+      asset: assetAddress,
+      outputSchema: {
+        input: {
+          type: 'http',
+          method: 'POST',
+          discoverable: false,
         },
-        extra: {
-          name: 'USDC',
-          version: '2',
-        },
-        description: `CryptoMeACoffee donation of $${amount.toFixed(2)} - Thank you for your support!`,
-        discoverable: false,
+        output: undefined,
       },
-    };
+      extra: asset.eip712,
+    }];
 
-    // Create mock Express-compatible request/response objects for x402 middleware
-    const mockReq = {
-      method: 'POST',
-      path: '/api/donate',
-      headers: event.headers || {},
-      body: requestBody,
-      // Express compatibility methods
-      header: function(name) {
-        return this.headers[name.toLowerCase()];
-      },
-      get: function(name) {
-        return this.header(name);
-      },
-      // Additional Express properties
-      app: {},
-      query: {},
-      params: {},
-      route: { path: '/api/donate' },
-      baseUrl: '',
-      originalUrl: '/api/donate',
-      url: '/api/donate',
-    };
+    const x402Version = 1;
 
-    let mockResStatusCode = 200;
-    let mockResBody = null;
-    const mockResHeaders = {};
-
-    const mockRes = {
-      status: (code) => {
-        mockResStatusCode = code;
-        return mockRes;
-      },
-      json: (data) => {
-        mockResBody = data;
-        return mockRes;
-      },
-      send: (data) => {
-        mockResBody = data;
-        return mockRes;
-      },
-      setHeader: (key, value) => {
-        mockResHeaders[key] = value;
-        return mockRes;
-      },
-      getHeader: (name) => mockResHeaders[name],
-      end: () => mockRes,
-      // Additional Express properties
-      locals: {},
-      headersSent: false,
-      statusCode: 200,
-    };
-
-    // Apply x402 payment middleware
-    console.log('🔄 Initializing x402 middleware...');
-    const x402Middleware = paymentMiddleware(process.env.WALLET_ADDRESS, dynamicConfig, {
-      url: process.env.FACILITATOR_URL || 'https://x402.org/facilitator',
-    });
-
-    // Wrap x402 middleware for Netlify
-    console.log('⏳ Waiting for x402 middleware to complete...');
-    console.log('📊 Mock req properties:', Object.keys(mockReq));
-    console.log('📊 Mock res properties:', Object.keys(mockRes));
-
-    try {
-      await new Promise((resolve, reject) => {
-        let callbackCalled = false;
-
-        // Safety timeout to prevent hanging
-        const timeout = setTimeout(() => {
-          if (!callbackCalled) {
-            console.error('⚠️ x402 middleware callback never called - timing out');
-            reject(new Error('x402 middleware timeout - callback never invoked'));
-          }
-        }, 10000);
-
-        x402Middleware(mockReq, mockRes, (error) => {
-          if (callbackCalled) {
-            console.warn('⚠️ x402 middleware callback called multiple times');
-            return;
-          }
-          callbackCalled = true;
-          clearTimeout(timeout);
-
-          if (error) {
-            console.error('❌ x402 middleware error:', error);
-            reject(error);
-          } else {
-            console.log('✅ x402 middleware completed');
-            resolve();
-          }
-        });
-
-        console.log('🔄 x402 middleware invoked, waiting for callback...');
-      });
-    } catch (middlewareError) {
-      console.error('❌ Middleware execution failed:', middlewareError);
+    // Check for payment header
+    if (!paymentHeader) {
+      console.log('❌ No X-Payment header - returning 402');
       return {
-        statusCode: 500,
+        statusCode: 402,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          success: false,
-          error: 'Payment verification failed',
-          details: process.env.NODE_ENV !== 'production' ? middlewareError.message : undefined
+          x402Version,
+          error: 'X-PAYMENT header is required',
+          accepts: toJsonSafe(paymentRequirements),
         }),
       };
     }
 
-    // Check if x402 middleware sent a 402 response
-    if (mockResStatusCode === 402) {
+    // Payment header exists - verify it
+    console.log('🔄 Verifying payment...');
+
+    // Initialize facilitator
+    const facilitatorConfig = {
+      url: process.env.FACILITATOR_URL || 'https://x402.org/facilitator',
+    };
+    const { verify } = useFacilitator(facilitatorConfig);
+
+    // Decode payment
+    let decodedPayment;
+    try {
+      decodedPayment = exact.evm.decodePayment(paymentHeader);
+      decodedPayment.x402Version = x402Version;
+    } catch (error) {
+      console.error('❌ Failed to decode payment:', error);
       return {
-        statusCode: 402,
-        headers: { ...corsHeaders, ...mockResHeaders, 'Content-Type': 'application/json' },
-        body: JSON.stringify(mockResBody),
+        statusCode: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          success: false,
+          error: 'Invalid payment header format',
+        }),
       };
     }
 
-    // If we got here, payment was verified by x402 middleware
-    console.log('✅ Payment verified successfully');
+    // Verify payment
+    const matchingRequirement = paymentRequirements[0];
+    const verifyResult = await verify(decodedPayment, matchingRequirement);
 
-    // Run validation
-    mockReq.body = requestBody; // Ensure body is set for validation
-    for (const validation of validateDonation) {
-      await validation.run(mockReq);
+    if (!verifyResult.valid) {
+      console.error('❌ Payment verification failed:', verifyResult.reason);
+      return {
+        statusCode: 402,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          x402Version,
+          error: 'Payment verification failed',
+          reason: verifyResult.reason,
+          accepts: toJsonSafe(paymentRequirements),
+        }),
+      };
     }
 
-    const errors = validationResult(mockReq);
+    console.log('✅ Payment verified successfully');
+
+    // Run validation (create minimal mock for validation)
+    const validationReq = { body: requestBody };
+    for (const validation of validateDonation) {
+      await validation.run(validationReq);
+    }
+
+    const errors = validationResult(validationReq);
     if (!errors.isEmpty()) {
       console.log('❌ Validation failed', errors.array());
       return {
