@@ -1,102 +1,52 @@
 {
   "name": "cryptomeacoffee",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "type": "module",
-  "description": "Open-source, self-hosted donation widget for accepting cryptocurrency donations via x402 protocol. Zero fees, direct to wallet.",
+  "description": "Accept USDC donations via x402 protocol - widget library and Netlify backend",
   "main": "dist/widget.umd.js",
   "module": "dist/widget.es.js",
   "types": "dist/widget.d.ts",
-  "unpkg": "dist/widget.umd.js",
-  "jsdelivr": "dist/widget.umd.js",
   "exports": {
     ".": {
       "import": "./dist/widget.es.js",
-      "require": "./dist/widget.umd.js"
-    },
-    "./styles.css": "./src/styles.css"
+      "require": "./dist/widget.umd.js",
+      "types": "./dist/widget.d.ts"
+    }
   },
-  "files": [
-    "dist/widget.umd.js",
-    "dist/widget.umd.js.map",
-    "dist/widget.es.js",
-    "dist/widget.es.js.map",
-    "dist/widget.d.ts",
-    "dist/widget-*.mjs",
-    "dist/widget-*.mjs.map",
-    "src/styles.css",
-    "README.md",
-    "LICENSE"
-  ],
   "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
-    "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
-    "test:ci": "NODE_OPTIONS=--experimental-vm-modules jest --ci --coverage --maxWorkers=2",
+    "dev": "netlify dev",
     "build": "vite build",
-    "build:old": "node scripts/build.js",
-    "dev": "vite",
-    "lint": "eslint src/**/*.js",
-    "lint:fix": "eslint src/**/*.js --fix",
-    "format": "prettier --write \"**/*.{js,json,md}\"",
-    "prepublishOnly": "npm run build",
-    "prepare": "husky"
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md}": [
-      "prettier --write"
-    ]
+    "build:watch": "vite build --watch",
+    "preview": "vite preview",
+    "deploy": "netlify deploy",
+    "deploy:prod": "netlify deploy --prod"
   },
   "keywords": [
     "crypto",
-    "cryptocurrency",
     "donations",
     "x402",
-    "usdc",
-    "base",
-    "base-network",
-    "web3",
-    "ethereum",
-    "payment",
-    "widget",
-    "viem",
-    "self-hosted",
-    "zero-fees",
-    "buymeacoffee",
-    "kofi"
+    "netlify",
+    "serverless",
+    "usdc"
   ],
   "author": "Pedro Lazaro Nacif",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/LazaroNacif/CryptoMeACoffee.git"
-  },
-  "bugs": {
-    "url": "https://github.com/LazaroNacif/CryptoMeACoffee/issues"
-  },
-  "homepage": "https://github.com/LazaroNacif/CryptoMeACoffee#readme",
-  "engines": {
-    "node": ">=16.0.0"
-  },
   "dependencies": {
-    "viem": "^2.39.3",
-    "x402": "^0.7.2"
+    "@coinbase/x402": "^0.7.1",
+    "express-validator": "^7.3.1",
+    "isomorphic-dompurify": "^2.33.0",
+    "nodemailer": "^7.0.10",
+    "x402-express": "^0.7.0",
+    "x402": "^0.7.0",
+    "viem": "^2.21.0"
   },
   "devDependencies": {
-    "@jest/globals": "^30.2.0",
-    "@playwright/test": "^1.40.0",
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.9.1",
-    "eslint": "^8.0.0",
-    "husky": "^9.1.7",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^30.2.0",
-    "lint-staged": "^16.2.7",
-    "mcporter": "^0.6.3",
-    "prettier": "^3.7.2",
-    "vite": "^5.0.0"
+    "netlify-cli": "^17.38.1",
+    "vite": "^5.4.11",
+    "vite-plugin-dts": "^4.3.0",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
