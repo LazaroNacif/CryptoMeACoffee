@@ -19,6 +19,29 @@ import { createWalletClient, custom } from 'viem';
 import { baseSepolia, base } from 'viem/chains';
 import { logger } from './logger.js';
 
+/**
+ * @typedef {Object} CryptoMeACoffeeConfig
+ * @property {string} walletAddress - Recipient wallet address (required)
+ * @property {string} apiEndpoint - Backend API endpoint URL (required)
+ * @property {string} [creatorName='this creator'] - Display name for the creator
+ * @property {string} [message='Thanks for the coffee!'] - Thank you message after donation
+ * @property {string} [color='#5F7FFF'] - Primary color for the widget
+ * @property {'Left' | 'Right'} [position='Right'] - Widget position on screen
+ * @property {string | number} [xMargin='18'] - Horizontal margin in pixels
+ * @property {string | number} [yMargin='18'] - Vertical margin in pixels
+ * @property {number[]} [presetAmounts=[1, 3, 5]] - Preset donation amounts in USD
+ * @property {'light' | 'dark'} [theme='light'] - Widget theme
+ * @property {'base-sepolia' | 'base'} [network='base-sepolia'] - Blockchain network
+ * @property {string} [logoUrl] - Custom logo URL
+ * @property {number} [minAmount=0.01] - Minimum donation amount in USD
+ * @property {number} [maxAmount=1000000] - Maximum donation amount in USD
+ */
+
+/**
+ * CryptoMeACoffee Widget
+ * Accept USDC donations on your website via x402 protocol
+ * @class
+ */
 class CryptoMeACoffee {
   // Minimal HTML escaping for XSS protection
   static escapeHTML(str) {
@@ -28,6 +51,10 @@ class CryptoMeACoffee {
     return div.innerHTML;
   }
 
+  /**
+   * Create a new CryptoMeACoffee widget instance
+   * @param {CryptoMeACoffeeConfig} config - Widget configuration
+   */
   constructor(config = {}) {
     this.config = {
       // Required
@@ -449,7 +476,11 @@ class CryptoMeACoffee {
     }
   }
 
-  // Render floating widget
+  /**
+   * Render the widget in the specified container
+   * @param {string} [containerId='body'] - Container element ID or 'body'
+   * @returns {void}
+   */
   render(containerId = 'body') {
     let container;
 
@@ -670,6 +701,10 @@ class CryptoMeACoffee {
     }
   }
 
+  /**
+   * Destroy the widget and clean up
+   * @returns {void}
+   */
   destroy() {
     if (this.elements.container) {
       this.elements.container.remove();
