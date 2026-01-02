@@ -51,9 +51,34 @@ export async function handler(event) {
   console.log('🚀 Function invoked:', event.httpMethod, event.headers.origin);
   console.log('📋 Has X-Payment header:', !!event.headers['x-payment']);
 
-  // CORS headers
+  // CORS headers with improved origin matching
   const origin = event.headers.origin;
-  const allowedOrigins = process.env.CORS_ORIGIN?.split(',').map(o => o.trim()) || [];
+  const allowedOriginsRaw = process.env.CORS_ORIGIN?.split(',').map(o => o.trim()) || [];
+
+  // Normalize origins: lowercase and remove trailing slashes
+  const normalizeOrigin = (url) => {
+    if (!url) return '';
+    return url.toLowerCase().replace(/\/$/, '');
+  };
+
+  const allowedOrigins = allowedOriginsRaw.map(normalizeOrigin);
+  const normalizedOrigin = normalizeOrigin(origin);
+
+  // Debug logging for CORS troubleshooting
+  console.log('🔍 CORS Debug:', {
+    requestOrigin: origin,
+    normalizedOrigin,
+    requestMethod: event.httpMethod,
+    corsOriginEnv: process.env.CORS_ORIGIN,
+    allowedOriginsParsed: allowedOrigins,
+    originMatches: allowedOrigins.includes(normalizedOrigin),
+    hasOriginHeader: !!origin
+  });
+
+  // Validate environment configuration
+  if (!process.env.CORS_ORIGIN) {
+    console.error('❌ CRITICAL: CORS_ORIGIN environment variable is not set!');
+  }
 
   const corsHeaders = {
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -64,8 +89,15 @@ export async function handler(event) {
     'X-XSS-Protection': '1; mode=block',
   };
 
-  if (allowedOrigins.includes(origin)) {
+  // Add origin header if origin is in allowed list
+  if (origin && allowedOrigins.includes(normalizedOrigin)) {
     corsHeaders['Access-Control-Allow-Origin'] = origin;
+    console.log('✅ CORS: Origin matched and header added');
+  } else {
+    console.warn('⚠️ CORS: Origin not matched', {
+      hasOrigin: !!origin,
+      matched: allowedOrigins.includes(normalizedOrigin)
+    });
   }
 
   // Handle OPTIONS preflight
