@@ -1,605 +1,355 @@
-# CryptoMeACoffee - Implementation Plan
-## Fix CORS, Build Configuration, TypeScript Support
+# Fix x402 Middleware Crash - CryptoMeACoffee
+## Production Demo Not Working Due to Serverless Function Error
 
 ---
 
-## 🚨 Critical Issue: CORS Blocking Production Demo
+## 🎯 Problem Summary
 
-### Current Status
-- ✅ **Localhost**: Works perfectly at `http://localhost:3000`
-- ❌ **Production**: Fails at `https://lazaronacif.github.io/CryptoMeACoffee/`
+Your production demo at **https://lazaronacif.github.io/CryptoMeACoffee/** is failing because the Netlify serverless function crashes when trying to initialize the x402 payment middleware.
 
-### Error in Browser Console
-```
-Access to fetch at 'https://bucolic-cannoli-49fd18.netlify.app/api/donate'
-from origin 'https://lazaronacif.github.io' has been blocked by CORS policy:
-No 'Access-Control-Allow-Origin' header is present on the requested resource.
+**What's Working:**
+- ✅ CORS headers are being set correctly (`originMatches: true`)
+- ✅ Environment variables configured properly
+- ✅ x402 API usage is correct (verified against official docs)
 
-Failed to fetch
-```
-
-### Root Cause
-The server responds with **402 Payment Required** (x402 middleware working correctly), but the 402 response **lacks the `Access-Control-Allow-Origin` header** because the origin matching is failing.
-
-**Why localhost works but production doesn't:**
-- `http://localhost:3000` matches the CORS_ORIGIN env var → CORS header added → ✅
-- `https://lazaronacif.github.io` should match but doesn't (case/formatting issue) → No CORS header → ❌
+**What's Broken:**
+- ❌ x402 middleware crashes with `.bind()` error
+- ❌ Function exits before returning response
+- ❌ CORS headers are lost (never reach browser)
+- ❌ Browser shows CORS error
 
 ---
 
-## 📋 Implementation Steps
+## 🔍 Root Cause Analysis
 
-### Phase 1: Fix CORS (CRITICAL - Do This First)
-
-**File to Edit**: `netlify/functions/donate.js`
-
-#### Step 1: Add Debug Logging
-
-**Location**: After line 56 (right after `const allowedOrigins = ...`)
-
-**Add this code**:
-```javascript
-// Debug logging for CORS troubleshooting
-console.log('🔍 CORS Debug:', {
-  requestOrigin: origin,
-  requestMethod: event.httpMethod,
-  corsOriginEnv: process.env.CORS_ORIGIN,
-  allowedOriginsParsed: allowedOrigins,
-  originMatches: allowedOrigins.includes(origin),
-  hasOriginHeader: !!origin
-});
-
-// Validate environment configuration
-if (!process.env.CORS_ORIGIN) {
-  console.error('❌ CRITICAL: CORS_ORIGIN environment variable is not set!');
-}
+### The Error
+```
+TypeError: Cannot read properties of undefined (reading 'bind')
+at paymentMiddleware2 (/var/task/netlify/functions/donate.js:78850:45)
 ```
 
-#### Step 2: Add Origin Normalization
+### Why It Happens
 
-**Location**: Replace lines 55-69
+**x402-express is designed for Express applications**, not serverless functions. When you call `paymentMiddleware()` in Netlify, it tries to bind methods to Express request/response objects that don't fully exist in your mock objects.
 
-**Replace this**:
-```javascript
-// CORS headers
-const origin = event.headers.origin;
-const allowedOrigins = process.env.CORS_ORIGIN?.split(',').map(o => o.trim()) || [];
-
-const corsHeaders = {
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Payment',
-  'Access-Control-Allow-Credentials': 'true',
-  'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'DENY',
-  'X-XSS-Protection': '1; mode=block',
-};
-
-if (allowedOrigins.includes(origin)) {
-  corsHeaders['Access-Control-Allow-Origin'] = origin;
-}
+**Evidence from Function Logs:**
+```
+🔄 Initializing x402 middleware...
+⏳ Waiting for x402 middleware to complete...
+ERROR: Cannot read properties of undefined (reading 'bind')
 ```
 
-**With this**:
+The function **sets CORS headers successfully** but crashes **before returning the response**, so the browser never receives the CORS headers.
+
+---
+
+## ✅ Verification Against Official Documentation
+
+According to x402-express TypeScript definitions:
+
+**Your API usage is 100% CORRECT:**
 ```javascript
-// CORS headers with improved origin matching
-const origin = event.headers.origin;
-const allowedOriginsRaw = process.env.CORS_ORIGIN?.split(',').map(o => o.trim()) || [];
+paymentMiddleware(
+  process.env.WALLET_ADDRESS,  // ✅ Correct: Ethereum address
+  dynamicConfig,               // ✅ Correct: RoutesConfig format
+  {
+    url: process.env.FACILITATOR_URL || 'https://x402.org/facilitator'
+  }                            // ✅ Correct: FacilitatorConfig format
+);
+```
 
-// Normalize origins: lowercase and remove trailing slashes
-const normalizeOrigin = (url) => {
-  if (!url) return '';
-  return url.toLowerCase().replace(/\/$/, '');
-};
+**The problem is NOT the API parameters** - it's the Netlify serverless environment lacking full Express compatibility.
 
-const allowedOrigins = allowedOriginsRaw.map(normalizeOrigin);
-const normalizedOrigin = normalizeOrigin(origin);
+---
 
-// Debug logging
-console.log('🔍 CORS Debug:', {
-  requestOrigin: origin,
-  normalizedOrigin,
-  requestMethod: event.httpMethod,
-  corsOriginEnv: process.env.CORS_ORIGIN,
-  allowedOriginsParsed: allowedOrigins,
-  originMatches: allowedOrigins.includes(normalizedOrigin),
-  hasOriginHeader: !!origin
+## 🛠️ Solution: Simplify Middleware Handling
+
+Your project has **two implementations** of the same function:
+
+1. **Main** (`netlify/functions/donate.js`): Complex promise handling with timeout logic
+2. **Example** (`server-examples/netlify/netlify/functions/donate.js`): Simple promise wrapper
+
+The **simpler version works better** in serverless environments.
+
+### What to Change
+
+**File**: `netlify/functions/donate.js`
+
+**Lines**: 169-223
+
+**Action**: Replace complex promise handling with simpler version
+
+---
+
+## 📝 Implementation Steps
+
+### Step 1: Simplify mockRes Object
+
+**Current (lines 180-204) - COMPLEX:**
+```javascript
+let middlewareResolved = false;
+let middlewareResolve, middlewareReject;
+
+const middlewarePromise = new Promise((resolve, reject) => {
+  middlewareResolve = resolve;
+  middlewareReject = reject;
 });
 
-// Validate environment
-if (!process.env.CORS_ORIGIN) {
-  console.error('❌ CRITICAL: CORS_ORIGIN not set');
-}
-
-const corsHeaders = {
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Payment',
-  'Access-Control-Allow-Credentials': 'true',
-  'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'DENY',
-  'X-XSS-Protection': '1; mode=block',
+const mockRes = {
+  status: (code) => {
+    mockResStatusCode = code;
+    return mockRes;
+  },
+  json: (data) => {
+    mockResBody = data;
+    if (!middlewareResolved) {
+      middlewareResolved = true;
+      middlewareResolve();
+    }
+    return mockRes;
+  },
+  // ... more complex logic
 };
+```
 
-// Add origin header if origin is in allowed list
-if (origin && allowedOrigins.includes(normalizedOrigin)) {
-  corsHeaders['Access-Control-Allow-Origin'] = origin;
-  console.log('✅ CORS: Origin matched and header added');
-} else {
-  console.warn('⚠️ CORS: Origin not matched', {
-    hasOrigin: !!origin,
-    matched: allowedOrigins.includes(normalizedOrigin)
+**New - SIMPLE:**
+```javascript
+let mockResStatusCode = 200;
+let mockResBody = null;
+const mockResHeaders = {};
+
+const mockRes = {
+  status: (code) => {
+    mockResStatusCode = code;
+    return mockRes;
+  },
+  json: (data) => {
+    mockResBody = data;
+    return mockRes;
+  },
+  setHeader: (key, value) => {
+    mockResHeaders[key] = value;
+    return mockRes;
+  },
+  end: () => mockRes,
+};
+```
+
+### Step 2: Simplify Middleware Call
+
+**Current (lines 207-223) - COMPLEX:**
+```javascript
+const x402Middleware = paymentMiddleware(...);
+
+x402Middleware(mockReq, mockRes, (error) => {
+  if (error && !middlewareResolved) {
+    // complex error handling
+  } else if (!middlewareResolved) {
+    // complex success handling
+  }
+});
+
+await Promise.race([
+  middlewarePromise,
+  new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 25000))
+]);
+```
+
+**New - SIMPLE:**
+```javascript
+console.log('🔄 Initializing x402 middleware...');
+const x402Middleware = paymentMiddleware(process.env.WALLET_ADDRESS, dynamicConfig, {
+  url: process.env.FACILITATOR_URL || 'https://x402.org/facilitator',
+});
+
+console.log('⏳ Waiting for x402 middleware to complete...');
+try {
+  await new Promise((resolve, reject) => {
+    x402Middleware(mockReq, mockRes, (error) => {
+      if (error) {
+        console.error('❌ x402 middleware error:', error);
+        reject(error);
+      } else {
+        console.log('✅ x402 middleware completed');
+        resolve();
+      }
+    });
   });
+} catch (middlewareError) {
+  console.error('❌ Middleware execution failed:', middlewareError);
+  return {
+    statusCode: 500,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      success: false,
+      error: 'Payment verification failed',
+      details: process.env.NODE_ENV !== 'production' ? middlewareError.message : undefined
+    }),
+  };
+}
+
+// Check if x402 middleware sent a 402 response
+if (mockResStatusCode === 402) {
+  return {
+    statusCode: 402,
+    headers: { ...corsHeaders, ...mockResHeaders, 'Content-Type': 'application/json' },
+    body: JSON.stringify(mockResBody),
+  };
+}
+
+// If we got here, payment was verified by x402 middleware
+console.log('✅ Payment verified successfully');
+```
+
+---
+
+## 🔧 Alternative Solutions (If Step 1-2 Don't Work)
+
+### Solution A: Add Missing Express Methods
+
+If the error persists, add more Express-compatible methods to mock objects:
+
+**Add to mockReq** (after line 167):
+```javascript
+app: {},           // Express app reference
+next: () => {},    // Express next function
+query: {},         // URL query parameters
+params: {},        // Route parameters
+```
+
+**Add to mockRes**:
+```javascript
+send: (data) => {
+  mockResBody = data;
+  return mockRes;
+},
+locals: {},              // Express locals
+headersSent: false,      // Express headers sent flag
+getHeader: (name) => mockResHeaders[name],
+```
+
+### Solution B: Comprehensive Error Handling
+
+Wrap the entire x402 section in try/catch to ensure CORS headers are always returned:
+
+**Before the middleware initialization:**
+```javascript
+try {
+  // x402 middleware code here
+} catch (error) {
+  console.error('❌ CRITICAL: x402 middleware initialization failed:', error);
+
+  // Return 402 manually if middleware fails
+  return {
+    statusCode: 402,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      requiresPayment: true,
+      message: 'Payment required for this request',
+      details: process.env.NODE_ENV !== 'production' ? error.message : undefined
+    }),
+  };
 }
 ```
 
-#### Step 3: Deploy to Netlify
+---
+
+## 🧪 Testing & Deployment
+
+### Deploy Changes
 
 ```bash
 # From project root
-netlify deploy --prod
+npx netlify deploy --prod --build
 ```
 
-Or if you prefer the Netlify dashboard:
-1. Commit and push changes to git
-2. Netlify will auto-deploy
+### Monitor Logs
 
-#### Step 4: Test and Monitor
+1. Go to: https://app.netlify.com/projects/bucolic-cannoli-49fd18/logs/functions
+2. Look for:
+   - `🔄 Initializing x402 middleware...`
+   - `✅ x402 middleware completed` (success!)
+   - OR `❌ x402 middleware error:` (still failing)
 
-1. **Check Netlify Function Logs**:
-   - Go to Netlify Dashboard
-   - Navigate to: Functions → donate → Logs
-   - Look for "🔍 CORS Debug" output
+### Test Demo
 
-2. **Test Production Demo**:
-   - Open: https://lazaronacif.github.io/CryptoMeACoffee/
-   - Open Browser DevTools → Console
-   - Try to make a donation
-   - Check for CORS errors
+1. **Open**: https://lazaronacif.github.io/CryptoMeACoffee/
+2. **Open DevTools**: Console + Network tab
+3. **Try donation**: Connect wallet and initiate payment
+4. **Check**:
+   - ✅ No CORS errors in console
+   - ✅ OPTIONS request has `Access-Control-Allow-Origin` header
+   - ✅ POST request has `Access-Control-Allow-Origin` header
+   - ✅ 402 Payment Required response works
 
-3. **Expected Log Output**:
+---
+
+## 🎯 Success Criteria
+
+After implementation, you should see:
+
+1. **In Function Logs:**
    ```
-   🔍 CORS Debug: {
-     requestOrigin: 'https://lazaronacif.github.io',
-     normalizedOrigin: 'https://lazaronacif.github.io',
-     allowedOrigins: ['https://lazaronacif.github.io', 'http://localhost:3000'],
-     originMatches: true
-   }
+   🔍 CORS Debug: { originMatches: true }
    ✅ CORS: Origin matched and header added
+   🔄 Initializing x402 middleware...
+   ⏳ Waiting for x402 middleware to complete...
+   ✅ x402 middleware completed
    ```
 
-4. **Expected Browser Network Tab**:
-   - OPTIONS request: Status 200, has `Access-Control-Allow-Origin` header
-   - POST request: Status 402 or 200, has `Access-Control-Allow-Origin` header
-   - No CORS errors in console
+2. **In Browser Network Tab:**
+   - OPTIONS request: Status 200, has `Access-Control-Allow-Origin`
+   - POST request: Status 402, has `Access-Control-Allow-Origin`
+   - No CORS errors
 
-#### Troubleshooting CORS
-
-If it still fails after deployment:
-
-**Check the debug logs** to see exactly what's happening:
-
-1. **If `originMatches: false`**:
-   - Compare `requestOrigin` vs `allowedOrigins` in the logs
-   - Manually update CORS_ORIGIN in Netlify to match exact origin value
-   - Redeploy
-
-2. **If `CORS_ORIGIN not set`**:
-   - Go to Netlify Dashboard → Site Settings → Environment Variables
-   - Add `CORS_ORIGIN` = `https://lazaronacif.github.io,http://localhost:3000`
-   - Trigger new deployment
-
-3. **If origin is `null` or `undefined`**:
-   - Browser might not be sending Origin header
-   - Try adding wildcard support (less secure) for testing
+3. **In Widget:**
+   - Donation flow completes successfully
+   - Payment modal appears properly
+   - x402 payment header transmitted
 
 ---
 
-### Phase 2: Fix Logo Reference (Quick Win)
+## 📊 Why This Fix Works
 
-**File**: `examples/vanilla-html/index.html`
-
-**Line 166**: Change from:
-```html
-<img src="../../assets/logos/logo_CMC.png" alt="CryptoMeACoffee Logo" class="logo">
-```
-
-To:
-```html
-<img src="../../assets/logos/logo_v3.png" alt="CryptoMeACoffee Logo" class="logo">
-```
-
-**Verification**:
-- Open `examples/vanilla-html/index.html` in browser
-- Verify logo loads without 404 error
+| Issue | Root Cause | Fix |
+|-------|-----------|-----|
+| `.bind()` error | Complex promise handling confuses middleware | Simplify to basic Promise wrapper |
+| Timeout interference | 25-second timeout might race with middleware | Remove timeout logic |
+| Promise resolution | Dual resolution paths cause issues | Single promise resolve/reject |
+| Error handling | Unhandled rejection loses CORS headers | Wrap in try/catch, always return headers |
 
 ---
 
-### Phase 3: Add Build Script & Dependencies
+## 🔄 Rollback Plan
 
-**File**: `package.json`
-
-#### Step 1: Update Package Metadata
-
-**Replace lines 1-6**:
-```json
-{
-  "name": "cryptomeacoffee",
-  "version": "1.0.0",
-  "type": "module",
-  "description": "Accept USDC donations via x402 protocol - widget library and Netlify backend",
-  "main": "dist/widget.umd.js",
-  "module": "dist/widget.es.js",
-  "types": "dist/widget.d.ts",
-```
-
-**Add exports section** (after line 6):
-```json
-  "exports": {
-    ".": {
-      "import": "./dist/widget.es.js",
-      "require": "./dist/widget.umd.js",
-      "types": "./dist/widget.d.ts"
-    }
-  },
-```
-
-#### Step 2: Update Scripts
-
-**Replace the scripts section**:
-```json
-  "scripts": {
-    "dev": "netlify dev",
-    "build": "vite build",
-    "build:watch": "vite build --watch",
-    "preview": "vite preview",
-    "deploy": "netlify deploy",
-    "deploy:prod": "netlify deploy --prod"
-  },
-```
-
-#### Step 3: Add Widget Dependencies
-
-**Update dependencies section**:
-```json
-  "dependencies": {
-    "@coinbase/x402": "^0.7.1",
-    "express-validator": "^7.3.1",
-    "isomorphic-dompurify": "^2.33.0",
-    "nodemailer": "^7.0.10",
-    "x402-express": "^0.7.0",
-    "x402": "^0.7.0",
-    "viem": "^2.21.0"
-  },
-```
-
-**Update devDependencies section**:
-```json
-  "devDependencies": {
-    "netlify-cli": "^17.38.1",
-    "vite": "^5.4.11",
-    "vite-plugin-dts": "^4.3.0",
-    "typescript": "^5.7.2"
-  },
-```
-
-#### Step 4: Install Dependencies
+If the fix doesn't work:
 
 ```bash
-npm install
+# Revert to previous version
+git log --oneline  # Find commit before changes
+git revert <commit-hash>
+git push
+
+# Force redeploy
+npx netlify deploy --prod --build
 ```
-
-#### Step 5: Test Build
-
-```bash
-npm run build
-```
-
-**Expected output**:
-- `dist/widget.umd.js` (~450 KB)
-- `dist/widget.es.js`
-- Source maps (.js.map files)
-
-**Verify**:
-```bash
-ls -lh dist/
-```
-
----
-
-### Phase 4: Add TypeScript Support
-
-#### Step 1: Update Vite Configuration
-
-**File**: `vite.config.js`
-
-**Replace entire file**:
-```javascript
-import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
-import path from 'path';
-
-export default defineConfig({
-  plugins: [
-    dts({
-      insertTypesEntry: true,
-      rollupTypes: true,
-      include: ['src/**/*.js']
-    })
-  ],
-  define: {
-    'process.env': '{}',
-    'process.env.NODE_ENV': '"production"',
-    'global': 'globalThis',
-    'process': '{"env":{}}'
-  },
-  build: {
-    lib: {
-      entry: path.resolve(__dirname, 'src/widget.js'),
-      name: 'CryptoMeACoffee',
-      fileName: (format) => `widget.${format}.js`,
-      formats: ['es', 'umd']
-    },
-    rollupOptions: {
-      external: [],
-      output: {
-        globals: {}
-      }
-    },
-    outDir: 'dist',
-    sourcemap: true
-  }
-});
-```
-
-#### Step 2: Create TypeScript Configuration
-
-**Create file**: `tsconfig.json`
-
-```json
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "lib": ["ES2020", "DOM"],
-    "moduleResolution": "bundler",
-    "allowJs": true,
-    "checkJs": false,
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "outDir": "dist",
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": false,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "netlify", "server-examples"]
-}
-```
-
-#### Step 3: Add JSDoc Type Annotations
-
-**File**: `src/widget.js`
-
-**Add at the top** (before the class definition):
-
-```javascript
-/**
- * @typedef {Object} CryptoMeACoffeeConfig
- * @property {string} walletAddress - Recipient wallet address (required)
- * @property {string} apiEndpoint - Backend API endpoint URL (required)
- * @property {string} [creatorName='this creator'] - Display name for the creator
- * @property {string} [message='Thanks for the coffee!'] - Thank you message after donation
- * @property {string} [color='#5F7FFF'] - Primary color for the widget
- * @property {'Left' | 'Right'} [position='Right'] - Widget position on screen
- * @property {string | number} [xMargin='18'] - Horizontal margin in pixels
- * @property {string | number} [yMargin='18'] - Vertical margin in pixels
- * @property {number[]} [presetAmounts=[1, 3, 5]] - Preset donation amounts in USD
- * @property {'light' | 'dark'} [theme='light'] - Widget theme
- * @property {'base-sepolia' | 'base'} [network='base-sepolia'] - Blockchain network
- * @property {string} [logoUrl] - Custom logo URL
- * @property {number} [minAmount=0.01] - Minimum donation amount in USD
- * @property {number} [maxAmount=1000000] - Maximum donation amount in USD
- */
-
-/**
- * CryptoMeACoffee Widget
- * Accept USDC donations on your website via x402 protocol
- * @class
- */
-class CryptoMeACoffee {
-  /**
-   * Create a new CryptoMeACoffee widget instance
-   * @param {CryptoMeACoffeeConfig} config - Widget configuration
-   */
-  constructor(config = {}) {
-    // ... existing code
-  }
-
-  /**
-   * Render the widget in the specified container
-   * @param {string} [containerId='body'] - Container element ID or 'body'
-   * @returns {void}
-   */
-  render(containerId = 'body') {
-    // ... existing code
-  }
-
-  /**
-   * Destroy the widget and clean up
-   * @returns {void}
-   */
-  destroy() {
-    // ... existing code
-  }
-
-  /**
-   * Connect to user's wallet
-   * @returns {Promise<string>} Connected wallet address
-   */
-  async connectWallet() {
-    // ... existing code
-  }
-}
-
-export default CryptoMeACoffee;
-```
-
-**Note**: You only need to add JSDoc for the main public methods. Private methods can skip JSDoc.
-
-#### Step 4: Build with TypeScript Definitions
-
-```bash
-npm run build
-```
-
-**Expected output**:
-- `dist/widget.umd.js`
-- `dist/widget.es.js`
-- `dist/widget.d.ts` ← **NEW!**
-- Source maps
-
-**Verify TypeScript definitions**:
-```bash
-cat dist/widget.d.ts
-```
-
-You should see TypeScript type definitions for the CryptoMeACoffee class.
-
----
-
-### Phase 5: Commit Package Lock Files
-
-```bash
-git add server-examples/express/package-lock.json
-git add server-examples/netlify/package-lock.json
-git commit -m "chore: Track package-lock files for server examples"
-```
-
----
-
-## 🧪 Testing Checklist
-
-### CORS Testing (Critical)
-
-After deploying CORS fix:
-
-- [ ] Open https://lazaronacif.github.io/CryptoMeACoffee/
-- [ ] Open Browser DevTools → Network tab
-- [ ] Click widget button to open donation modal
-- [ ] Connect wallet
-- [ ] Attempt donation
-- [ ] **Check Network tab**:
-  - [ ] OPTIONS request has `Access-Control-Allow-Origin` header
-  - [ ] POST request has `Access-Control-Allow-Origin` header
-  - [ ] No CORS errors in console
-- [ ] **Check Netlify Logs**:
-  - [ ] See "🔍 CORS Debug" output
-  - [ ] `originMatches: true`
-  - [ ] "✅ CORS: Origin matched" message
-
-### Build Testing
-
-After adding build scripts:
-
-- [ ] Run `npm run build`
-- [ ] Check `dist/` directory:
-  - [ ] `widget.umd.js` exists (~450 KB)
-  - [ ] `widget.es.js` exists
-  - [ ] Source maps exist
-- [ ] Test locally:
-  ```bash
-  cd examples/vanilla-html
-  python3 -m http.server 8000
-  # Open http://localhost:8000
-  ```
-- [ ] Widget renders correctly
-- [ ] All functionality works
-
-### TypeScript Testing
-
-After adding TypeScript support:
-
-- [ ] `dist/widget.d.ts` file exists
-- [ ] Create test TypeScript file:
-  ```typescript
-  import CryptoMeACoffee from './dist/widget.es.js';
-
-  const widget = new CryptoMeACoffee({
-    walletAddress: '0x...',
-    apiEndpoint: 'https://...',
-    position: 'Left' // Should autocomplete
-  });
-  ```
-- [ ] Run `npx tsc --noEmit test.ts` (should have no errors)
-- [ ] IDE shows autocomplete for config options
-
----
-
-## 📝 Summary
-
-### What Gets Fixed
-
-1. ✅ **CORS**: Production demo will work like localhost
-2. ✅ **Logo**: Examples will display correct logo
-3. ✅ **Build**: `npm run build` command available
-4. ✅ **TypeScript**: IDE support and type safety for widget users
-5. ✅ **Git**: Package lock files tracked properly
-
-### Priority Order
-
-1. **Phase 1 (CRITICAL)**: Fix CORS → Deploy → Test (15 minutes)
-2. **Phase 2**: Fix logo → Commit (2 minutes)
-3. **Phase 3**: Add build script → Install deps → Test build (10 minutes)
-4. **Phase 4**: Add TypeScript → Rebuild (15 minutes)
-5. **Phase 5**: Commit package locks (1 minute)
-
-### Expected Timeline
-
-- **Minimum to fix demo**: Phase 1 only (15 minutes)
-- **Complete all fixes**: All phases (45 minutes)
-
----
-
-## 🚀 Quick Start (Minimum Fix)
-
-If you just want to fix the production demo ASAP:
-
-```bash
-# 1. Edit netlify/functions/donate.js (add normalization code from Phase 1)
-# 2. Deploy
-netlify deploy --prod
-
-# 3. Wait 30 seconds for deployment
-# 4. Test: https://lazaronacif.github.io/CryptoMeACoffee/
-# 5. Check Netlify logs for CORS debug output
-```
-
-That's it! The rest of the phases are quality-of-life improvements.
 
 ---
 
 ## 📞 Need Help?
 
-If something doesn't work as expected:
+Check these resources:
 
-1. **Check Netlify function logs** for debug output
-2. **Check browser console** for error messages
-3. **Verify environment variables** in Netlify dashboard
-4. **Run `netlify env:list`** to see if CORS_ORIGIN is set
-
-Common issues:
-- CORS_ORIGIN not set in Netlify → Add it in dashboard
-- Origin still not matching → Check debug logs for exact values
-- Build fails → Run `npm install` first
+1. **Function Logs**: https://app.netlify.com/projects/bucolic-cannoli-49fd18/logs/functions
+2. **x402 Docs**: Check if there's a Netlify-specific integration
+3. **Server Example**: Reference `server-examples/netlify/netlify/functions/donate.js` (working version)
 
 ---
 
-## ✅ Done!
+## 🎉 Expected Result
 
-Once all phases are complete:
-- Production demo works ✅
-- Build process standardized ✅
-- TypeScript support added ✅
-- Code quality improved ✅
+Once fixed:
+- ✅ Production demo works like localhost
+- ✅ CORS errors eliminated
+- ✅ Payment flow functional end-to-end
+- ✅ Users can donate via widget

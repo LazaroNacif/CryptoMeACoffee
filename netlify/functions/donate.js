@@ -169,13 +169,6 @@ export async function handler(event) {
     let mockResStatusCode = 200;
     let mockResBody = null;
     const mockResHeaders = {};
-    let middlewareResolved = false;
-    let middlewareResolve, middlewareReject;
-
-    const middlewarePromise = new Promise((resolve, reject) => {
-      middlewareResolve = resolve;
-      middlewareReject = reject;
-    });
 
     const mockRes = {
       status: (code) => {
@@ -184,23 +177,13 @@ export async function handler(event) {
       },
       json: (data) => {
         mockResBody = data;
-        if (!middlewareResolved) {
-          middlewareResolved = true;
-          middlewareResolve();
-        }
         return mockRes;
       },
       setHeader: (key, value) => {
         mockResHeaders[key] = value;
         return mockRes;
       },
-      end: () => {
-        if (!middlewareResolved) {
-          middlewareResolved = true;
-          middlewareResolve();
-        }
-        return mockRes;
-      },
+      end: () => mockRes,
     };
 
     // Apply x402 payment middleware
@@ -210,24 +193,19 @@ export async function handler(event) {
     });
 
     // Wrap x402 middleware for Netlify
-    x402Middleware(mockReq, mockRes, (error) => {
-      if (error && !middlewareResolved) {
-        console.error('❌ x402 middleware error:', error);
-        middlewareResolved = true;
-        middlewareReject(error);
-      } else if (!middlewareResolved) {
-        console.log('✅ x402 middleware completed');
-        middlewareResolved = true;
-        middlewareResolve();
-      }
-    });
-
     console.log('⏳ Waiting for x402 middleware to complete...');
     try {
-      await Promise.race([
-        middlewarePromise,
-        new Promise((_, reject) => setTimeout(() => reject(new Error('x402 middleware timeout')), 25000))
-      ]);
+      await new Promise((resolve, reject) => {
+        x402Middleware(mockReq, mockRes, (error) => {
+          if (error) {
+            console.error('❌ x402 middleware error:', error);
+            reject(error);
+          } else {
+            console.log('✅ x402 middleware completed');
+            resolve();
+          }
+        });
+      });
     } catch (middlewareError) {
       console.error('❌ Middleware execution failed:', middlewareError);
       return {
