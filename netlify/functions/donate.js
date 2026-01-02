@@ -164,6 +164,14 @@ export async function handler(event) {
       get: function(name) {
         return this.header(name);
       },
+      // Additional Express properties
+      app: {},
+      query: {},
+      params: {},
+      route: { path: '/api/donate' },
+      baseUrl: '',
+      originalUrl: '/api/donate',
+      url: '/api/donate',
     };
 
     let mockResStatusCode = 200;
@@ -179,11 +187,20 @@ export async function handler(event) {
         mockResBody = data;
         return mockRes;
       },
+      send: (data) => {
+        mockResBody = data;
+        return mockRes;
+      },
       setHeader: (key, value) => {
         mockResHeaders[key] = value;
         return mockRes;
       },
+      getHeader: (name) => mockResHeaders[name],
       end: () => mockRes,
+      // Additional Express properties
+      locals: {},
+      headersSent: false,
+      statusCode: 200,
     };
 
     // Apply x402 payment middleware
@@ -194,9 +211,29 @@ export async function handler(event) {
 
     // Wrap x402 middleware for Netlify
     console.log('⏳ Waiting for x402 middleware to complete...');
+    console.log('📊 Mock req properties:', Object.keys(mockReq));
+    console.log('📊 Mock res properties:', Object.keys(mockRes));
+
     try {
       await new Promise((resolve, reject) => {
+        let callbackCalled = false;
+
+        // Safety timeout to prevent hanging
+        const timeout = setTimeout(() => {
+          if (!callbackCalled) {
+            console.error('⚠️ x402 middleware callback never called - timing out');
+            reject(new Error('x402 middleware timeout - callback never invoked'));
+          }
+        }, 10000);
+
         x402Middleware(mockReq, mockRes, (error) => {
+          if (callbackCalled) {
+            console.warn('⚠️ x402 middleware callback called multiple times');
+            return;
+          }
+          callbackCalled = true;
+          clearTimeout(timeout);
+
           if (error) {
             console.error('❌ x402 middleware error:', error);
             reject(error);
@@ -205,6 +242,8 @@ export async function handler(event) {
             resolve();
           }
         });
+
+        console.log('🔄 x402 middleware invoked, waiting for callback...');
       });
     } catch (middlewareError) {
       console.error('❌ Middleware execution failed:', middlewareError);
