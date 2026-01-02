@@ -1,46 +1,46 @@
 # CryptoMeACoffee - Session Summary
 
-**Date:** December 30, 2024
-**Session Focus:** Widget Debugging & CORS Fix
+**Date:** December 30-31, 2025
+**Session Focus:** CORS Deployment Fix - Environment Variable Propagation
 
 ---
 
-## ✅ What We Accomplished
+## ✅ What We Accomplished (Current Session)
 
-### 1. Fixed Widget Loading Issue
-**Problem:** Widget wasn't appearing on GitHub Pages demo site
-- **Root Cause:** ES module import chain broke due to esm.sh CDN returning 503 for `@solana/rpc-parsed-types@2.3.0`
-- **Why Solana?** The x402/viem dependencies include multi-chain support (including Solana) even though we only use Base
-- **Solution:** Switched from ES modules to pre-bundled UMD version
+### Fixed CORS Deployment Issue
+**Problem:** Widget still showing CORS errors despite `CORS_ORIGIN` environment variable being set correctly
+
+**Root Cause:**
+- Environment variable was updated on December 30, but **Netlify doesn't automatically redeploy when env vars change**
+- Backend was still running the old deployment from December 27
+- The function needed to be redeployed to pick up the new `CORS_ORIGIN` value
+
+**Solution:**
+1. Triggered manual Netlify redeploy to pick up environment variable changes
+2. Verified CORS headers are now correctly returned by backend
+3. Identified browser caching as remaining issue for end users
 
 **Changes Made:**
-- ✅ Copied `dist/widget.umd.js` (450KB) to `docs/widget.umd.js`
-- ✅ Updated `docs/index.html` - replaced ~40 lines of ES module code with simple UMD script tag
-- ✅ Removed importmap and ES module initialization code
-- ✅ Commit: `d5b43c1` - "🐛 fix: Switch to UMD bundle to fix widget loading"
+- ✅ Updated `netlify/functions/donate.js` with redeploy comment
+- ✅ Triggered manual deployment via Netlify CLI
+- ✅ Verified deployment: `695420c072a4493fc25dfb59` (deployed Dec 30, 2025)
+- ✅ Commit: `cdd24ad` - "🔄 chore: Trigger redeploy to pick up CORS_ORIGIN env var"
 
-### 2. Fixed CORS Backend Errors
-**Problem:** Backend rejecting requests from GitHub Pages domain
-- **Root Cause:** `CORS_ORIGIN` environment variable only included `localhost`
-- **Errors:**
-  - "Access-Control-Allow-Origin blocked by CORS"
-  - HTTP 402 errors
-  - Payment processing failures
-
-**Solution:** Updated Netlify environment variable
+**Verification Results:**
 ```bash
-# Before
-CORS_ORIGIN = http://localhost:3000
+# OPTIONS Preflight - ✅ WORKING
+curl -X OPTIONS https://bucolic-cannoli-49fd18.netlify.app/api/donate \
+  -H "Origin: https://lazaronacif.github.io"
+Response: 200 OK
+Headers: access-control-allow-origin: https://lazaronacif.github.io ✅
 
-# After
-CORS_ORIGIN = https://lazaronacif.github.io,http://localhost:3000
+# POST Request - ✅ WORKING
+curl -X POST https://bucolic-cannoli-49fd18.netlify.app/api/donate \
+  -H "Origin: https://lazaronacif.github.io" \
+  -d '{"amount": 5}'
+Response: 402 Payment Required (expected for x402)
+Headers: access-control-allow-origin: https://lazaronacif.github.io ✅
 ```
-
-**Changes Made:**
-- ✅ Installed Netlify CLI locally (`npm install --save-dev netlify-cli`)
-- ✅ Updated environment variable: `npx netlify env:set CORS_ORIGIN "https://lazaronacif.github.io,http://localhost:3000"`
-- ✅ Modified `netlify/functions/donate.js` to trigger redeploy
-- ✅ Commit: `9d472c9` - "🔧 config: Add GitHub Pages to CORS allowed origins"
 
 ---
 
@@ -49,106 +49,127 @@ CORS_ORIGIN = https://lazaronacif.github.io,http://localhost:3000
 ### Frontend (GitHub Pages)
 - **URL:** https://lazaronacif.github.io/CryptoMeACoffee/
 - **Status:** ✅ Working
-- **Widget:** UMD bundle (self-contained, no CDN dependencies)
+- **Widget:** UMD bundle (deployed Dec 29, 2025)
+- **Last Updated:** `widget.umd.js` from commit `d5b43c1`
 
 ### Backend (Netlify)
 - **URL:** https://bucolic-cannoli-49fd18.netlify.app/api/donate
-- **Site ID:** c03a226e-8d9d-40e9-94f5-a578f2022656
+- **Site ID:** `c03a226e-8d9d-40e9-94f5-a578f2022656`
 - **Status:** ✅ Working
-- **CORS:** Configured for GitHub Pages + localhost
+- **Latest Deploy:** `695420c072a4493fc25dfb59` (Dec 30, 2025 18:58 UTC)
+- **CORS:** ✅ Configured for GitHub Pages + localhost
+
+### Environment Variables (Netlify)
+```bash
+CORS_ORIGIN="https://lazaronacif.github.io,http://localhost:3000"
+WALLET_ADDRESS="0x518Cb6A5475097Ac3dDe6D2AF98F7cb1593262FB"
+NETWORK="base-sepolia"
+FACILITATOR_URL="https://x402.org/facilitator"
+```
 
 ### Configuration
 - **Wallet:** `0x518Cb6A5475097Ac3dDe6D2AF98F7cb1593262FB`
 - **Network:** Base Sepolia (testnet)
 - **USDC Contract:** `0x036CbD53842c5426634e7929541eC2318f3dCF7e`
-- **Email Notifications:** ⏸️ Disabled (can add later)
+- **Email Notifications:** ⏸️ Disabled (env vars not configured)
 
 ---
 
 ## 🧪 Testing Results
 
-### Widget UI - ✅ WORKING
-- ✅ Floating button appears (bottom-right corner)
-- ✅ Modal opens/closes smoothly
-- ✅ Amount selection ($1, $3, $5 presets + custom)
-- ✅ Message input (0/500 characters)
-- ✅ Clean UI with no rendering issues
+### Backend CORS - ✅ VERIFIED WORKING
+- ✅ OPTIONS preflight returns correct CORS headers
+- ✅ POST requests return correct CORS headers
+- ✅ Origin validation working for GitHub Pages domain
+- ✅ 402 Payment Required response (expected for x402 protocol)
 
-### Backend Integration - ✅ WORKING
-- ✅ No CORS errors in console
-- ✅ Widget initializes successfully
-- ✅ Backend accessible from GitHub Pages
-- 🟡 Full payment flow requires wallet connection (not tested)
-
-### Console Output - Clean
-```
-✅ Widget auto-initialized successfully!
-Widget instance: Xp
-```
+### Known Browser Cache Issue
+- ⚠️ Users may see cached error responses from old deployment
+- **Solution:** Clear browser cache (Ctrl+Shift+R / Cmd+Shift+R)
+- **Alternative:** Test in incognito/private browsing mode
 
 ---
 
-## 📂 Key Files Modified
+## 📂 Key Files Modified (Current Session)
 
-### Session Commits
-1. **d5b43c1** - Widget UMD fix
-   - `docs/widget.umd.js` (new, 450KB)
-   - `docs/index.html` (simplified script tag)
+### Commits
+1. **cdd24ad** - Redeploy trigger
+   - `netlify/functions/donate.js` (added redeploy comment)
+   - Triggered Netlify deployment with new env vars
 
-2. **9d472c9** - CORS configuration
-   - `netlify/functions/donate.js` (added comment)
-   - Netlify env var: `CORS_ORIGIN`
-
-### Critical Files
-- `docs/index.html` - Demo page (lines 280-293: UMD script tag)
-- `docs/widget.umd.js` - Self-contained widget bundle
-- `netlify/functions/donate.js` - Serverless backend
-- `dist/widget.umd.js` - Source UMD bundle (from build)
-- `src/widget.js` - Widget source code
+### Deployment Details
+- **Build ID:** `695420c072a4493fc25dfb59`
+- **Deploy Time:** December 30, 2025 18:58:08 UTC
+- **Status:** Ready
+- **Functions:** donate.js successfully deployed
 
 ---
 
 ## 🔧 Technical Context
 
-### Widget Architecture
-- **Build System:** Vite (creates UMD and ES bundles)
-- **Dependencies:** x402, viem, express-validator, nodemailer
-- **Bundle Size:** 450KB (includes all dependencies)
-- **Auto-initialization:** UMD bundle reads data-attributes from script tag
+### Why Manual Redeploy Was Needed
+**Netlify Environment Variable Behavior:**
+- Environment variables can be updated via CLI/dashboard
+- **Changes do NOT trigger automatic redeployment**
+- Functions continue using old env var values until next deploy
+- Must trigger manual deploy or push code change to pick up new values
 
-### Integration Pattern (UMD)
-```html
-<script
-  data-name="CMAC-Widget"
-  src="./widget.umd.js"
-  data-wallet="0x518..."
-  data-api="https://bucolic-cannoli-49fd18.netlify.app/api/donate"
-  data-creator-name="CryptoMeACoffee Demo"
-  data-network="base-sepolia">
-</script>
+### CORS Implementation (netlify/functions/donate.js)
+```javascript
+const origin = event.headers.origin;
+const allowedOrigins = process.env.CORS_ORIGIN?.split(',').map(o => o.trim()) || [];
+
+const corsHeaders = {
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Payment',
+  'Access-Control-Allow-Credentials': 'true',
+};
+
+if (allowedOrigins.includes(origin)) {
+  corsHeaders['Access-Control-Allow-Origin'] = origin;
+}
 ```
 
-### Backend Configuration
-- **Framework:** Netlify Functions (serverless)
-- **Protocol:** x402 (Coinbase payment protocol)
-- **Validation:** express-validator for input sanitization
-- **Security:** CORS headers, XSS protection, input validation
+### Deployment Commands Used
+```bash
+# Check environment variables
+npx netlify env:list
+npx netlify env:get CORS_ORIGIN
+
+# Check deployment status
+npx netlify status
+npx netlify api listSiteDeploys --data '{"site_id": "c03a226e-8d9d-40e9-94f5-a578f2022656"}'
+
+# Trigger manual deployment
+npx netlify deploy --prod --dir=. --functions=netlify/functions --message="Redeploy for CORS_ORIGIN"
+```
 
 ---
 
 ## ⚠️ Known Issues & Limitations
 
-### 1. Bundle Size (Non-Critical)
+### 1. Browser Cache Issue (User-Facing)
+- **Issue:** Users who visited before the fix will have cached 502/CORS errors
+- **Impact:** Widget appears broken despite backend working correctly
+- **Solution:** Hard refresh (Ctrl+Shift+R) or clear site data
+- **Prevention:** Consider adding cache-control headers or versioning to API endpoint
+
+### 2. Manual Redeploy Required for Env Changes
+- **Issue:** Netlify doesn't auto-deploy when environment variables change
+- **Impact:** Config changes don't take effect immediately
+- **Workaround:** Always trigger manual redeploy after env var updates
+
+### 3. Bundle Size (Non-Critical)
 - **Issue:** UMD bundle is 450KB (includes unused Solana dependencies)
 - **Impact:** Slightly slower initial load
 - **Future Optimization:** Configure tree-shaking to exclude Solana
 
-### 2. Email Notifications (Disabled)
+### 4. Email Notifications (Disabled)
 - **Status:** Environment variables not configured
 - **Required:** `EMAIL_HOST`, `EMAIL_USER`, `EMAIL_PASS`, `EMAIL_PORT`
 - **Impact:** No email alerts on donations
 
-### 3. Full Payment Flow Not Tested
+### 5. Full Payment Flow Not Tested
 - **Reason:** Requires Web3 wallet connection
 - **Next Steps:**
   - Install MetaMask/Coinbase Wallet
@@ -160,40 +181,54 @@ Widget instance: Xp
 
 ## 🚀 Next Steps
 
-### Immediate (Optional)
-1. **Test Full Payment Flow**
+### Immediate (User Action Required)
+1. **Clear Browser Cache**
+   - Hard refresh: Ctrl+Shift+R (Windows) / Cmd+Shift+R (Mac)
+   - Or test in incognito/private browsing mode
+   - Verify widget can connect to backend without CORS errors
+
+2. **Test Full Payment Flow** (Optional)
    - Connect wallet to Base Sepolia
    - Acquire testnet USDC
    - Test donation end-to-end
+
+### Future Improvements
+1. **Add Cache Busting**
+   - Version API endpoint (e.g., `/api/v1/donate`)
+   - Add cache-control headers to prevent stale responses
+   - Implement API versioning strategy
 
 2. **Enable Email Notifications**
    - Configure email environment variables
    - Test notification delivery
 
-### Optimizations (Future)
-1. **Reduce Bundle Size**
+3. **Reduce Bundle Size**
    - Investigate why Solana deps are included
    - Configure build to exclude unused chains
    - Target: <300KB bundle
 
-2. **Production Deployment**
+4. **Production Deployment**
    - Switch to Base mainnet
    - Update USDC contract to mainnet address
    - Point to production wallet
-
-3. **Add Features**
-   - Custom donation amounts (beyond presets)
-   - Donation history/leaderboard
-   - Multiple currency support
 
 ---
 
 ## 💡 Important Notes
 
-### Why UMD vs ES Modules?
-- **ES Modules:** Require runtime CDN fetches → single 503 breaks everything
-- **UMD Bundle:** Self-contained → no external dependencies → more reliable
-- **Trade-off:** Larger file size but guaranteed to work
+### Environment Variable Best Practices
+- **Always redeploy after updating env vars** in Netlify
+- Use `npx netlify deploy --prod` to trigger manual deployments
+- Verify deployment picked up changes via function logs
+- Consider using CI/CD for automatic deployments on env changes
+
+### CORS Debugging Checklist
+1. ✅ Check env var is set: `npx netlify env:get CORS_ORIGIN`
+2. ✅ Verify latest deployment date matches env var update
+3. ✅ Test OPTIONS preflight with curl
+4. ✅ Test POST request with curl
+5. ✅ Clear browser cache before testing in browser
+6. ✅ Check function logs for origin validation
 
 ### Repository Structure
 ```
@@ -208,7 +243,7 @@ CryptoMeACoffee/
 │   └── widget.umd.js      # Deployed widget
 ├── netlify/
 │   └── functions/
-│       └── donate.js      # Backend handler
+│       └── donate.js      # Backend handler (CORS configured)
 └── netlify.toml           # Netlify config
 ```
 
@@ -216,6 +251,11 @@ CryptoMeACoffee/
 ```
 On branch main
 Your branch is up to date with 'origin/main'
+
+Recent commits:
+cdd24ad - 🔄 chore: Trigger redeploy to pick up CORS_ORIGIN env var
+c3cadd9 - 🐛 fix: Add error handling to prevent 502 without CORS headers
+a8b76d0 - 🐛 fix: Add error logging and timeout handling for x402
 
 Untracked/Modified (not committed):
 - .gitignore
@@ -232,32 +272,61 @@ Untracked/Modified (not committed):
 - **Backend:** https://bucolic-cannoli-49fd18.netlify.app/api/donate
 - **Repository:** https://github.com/LazaroNacif/CryptoMeACoffee
 - **Netlify Dashboard:** https://app.netlify.com/projects/bucolic-cannoli-49fd18
+- **Latest Deploy:** https://app.netlify.com/projects/bucolic-cannoli-49fd18/deploys/695420c072a4493fc25dfb59
 
 ---
 
-## 📋 Session Commands Used
+## 📋 Session Commands Reference
 
 ```bash
-# Install Netlify CLI
-npm install --save-dev netlify-cli
+# Check environment variables
+npx netlify env:list
+npx netlify env:get CORS_ORIGIN
 
-# Update CORS environment variable
-npx netlify env:set CORS_ORIGIN "https://lazaronacif.github.io,http://localhost:3000"
+# Check deployment status
+npx netlify status
+npx netlify api listSiteDeploys --data '{"site_id": "c03a226e-8d9d-40e9-94f5-a578f2022656"}'
 
-# Copy UMD bundle to docs
-cp dist/widget.umd.js docs/widget.umd.js
-
-# Commit and push changes
-git add docs/widget.umd.js docs/index.html
-git commit -m "🐛 fix: Switch to UMD bundle to fix widget loading"
-git push
-
+# Trigger manual deployment
 git add netlify/functions/donate.js
-git commit -m "🔧 config: Add GitHub Pages to CORS allowed origins"
+git commit -m "🔄 chore: Trigger redeploy to pick up CORS_ORIGIN env var"
 git push
+
+# Alternative: Direct deployment via CLI
+npx netlify deploy --prod --dir=. --functions=netlify/functions --message="Redeploy for CORS_ORIGIN"
+
+# Test CORS headers
+curl -X OPTIONS https://bucolic-cannoli-49fd18.netlify.app/api/donate \
+  -H "Origin: https://lazaronacif.github.io" \
+  -H "Access-Control-Request-Method: POST" -v
+
+curl -X POST https://bucolic-cannoli-49fd18.netlify.app/api/donate \
+  -H "Origin: https://lazaronacif.github.io" \
+  -H "Content-Type: application/json" \
+  -d '{"amount": 5}' -i
 ```
 
 ---
 
-**Status:** ✅ Production Ready (for users with Web3 wallets)
-**Next Session:** Test full donation flow with wallet connection
+## 📚 Previous Session Summary (Dec 29-30, 2024)
+
+### What Was Accomplished
+1. **Fixed Widget Loading Issue**
+   - Switched from ES modules to UMD bundle
+   - Resolved CDN 503 errors from esm.sh
+   - Commit: `d5b43c1`
+
+2. **Initial CORS Configuration**
+   - Set `CORS_ORIGIN` environment variable
+   - Added GitHub Pages domain to allowed origins
+   - Commit: `9d472c9`
+
+### Why CORS Still Didn't Work
+- Environment variable was set correctly
+- **BUT deployment wasn't triggered** to pick up the change
+- Functions continued using old configuration until today's redeploy
+
+---
+
+**Status:** ✅ Backend Fully Working - User Cache Clear Required
+**Next Session:** Test full payment flow with wallet connection after cache clear

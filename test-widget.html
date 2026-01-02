@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Widget Test</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 40px;
+      background: #f0f0f0;
+    }
+    .test-info {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    h1 { color: #333; }
+    .status { margin: 20px 0; padding: 15px; border-radius: 4px; }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+  <div class="test-info">
+    <h1>🧪 Widget Test Page</h1>
+    <p>This page tests if the CryptoMeACoffee widget loads correctly.</p>
+
+    <div id="status" class="status">
+      <strong>Status:</strong> Loading widget...
+    </div>
+
+    <div>
+      <h3>What to check:</h3>
+      <ol>
+        <li>Look for a floating button in the bottom-right corner</li>
+        <li>Click the button to open the modal</li>
+        <li>Check browser console for any errors (F12)</li>
+      </ol>
+    </div>
+
+    <div>
+      <h3>Backend Setup:</h3>
+      <ol>
+        <li>cd server-examples/express</li>
+        <li>npm install</li>
+        <li>Create .env file with your config</li>
+        <li>npm start</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Widget Script -->
+  <script
+    data-name="CMAC-Widget"
+    src="https://unpkg.com/cryptomeacoffee@latest/dist/widget.umd.js"
+    data-wallet="0x518Cb6A5475097Ac3dDe6D2AF98F7cb1593262FB"
+    data-api="http://localhost:3000/api/donate"
+    data-creator-name="Test Creator"
+    data-message="Thanks for testing!"
+    data-color="#5F7FFF"
+    data-position="Right"
+    data-x_margin="18"
+    data-y_margin="18"
+    data-network="base-sepolia"
+  ></script>
+
+  <script>
+    // Check if widget loaded
+    window.addEventListener('load', () => {
+      const status = document.getElementById('status');
+
+      setTimeout(() => {
+        if (window.CryptoMeACoffeeWidget) {
+          status.className = 'status success';
+          status.innerHTML = '<strong>✅ Success!</strong> Widget loaded. Check the bottom-right corner for the button.';
+          console.log('Widget instance:', window.CryptoMeACoffeeWidget);
+        } else {
+          status.className = 'status error';
+          status.innerHTML = '<strong>❌ Error!</strong> Widget did not load. Check the console for errors.';
+        }
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

@@ -151,9 +151,11 @@ export async function handler(event) {
 
     const { maxAmountRequired, asset } = atomicAmountForAsset;
 
+    console.log('💰 Atomic amount:', maxAmountRequired);
+    console.log('💰 Asset:', JSON.stringify(asset, null, 2));
+
     // Construct payment requirements manually
     const payTo = getAddress(process.env.WALLET_ADDRESS);
-    const assetAddress = getAddress(USDC_ADDRESSES[network]);
     const resourceUrl = `https://${event.headers.host || 'bucolic-cannoli-49fd18.netlify.app'}/api/donate`;
 
     const paymentRequirements = [{
@@ -165,7 +167,7 @@ export async function handler(event) {
       mimeType: 'application/json',
       payTo,
       maxTimeoutSeconds: 60,
-      asset: assetAddress,
+      asset: getAddress(asset.address), // Use asset.address from processPriceToAtomicAmount
       outputSchema: {
         input: {
           type: 'http',
@@ -174,7 +176,7 @@ export async function handler(event) {
         },
         output: undefined,
       },
-      extra: asset.eip712,
+      extra: asset.eip712, // EIP-712 domain from processPriceToAtomicAmount
     }];
 
     const x402Version = 1;
@@ -221,17 +223,23 @@ export async function handler(event) {
 
     // Verify payment
     const matchingRequirement = paymentRequirements[0];
+
+    console.log('🔍 Decoded payment:', JSON.stringify(decodedPayment, null, 2));
+    console.log('🔍 Payment requirement:', JSON.stringify(matchingRequirement, null, 2));
+
     const verifyResult = await verify(decodedPayment, matchingRequirement);
 
+    console.log('🔍 Verify result:', JSON.stringify(verifyResult, null, 2));
+
     if (!verifyResult.valid) {
-      console.error('❌ Payment verification failed:', verifyResult.reason);
+      console.error('❌ Payment verification failed:', verifyResult.reason || 'No reason provided');
       return {
         statusCode: 402,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           x402Version,
           error: 'Payment verification failed',
-          reason: verifyResult.reason,
+          reason: verifyResult.reason || 'Verification failed',
           accepts: toJsonSafe(paymentRequirements),
         }),
       };
