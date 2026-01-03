@@ -312,7 +312,7 @@ export async function handler(event) {
 
     const { message } = requestBody;
 
-    // Send email notification asynchronously (non-blocking)
+    // Send email notification (must await to ensure completion in serverless)
     // Note: message is already sanitized by express-validator's .escape()
     const resend = getResendClient();
 
@@ -321,8 +321,8 @@ export async function handler(event) {
 
       console.log('📧 Attempting to send email to:', process.env.NOTIFICATION_EMAIL);
 
-      resend.emails
-        .send({
+      try {
+        const emailResult = await resend.emails.send({
           from: 'CryptoMeACoffee <onboarding@resend.dev>',
           to: process.env.NOTIFICATION_EMAIL,
           subject: `💰 New Donation: $${amount} USDC`,
@@ -335,15 +335,13 @@ export async function handler(event) {
           <hr>
           <p><em>Powered by CryptoMeACoffee</em></p>
         `,
-        })
-        .then((result) => {
-          console.log('📧 Email notification sent via Resend');
-          console.log('📧 Resend response:', JSON.stringify(result));
-        })
-        .catch((emailError) => {
-          console.error('❌ Failed to send email:', emailError);
-          console.error('❌ Error details:', JSON.stringify(emailError, null, 2));
         });
+        console.log('📧 Email notification sent via Resend');
+        console.log('📧 Resend response:', JSON.stringify(emailResult));
+      } catch (emailError) {
+        console.error('❌ Failed to send email:', emailError);
+        console.error('❌ Error details:', JSON.stringify(emailError, null, 2));
+      }
     } else {
       console.log('⚠️ Email notification skipped:', {
         hasResend: !!resend,
