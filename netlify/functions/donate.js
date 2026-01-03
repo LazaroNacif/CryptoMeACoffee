@@ -7,7 +7,7 @@
 import { useFacilitator } from 'x402/verify';
 import { exact } from 'x402/schemes';
 import { processPriceToAtomicAmount, toJsonSafe } from 'x402/shared';
-import { SupportedEVMNetworks } from 'x402/types';
+import { SupportedEVMNetworks, settleResponseHeader } from 'x402/types';
 import { getAddress } from 'viem';
 import nodemailer from 'nodemailer';
 import { body, validationResult } from 'express-validator';
@@ -202,7 +202,7 @@ export async function handler(event) {
     const facilitatorConfig = {
       url: process.env.FACILITATOR_URL || 'https://x402.org/facilitator',
     };
-    const { verify } = useFacilitator(facilitatorConfig);
+    const { verify, settle } = useFacilitator(facilitatorConfig);
 
     // Decode payment
     let decodedPayment;
@@ -246,6 +246,51 @@ export async function handler(event) {
     }
 
     console.log('✅ Payment verified successfully');
+
+    // Settle payment (execute the USDC transfer on-chain)
+    console.log('💸 Settling payment on-chain...');
+    let settleResult;
+    try {
+      settleResult = await settle(decodedPayment, matchingRequirement);
+      console.log('🔍 Settle result:', JSON.stringify(settleResult, null, 2));
+    } catch (settleError) {
+      console.error('❌ Settlement failed:', settleError);
+      return {
+        statusCode: 402,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          x402Version,
+          error: 'Payment settlement failed',
+          reason: settleError.message || 'Unable to execute transfer',
+          accepts: toJsonSafe(paymentRequirements),
+        }),
+      };
+    }
+
+    // Check if settlement was successful
+    if (!settleResult.success) {
+      console.error('❌ Settlement unsuccessful:', settleResult.errorReason);
+      return {
+        statusCode: 402,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'X-PAYMENT-RESPONSE': settleResponseHeader(settleResult),
+        },
+        body: JSON.stringify({
+          x402Version,
+          error: 'Payment settlement failed',
+          reason: settleResult.errorReason || 'Settlement unsuccessful',
+          accepts: toJsonSafe(paymentRequirements),
+        }),
+      };
+    }
+
+    console.log('✅ Payment settled successfully');
+
+    // Add settlement response header
+    const paymentResponseHeader = settleResponseHeader(settleResult);
+    corsHeaders['X-PAYMENT-RESPONSE'] = paymentResponseHeader;
 
     // Run validation (create minimal mock for validation)
     const validationReq = { body: requestBody };
