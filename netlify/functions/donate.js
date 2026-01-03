@@ -289,10 +289,13 @@ export async function handler(event) {
     console.log('✅ Payment settled successfully');
 
     // Add settlement response header
+    console.log('📝 Creating payment response header...');
     const paymentResponseHeader = settleResponseHeader(settleResult);
     corsHeaders['X-PAYMENT-RESPONSE'] = paymentResponseHeader;
+    console.log('✅ Payment response header added');
 
     // Run validation (create minimal mock for validation)
+    console.log('🔍 Running validation...');
     const validationReq = { body: requestBody };
     for (const validation of validateDonation) {
       await validation.run(validationReq);
@@ -310,6 +313,7 @@ export async function handler(event) {
         }),
       };
     }
+    console.log('✅ Validation passed');
 
     const { message } = requestBody;
 
@@ -348,7 +352,8 @@ Powered by CryptoMeACoffee
     }
 
     // Return success response
-    return {
+    console.log('✅ Returning 200 success response');
+    const successResponse = {
       statusCode: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -358,8 +363,12 @@ Powered by CryptoMeACoffee
         timestamp: new Date().toISOString(),
       }),
     };
+    console.log('📤 Response:', JSON.stringify(successResponse, null, 2));
+    return successResponse;
   } catch (error) {
-    console.error('❌ Server error:', error);
+    console.error('❌ Server error caught in try/catch:', error);
+    console.error('❌ Error message:', error.message);
+    console.error('❌ Error stack:', error.stack);
 
     // Don't expose internal errors in production
     const errorResponse = {
@@ -374,6 +383,7 @@ Powered by CryptoMeACoffee
       errorResponse.stack = error.stack;
     }
 
+    console.log('📤 Returning 500 error response');
     return {
       statusCode: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
