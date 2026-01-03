@@ -33,7 +33,7 @@ Before you begin, make sure you have:
 
 ### Optional
 
-- 📧 **Email account** for donation notifications (Gmail works great)
+- 📧 **Resend account** for donation notifications (free 3,000 emails/month)
 - 🌐 **Domain name** for production (not required for testing)
 
 ### For Local Development
@@ -199,12 +199,8 @@ WALLET_ADDRESS=0xYourWalletAddress
 NETWORK=base-sepolia
 FACILITATOR_URL=https://x402.org/facilitator
 
-# Optional - Email Notifications
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_SECURE=false
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASS=your-gmail-app-password
+# Optional - Email Notifications (Resend)
+RESEND_API_KEY=re_your_api_key_here
 NOTIFICATION_EMAIL=your-email@gmail.com
 
 # Optional - CORS
@@ -238,10 +234,7 @@ You should see:
 | `FACILITATOR_URL`    | ✅ Yes   | x402 facilitator endpoint                     | `https://x402.org/facilitator` |
 | `PORT`               | No       | Server port (default: 3000)                   | `3000`                         |
 | `CORS_ORIGIN`        | No       | Allowed website origin                        | `https://yoursite.com`         |
-| `EMAIL_HOST`         | No       | SMTP server for notifications                 | `smtp.gmail.com`               |
-| `EMAIL_PORT`         | No       | SMTP port                                     | `587`                          |
-| `EMAIL_USER`         | No       | Email account username                        | `you@gmail.com`                |
-| `EMAIL_PASS`         | No       | Email account password                        | `app-password`                 |
+| `RESEND_API_KEY`     | No       | Resend API key for email notifications        | `re_abc123...`                 |
 | `NOTIFICATION_EMAIL` | No       | Where to send donation alerts                 | `you@gmail.com`                |
 
 ---
@@ -491,38 +484,28 @@ All production servers need HTTPS. Fortunately, most platforms provide it automa
 
 Get notified when you receive donations:
 
-#### Gmail Setup (Free)
+#### Resend Setup (Recommended)
 
-1. **Enable 2-Step Verification** in Google Account
-2. **Generate App Password:**
-   - Google Account → Security → App passwords
-   - Create password for "Mail"
-   - Copy the 16-character password
+Modern email API with excellent deliverability:
+
+1. **Sign up at [Resend](https://resend.com)** (free: 3,000 emails/month)
+2. **Create API Key:**
+   - Dashboard → API Keys
+   - Click "Create API Key"
+   - Name: "CryptoMeACoffee"
+   - Copy the API key (starts with `re_...`)
 
 3. **Update `.env`:**
    ```env
-   EMAIL_HOST=smtp.gmail.com
-   EMAIL_PORT=587
-   EMAIL_SECURE=false
-   EMAIL_USER=your-email@gmail.com
-   EMAIL_PASS=xxxx-xxxx-xxxx-xxxx  # App password
+   RESEND_API_KEY=re_your_api_key_here
    NOTIFICATION_EMAIL=your-email@gmail.com
    ```
 
-#### SendGrid Setup (Scalable)
-
-For higher volume:
-
-1. Sign up at [SendGrid](https://sendgrid.com) (free 100 emails/day)
-2. Create API key
-3. Update `.env`:
-   ```env
-   EMAIL_HOST=smtp.sendgrid.net
-   EMAIL_PORT=587
-   EMAIL_USER=apikey
-   EMAIL_PASS=YOUR_SENDGRID_API_KEY
-   NOTIFICATION_EMAIL=your-email@gmail.com
-   ```
+**Benefits:**
+- ✅ Simple setup (no app passwords needed)
+- ✅ Better deliverability than Gmail
+- ✅ 3,000 emails/month free (vs Gmail's stricter limits)
+- ✅ Built for developers
 
 ---
 
@@ -622,15 +605,16 @@ CORS_ORIGIN=https://yoursite.com
 
 1. Check spam folder
 2. Verify `NOTIFICATION_EMAIL` in `.env`
-3. Test SMTP credentials:
+3. Check server logs for email confirmation:
 
    ```bash
-   # Check server logs for email errors
-   npm start
-   # Look for "📧 Email notification sent"
+   # Look for these messages in logs:
+   # "✅ Initializing Resend client"
+   # "📧 Email notification sent via Resend"
    ```
 
-4. For Gmail, verify App Password is correct
+4. Verify Resend API key is correct (starts with `re_`)
+5. Check Resend dashboard for email logs: https://resend.com/emails
 
 ---
 

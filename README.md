@@ -19,6 +19,7 @@
 - ✅ **Buy Me a Coffee Style** - Floating widget with modern UX
 - ✅ **Easy Integration** - One script tag or npm install
 - ✅ **Message Support** - Supporters can include messages (500 chars)
+- ✅ **Email Notifications** - Get notified via Resend when donations arrive
 
 ## 🚀 Quick Start
 
@@ -108,6 +109,22 @@ const widget = new CryptoMeACoffee({
 ## 🖥️ Server Setup Required
 
 This widget requires a backend server running x402-express middleware. Choose your deployment method:
+
+### 📧 Optional: Email Notifications
+
+Get notified when donations arrive! Configure Resend for email alerts:
+
+1. **Sign up for Resend**: https://resend.com (free: 3,000 emails/month)
+2. **Get your API key**: https://resend.com/api-keys
+3. **Add to your environment variables**:
+   ```bash
+   RESEND_API_KEY=re_your_api_key_here
+   NOTIFICATION_EMAIL=your-email@example.com
+   ```
+
+The backend will automatically send email notifications for each donation with amount, message, and timestamp.
+
+---
 
 ### Option 1: Vercel (Serverless - Easiest) ⚡
 
