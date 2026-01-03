@@ -12,11 +12,14 @@ import { getAddress } from 'viem';
 import { Resend } from 'resend';
 import { body, validationResult } from 'express-validator';
 
-// Email configuration (Resend)
-let resend = null;
-if (process.env.RESEND_API_KEY) {
-  resend = new Resend(process.env.RESEND_API_KEY);
-  console.log('✅ Email notifications enabled (Resend)');
+// Email configuration (Resend) - lazy initialization
+function getResendClient() {
+  if (!process.env.RESEND_API_KEY) {
+    console.log('⚠️ RESEND_API_KEY not found in environment');
+    return null;
+  }
+  console.log('✅ Initializing Resend client');
+  return new Resend(process.env.RESEND_API_KEY);
 }
 
 // USDC Token addresses
@@ -311,6 +314,8 @@ export async function handler(event) {
 
     // Send email notification asynchronously (non-blocking)
     // Note: message is already sanitized by express-validator's .escape()
+    const resend = getResendClient();
+
     if (resend && process.env.NOTIFICATION_EMAIL) {
       const sanitizedMessage = message || 'No message';
 
@@ -342,7 +347,8 @@ export async function handler(event) {
     } else {
       console.log('⚠️ Email notification skipped:', {
         hasResend: !!resend,
-        hasNotificationEmail: !!process.env.NOTIFICATION_EMAIL
+        hasNotificationEmail: !!process.env.NOTIFICATION_EMAIL,
+        resendApiKey: process.env.RESEND_API_KEY ? 're_***' : 'missing'
       });
     }
 
