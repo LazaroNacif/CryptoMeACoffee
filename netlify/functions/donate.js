@@ -8,6 +8,7 @@ import { useFacilitator } from 'x402/verify';
 import { exact } from 'x402/schemes';
 import { processPriceToAtomicAmount, toJsonSafe } from 'x402/shared';
 import { SupportedEVMNetworks, settleResponseHeader } from 'x402/types';
+import { createFacilitatorConfig } from '@coinbase/x402';
 import { getAddress } from 'viem';
 import { Resend } from 'resend';
 import { body, validationResult } from 'express-validator';
@@ -193,22 +194,25 @@ export async function handler(event) {
     console.log('🔄 Verifying payment...');
 
     // Initialize facilitator with CDP authentication for mainnet
-    const facilitatorConfig = {
-      url: process.env.FACILITATOR_URL || 'https://x402.org/facilitator',
-    };
+    let facilitatorConfig;
 
-    // Add CDP API credentials for mainnet
     if (network === 'base') {
+      // Mainnet: Use CDP-authenticated facilitator
       if (!process.env.CDP_API_KEY_ID || !process.env.CDP_API_KEY_SECRET) {
         throw new Error('CDP API credentials required for mainnet. Set CDP_API_KEY_ID and CDP_API_KEY_SECRET.');
       }
 
-      facilitatorConfig.auth = {
-        keyId: process.env.CDP_API_KEY_ID,
-        keySecret: process.env.CDP_API_KEY_SECRET,
-      };
+      facilitatorConfig = createFacilitatorConfig(
+        process.env.CDP_API_KEY_ID,
+        process.env.CDP_API_KEY_SECRET
+      );
 
       console.log('✅ Using CDP-authenticated facilitator for mainnet');
+    } else {
+      // Testnet: Use public facilitator (for backwards compatibility, though testnet is deprecated)
+      facilitatorConfig = {
+        url: process.env.FACILITATOR_URL || 'https://x402.org/facilitator',
+      };
     }
 
     const { verify, settle } = useFacilitator(facilitatorConfig);
