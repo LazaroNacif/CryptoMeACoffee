@@ -36,15 +36,16 @@
     "express-validator": "^7.3.1",
     "isomorphic-dompurify": "^2.33.0",
     "nodemailer": "^7.0.10",
-    "x402-express": "^0.7.0",
+    "resend": "^6.6.0",
+    "viem": "^2.21.0",
     "x402": "^0.7.0",
-    "viem": "^2.21.0"
+    "x402-express": "^0.7.0"
   },
   "devDependencies": {
     "netlify-cli": "^17.38.1",
+    "typescript": "^5.7.2",
     "vite": "^5.4.11",
-    "vite-plugin-dts": "^4.3.0",
-    "typescript": "^5.7.2"
+    "vite-plugin-dts": "^4.3.0"
   },
   "engines": {
     "node": ">=18.0.0"

@@ -9,22 +9,14 @@ import { exact } from 'x402/schemes';
 import { processPriceToAtomicAmount, toJsonSafe } from 'x402/shared';
 import { SupportedEVMNetworks, settleResponseHeader } from 'x402/types';
 import { getAddress } from 'viem';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { body, validationResult } from 'express-validator';
 
-// Email configuration (optional)
-let emailTransporter = null;
-if (process.env.EMAIL_HOST && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-  emailTransporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: parseInt(process.env.EMAIL_PORT || '587'),
-    secure: process.env.EMAIL_SECURE === 'true',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-  console.log('✅ Email notifications enabled');
+// Email configuration (Resend)
+let resend = null;
+if (process.env.RESEND_API_KEY) {
+  resend = new Resend(process.env.RESEND_API_KEY);
+  console.log('✅ Email notifications enabled (Resend)');
 }
 
 // USDC Token addresses
@@ -319,12 +311,12 @@ export async function handler(event) {
 
     // Send email notification asynchronously (non-blocking)
     // Note: message is already sanitized by express-validator's .escape()
-    if (emailTransporter && process.env.NOTIFICATION_EMAIL) {
+    if (resend && process.env.NOTIFICATION_EMAIL) {
       const sanitizedMessage = message || 'No message';
 
-      emailTransporter
-        .sendMail({
-          from: process.env.EMAIL_USER,
+      resend.emails
+        .send({
+          from: 'CryptoMeACoffee <onboarding@resend.dev>',
           to: process.env.NOTIFICATION_EMAIL,
           subject: `💰 New Donation: $${amount} USDC`,
           html: `
@@ -336,19 +328,9 @@ export async function handler(event) {
           <hr>
           <p><em>Powered by CryptoMeACoffee</em></p>
         `,
-          text: `
-New Donation Received!
-
-Amount: $${amount} USDC
-Message: ${message || 'No message'}
-Network: ${network}
-Timestamp: ${new Date().toISOString()}
-
-Powered by CryptoMeACoffee
-        `,
         })
-        .then(() => console.log('📧 Email notification sent'))
-        .catch((emailError) => console.error('❌ Failed to send email:', emailError.message));
+        .then(() => console.log('📧 Email notification sent via Resend'))
+        .catch((emailError) => console.error('❌ Failed to send email:', emailError.message || emailError));
     }
 
     // Return success response
