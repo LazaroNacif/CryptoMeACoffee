@@ -16,7 +16,7 @@
 
 import { createPaymentHeader, selectPaymentRequirements } from 'x402/client';
 import { createWalletClient, custom } from 'viem';
-import { baseSepolia, base } from 'viem/chains';
+import { base } from 'viem/chains';
 import { logger } from './logger.js';
 
 /**
@@ -74,7 +74,7 @@ class CryptoMeACoffee {
       // Optional
       presetAmounts: config.presetAmounts || [1, 3, 5],
       theme: config.theme || 'light',
-      network: config.network || 'base-sepolia',
+      network: config.network || 'base',
       logoUrl: config.logoUrl || null,
 
       // Advanced
@@ -113,11 +113,6 @@ class CryptoMeACoffee {
 
   initializeNetworkConfig() {
     this.networks = {
-      'base-sepolia': {
-        chain: baseSepolia,
-        id: 84532,
-        name: 'Base Sepolia',
-      },
       base: {
         chain: base,
         id: 8453,
@@ -127,7 +122,7 @@ class CryptoMeACoffee {
 
     this.targetNetwork = this.networks[this.config.network];
     if (!this.targetNetwork) {
-      throw new Error(`Unsupported network: ${this.config.network}`);
+      throw new Error(`Unsupported network: ${this.config.network}. Only 'base' (mainnet) is supported.`);
     }
   }
 

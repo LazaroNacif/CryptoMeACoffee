@@ -53,5 +53,8 @@ credentials.json
 chrome-devtools-mcp
 .claude/
 
+# Local context (personal session notes)
+CONTEXT.md
+
 # Local Netlify folder
 .netlify

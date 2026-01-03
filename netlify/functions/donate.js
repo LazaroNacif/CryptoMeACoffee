@@ -22,9 +22,8 @@ function getResendClient() {
   return new Resend(process.env.RESEND_API_KEY);
 }
 
-// USDC Token addresses
+// USDC Token addresses (mainnet only)
 const USDC_ADDRESSES = {
-  'base-sepolia': '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
   base: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
 };
 
@@ -121,7 +120,7 @@ export async function handler(event) {
     const requestBody = JSON.parse(event.body || '{}');
 
     // Get network configuration
-    const network = process.env.NETWORK || 'base-sepolia';
+    const network = process.env.NETWORK || 'base';
     const amount = requestBody?.amount || 1.0;
     const paymentHeader = event.headers['x-payment'];
 
@@ -193,10 +192,25 @@ export async function handler(event) {
     // Payment header exists - verify it
     console.log('🔄 Verifying payment...');
 
-    // Initialize facilitator
+    // Initialize facilitator with CDP authentication for mainnet
     const facilitatorConfig = {
       url: process.env.FACILITATOR_URL || 'https://x402.org/facilitator',
     };
+
+    // Add CDP API credentials for mainnet
+    if (network === 'base') {
+      if (!process.env.CDP_API_KEY_ID || !process.env.CDP_API_KEY_SECRET) {
+        throw new Error('CDP API credentials required for mainnet. Set CDP_API_KEY_ID and CDP_API_KEY_SECRET.');
+      }
+
+      facilitatorConfig.auth = {
+        keyId: process.env.CDP_API_KEY_ID,
+        keySecret: process.env.CDP_API_KEY_SECRET,
+      };
+
+      console.log('✅ Using CDP-authenticated facilitator for mainnet');
+    }
+
     const { verify, settle } = useFacilitator(facilitatorConfig);
 
     // Decode payment
