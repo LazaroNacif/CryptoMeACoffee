@@ -231,7 +231,7 @@ export async function handler(event) {
 
     console.log('🔍 Verify result:', JSON.stringify(verifyResult, null, 2));
 
-    if (!verifyResult.valid) {
+    if (!verifyResult.isValid) {
       console.error('❌ Payment verification failed:', verifyResult.reason || 'No reason provided');
       return {
         statusCode: 402,
