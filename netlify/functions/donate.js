@@ -314,6 +314,8 @@ export async function handler(event) {
     if (resend && process.env.NOTIFICATION_EMAIL) {
       const sanitizedMessage = message || 'No message';
 
+      console.log('📧 Attempting to send email to:', process.env.NOTIFICATION_EMAIL);
+
       resend.emails
         .send({
           from: 'CryptoMeACoffee <onboarding@resend.dev>',
@@ -329,8 +331,19 @@ export async function handler(event) {
           <p><em>Powered by CryptoMeACoffee</em></p>
         `,
         })
-        .then(() => console.log('📧 Email notification sent via Resend'))
-        .catch((emailError) => console.error('❌ Failed to send email:', emailError.message || emailError));
+        .then((result) => {
+          console.log('📧 Email notification sent via Resend');
+          console.log('📧 Resend response:', JSON.stringify(result));
+        })
+        .catch((emailError) => {
+          console.error('❌ Failed to send email:', emailError);
+          console.error('❌ Error details:', JSON.stringify(emailError, null, 2));
+        });
+    } else {
+      console.log('⚠️ Email notification skipped:', {
+        hasResend: !!resend,
+        hasNotificationEmail: !!process.env.NOTIFICATION_EMAIL
+      });
     }
 
     // Return success response
