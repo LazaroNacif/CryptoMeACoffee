@@ -32,17 +32,17 @@
   "author": "Pedro Lazaro Nacif",
   "license": "MIT",
   "dependencies": {
-    "@coinbase/x402": "^0.7.1",
+    "@coinbase/x402": "^2.1.0",
     "express-validator": "^7.3.1",
     "isomorphic-dompurify": "^2.33.0",
     "nodemailer": "^7.0.10",
     "resend": "^6.6.0",
-    "viem": "^2.21.0",
-    "x402": "^0.7.0",
-    "x402-express": "^0.7.0"
+    "viem": "^2.43.5",
+    "x402": "^1.1.0",
+    "x402-express": "^1.1.0"
   },
   "devDependencies": {
-    "netlify-cli": "^17.38.1",
+    "netlify-cli": "^23.13.0",
     "typescript": "^5.7.2",
     "vite": "^5.4.11",
     "vite-plugin-dts": "^4.3.0"
