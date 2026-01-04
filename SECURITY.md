@@ -18,8 +18,11 @@ We take the security of CryptoMeACoffee seriously. If you discover a security vu
 
 **DO NOT** open a public GitHub issue for security vulnerabilities.
 
-Instead, please report security issues by emailing:
-**[MAINTAINER EMAIL - UPDATE THIS]**
+Instead, please report security issues via GitHub Security Advisories:
+**https://github.com/LazaroNacif/CryptoMeACoffee/security/advisories/new**
+
+Or contact the maintainer directly on GitHub:
+**@LazaroNacif** - https://github.com/LazaroNacif
 
 ### What to Include
 
