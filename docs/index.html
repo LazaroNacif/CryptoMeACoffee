@@ -8,7 +8,7 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Widget Styles -->
   <link rel="stylesheet" href="./styles.css">
@@ -79,7 +79,7 @@
 
     .info-banner p,
     .info-banner ul {
-      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-weight: 500;
       margin-left: 1.5rem;
       line-height: 1.8;
@@ -119,7 +119,7 @@
     }
 
     .demo-card p {
-      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-weight: 500;
       line-height: 1.7;
       margin-bottom: 1rem;
@@ -134,16 +134,16 @@
       font-size: 0.9rem;
       overflow-x: auto;
       margin-top: 1rem;
-      color: #4ADE80;
+      color: #00FF00;
       line-height: 1.6;
     }
 
     .code-block code {
-      color: #4ADE80;
+      color: #00FF00;
     }
 
     .highlight {
-      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: #FFD700;
       color: #0A1E4A;
       padding: 0.2rem 0.4rem;
@@ -151,7 +151,7 @@
     }
 
     .cta {
-      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: #FFD700;
       color: #000000;
       border: 4px solid #FFFFFF;
@@ -172,7 +172,7 @@
     }
 
     footer {
-      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-weight: 500;
       text-align: center;
       padding: 2rem 0 1rem;
@@ -216,29 +216,25 @@
 
     <!-- Info Banner -->
     <div class="info-banner">
-      <h2>>>> ACCEPT CRYPTO DONATIONS ON ANY WEBSITE</h2>
-      <p style="margin-bottom: 1rem; font-size: 0.7rem; font-family: 'Press Start 2P', monospace;">A MODERN, OPEN-SOURCE DONATION WIDGET THAT:</p>
-      <ul>
-        <li><strong>GASLESS DONATIONS</strong> - Supporters pay zero gas fees via x402 protocol</li>
-        <li><strong>DEVELOPER FRIENDLY</strong> - Drop-in widget + backend in minutes</li>
-        <li><strong>BLOCKCHAIN NATIVE</strong> - Built on Base with USDC for stability</li>
-      </ul>
+      <h2>> WHAT IT IS</h2>
+      <p style="margin-bottom: 1rem; font-size: 0.7rem; font-family: 'Press Start 2P', monospace;">Crypto Me A Coffee is an open-source donation widget that lets any website accept crypto donations using the x402 protocol.</p>
+      <p style="margin-bottom: 0;">It works as a small button on your site. When someone clicks "Donate", the server responds with HTTP 402, the wallet approves the payment, and the transfer settles in seconds.</p>
     </div>
 
     <!-- Demo Section -->
     <div class="demo-section">
       <div class="demo-card">
-        <h2>WHY CRYPTO ME A COFFEE?</h2>
+        <h2>> WHY IT EXISTS</h2>
         <p>
-          Traditional payment processors take 3-5% fees and add friction. With CryptoMeACoffee, your supporters send USDC directly to your wallet.
+          Most donation tools rely on intermediaries, fees, and platform lock-in.
         </p>
         <p>
-          The <span class="highlight">x402 protocol</span> eliminates gas fees for donors, making crypto donations as easy as traditional payments.
+          x402 enables payments directly at the protocol layer. Crypto Me A Coffee is a simple implementation of that idea, focused on simplicity, control, and ease of use.
         </p>
       </div>
 
       <div class="demo-card">
-        <h2>GETTING STARTED</h2>
+        <h2>> HOW IT WORKS</h2>
         <p>
           Clone the repo and deploy in minutes. Includes widget, backend examples, and full documentation:
         </p>
@@ -254,18 +250,22 @@ npm run build</code></div>
       </div>
 
       <div class="demo-card">
-        <h2>OPEN SOURCE</h2>
+        <h2>> OPEN-SOURCE</h2>
         <p>
-          CryptoMeACoffee is 100% open source and free to use. No hidden fees, no lock-in, no proprietary platforms.
+          Crypto Me A Coffee is fully open-source and MIT licensed.
         </p>
         <p>
-          Supporters can send messages with donations and you get instant email notifications.
-        </p>
-        <p>
-          MIT Licensed with clear guides, documentation and examples. Use it as you like it!
+          No hidden fees.<br>
+          No lock-in.<br>
+          Fully customizable.
         </p>
       </div>
     </div>
+
+    <!-- Footer -->
+    <footer>
+      Built by <a href="https://www.linkedin.com/in/pedrolazaronacif/" target="_blank" rel="noopener noreferrer">Pedro Lázaro Nacif</a>
+    </footer>
 
   </div>
 
