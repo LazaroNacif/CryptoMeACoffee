@@ -2,6 +2,8 @@
 
 > Accept USDC donations on your website via x402 protocol. Zero fees, self-hosted, fully open-source.
 
+**🌐 Live Demo:** [cryptomeacoffee.com](https://cryptomeacoffee.com)
+
 [![npm version](https://img.shields.io/npm/v/cryptomeacoffee.svg)](https://www.npmjs.com/package/cryptomeacoffee)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/LazaroNacif/cryptomeacoffee/actions)
