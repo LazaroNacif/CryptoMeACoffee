@@ -2,9 +2,7 @@
 # This is ironic and perfect - a donation widget using itself for funding
 
 custom:
-  - "https://yourdomain.com/donate"
-  # TODO: Replace with actual URL where CryptoMeACoffee widget is deployed
-  # Example: https://lazaronacif.github.io/cryptomeacoffee-demo
+  - "https://cryptomeacoffee.com"
 
 # Optional: Add other funding platforms
 # github: [LazaroNacif]
