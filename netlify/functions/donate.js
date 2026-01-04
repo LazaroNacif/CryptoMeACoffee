@@ -151,7 +151,7 @@ export async function handler(event) {
 
     // Construct payment requirements manually
     const payTo = getAddress(process.env.WALLET_ADDRESS);
-    const resourceUrl = `https://${event.headers.host || 'bucolic-cannoli-49fd18.netlify.app'}/api/donate`;
+    const resourceUrl = `https://${event.headers.host || 'cryptomeacoffee.netlify.app'}/api/donate`;
 
     const paymentRequirements = [{
       scheme: 'exact',
